@@ -1,9 +1,7 @@
-Marpa Papers
-============
+The Marpa FAQ
+=============
 
-Various documents pertaining to Marpa (Introduction, FAQ, etc).
-
-Visit the web version at [the Marpa Papers](http://savage.net.au/Perl-modules/html/marpa.papers/index.html).
+Visit the web version at [the Marpa FAQ](http://savage.net.au/Perl-modules/html/marpa.faq/index.html).
 
 What is Marpa
 -------------
@@ -18,7 +16,7 @@ Contributing
 We appreciate any contributions to this guide. See the [contribution guide][contrib] for
 more information.
 
-[contrib]: http://savage.net.au/Perl-modules/html/marpa.papers/contribution.html
+[contrib]: http://savage.net.au/Perl-modules/html/marpa.faq/contribution.html
 
 When you submit text to which you hold the copyright, you agree to license it under:
 
