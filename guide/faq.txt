@@ -33,6 +33,7 @@ Table of Contents
 * [28 Papers on Parsing Theory](#q28)
 * [29 Are there C/Lua/Python/etc bindings for libmarpa?](#q29)
 * [30 What are the Marpa Papers?](#q30)
+* [31 What grammar do I use when eol ("\n", new-line) is significant?](#q31)
 
 <a name="q1"></a>
 1 Where do I go for help?
@@ -690,3 +691,12 @@ A complex case: [MarpaX::Languages::SQL2003::AST](https://metacpan.org/release/M
 [They are a small book of Marpa-related matters](http://savage.net.au/Perl-modules/html/marpa.papers/),
 and are highly recommended reading for (a) Getting Started, (b) Marpa's Advantages, and
 (c) Advanced Usage.
+
+<a name="q31"></a>
+31 What grammar do I use when eol ("\n", new-line) is significant?
+------------------------------------------------------------------
+
+There is no definitive answer to this, because different contexts will have different interpretations
+of how they need to handle eol.
+
+It would be nice, however, to have some specific samples of grammar available.
