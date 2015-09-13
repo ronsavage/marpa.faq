@@ -1,6 +1,20 @@
 The Marpa FAQ
 =============
 
+On-line docs
+------------
+
+[The Marpa FAQ](http://savage.net.au/Perl-modules/html/marpa.faq/)
+
+[The Marpa Papers](http://savage.net.au/Perl-modules/html/marpa.papers/)
+
+Github repos
+------------
+
+[The Marpa FAQ repo](https://github.com/ronsavage/marpa.faq.git)
+
+[The Marpa Papers repo](https://github.com/ronsavage/marpa.papers.git)
+
 Table of Contents
 -----------------
 * [1 Where do I go for help?](#q1)
