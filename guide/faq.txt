@@ -49,6 +49,7 @@ Table of Contents
 * [30 What are the Marpa Papers?](#q30)
 * [31 What grammar do I use when eol ("\n", new-line) is significant?](#q31)
 * [32 What's the meaning of: A lexeme in G1 is not a lexeme in any of the lexers](#q32)
+* [33 When I use the case-insensitive suffix ':i' my program dies](#q33)
 
 <a name="q1"></a>
 1 Where do I go for help?
@@ -744,3 +745,10 @@ It would be nice, however, to have some specific samples of grammar available.
 -----------------------------------------------------------------------------
 It means a lexeme (a symbol) appears on the left-hand-side of a '~' rule but should not have
 also appeared on the right-hand-side of a '~' rule.
+
+<a name="q33"></a>
+33 When I use the case-insensitive suffix ':i' my program dies
+--------------------------------------------------------------
+This is probably because you're using actions on rules, and you changed a lexeme from, say, "and ~ 'and'"
+to "and ~ 'and':i". After you add the ':i', the parameter passed in to your action function will have an
+extra arrayref around it, compared to what is was without the ':i'. Just dereference it with $t1 = $$t1[0].
