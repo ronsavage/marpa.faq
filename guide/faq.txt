@@ -48,6 +48,7 @@ Table of Contents
 * [29 Are there C/Lua/Python/etc bindings for libmarpa?](#q29)
 * [30 What are the Marpa Papers?](#q30)
 * [31 What grammar do I use when eol ("\n", new-line) is significant?](#q31)
+* [32 What's the meaning of: A lexeme in G1 is not a lexeme in any of the lexers](#q32)
 
 <a name="q1"></a>
 1 Where do I go for help?
@@ -115,14 +116,50 @@ See also the previous and next questions.
 <a name="q6"></a>
 6 Why did I get: Parse failed. value() called when recognizer is not in tree mode\nThe current mode is "forest"
 ---------------------------------------------------------------------------------------------------------------
-The parse is ambiguous. Instead of getting a tree, you got multiple trees. Hence 'forest'.
+The culprit is Marpa::R2::Scanless::R's [ambiguous()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguous) method.
 
-See [this discussion of 'rank'](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/DSL.pod#rank).
+So, after calling read() you're in 'tree mode'. But calling ambiguous() puts the recognizer into
+'forest mode', and that's probably not what you want (yet).
 
-Also see the long comment on rank at the start of sub BUILD in MarpaX::Languages::Perl::PackUnpack
-[here](https://metacpan.org/source/RSAVAGE/MarpaX-Languages-Perl-PackUnpack-1.00/lib/MarpaX/Languages/Perl/PackUnpack.pm#L139).
+Jeffrey's idea was that users should call [ambiguity_metric()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguity_metric)
+first, since it returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something <= 0.
 
-See also the previous 2 questions.
+Clearly, I hope, calling ambiguity_metric() does not put the recognizer into 'forest mode'.
+
+In pseudo-code:
+
+    $self -> recce -> read(\$text);
+
+    my($metric) = $self -> recce -> ambiguity_metric;
+
+    if ($metric <= 0)
+    {
+    	$self -> handle_error;
+    }
+    elsif ($metric == 1)
+    {
+    	# Process 1 tree.
+
+    	my($value) = $self -> recce -> value;
+
+    	$self -> process($$value);
+    }
+    else
+    {
+    	# Process N trees.
+
+    	while (my $value = $self -> recce -> value)
+    	{
+    		$self -> process($$value);
+    	}
+    }
+
+Alternately, you may have an ambiguous parse and specifically wish to operate in 'forest mode'.
+Enter Marpa::R2::ASF. See its docs for details. Here, ASF stands for Abstract Syntax Forest.
+
+Lastly, you may be wondering if there is an accessor, called mode() say, which returns 'forest' or 'tree'.
+Err, no. I guess somebody didn't think of that :-). mode() is not needed of course. Just call
+ambiguity_metric() and you know where you are.
 
 <a name="q7"></a>
 7 What is the meaning of L0 and G1?
@@ -714,3 +751,9 @@ There is no definitive answer to this, because different contexts will have diff
 of how they need to handle eol.
 
 It would be nice, however, to have some specific samples of grammar available.
+
+<a name="q32"></a>
+32 What's the meaning of: A lexeme in G1 is not a lexeme in any of the lexers
+-----------------------------------------------------------------------------
+It means a lexeme (a symbol) appears on the left-hand-side of a '~' rule but should not have
+also appeared on the right-hand-side of a '~' rule.
