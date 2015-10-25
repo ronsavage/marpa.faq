@@ -116,50 +116,38 @@ See also the previous and next questions.
 <a name="q6"></a>
 6 Why did I get: Parse failed. value() called when recognizer is not in tree mode\nThe current mode is "forest"
 ---------------------------------------------------------------------------------------------------------------
-The culprit is Marpa::R2::Scanless::R's [ambiguous()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguous) method.
+The culprit is Marpa::R2::Scanless::R's
+[ambiguous()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguous) method.
 
-So, after calling read() you're in 'tree mode'. But calling ambiguous() puts the recognizer into
-'forest mode', and that's probably not what you want (yet).
+Forest mode is something most users don't care about.
+It is used for Marpa's Abstract Syntax Forests.
+See Marpa::R2::ASF if you want to know more about those.
+The usual mode is "tree mode", and most of Marpa's calls,
+such as value(), require you to be in "tree mode".
 
-Jeffrey's idea was that users should call [ambiguity_metric()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguity_metric)
-first, since it returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something <= 0.
+ambiguous() uses forest mode to print a detailed description of the ambiguity.
+(By the way, try getting *that* out of another parser.)
+And ambiguous() leaves you in forest mode, which means you cannot do much of
+the usual processing, such as calling value().
+So how do you get around this problem?
 
-Clearly, I hope, calling ambiguity_metric() does not put the recognizer into 'forest mode'.
+There are two ways, depending on what you are trying to do.
+Most often, you regard an ambiguity in your parse as an error,
+so you want to print helpful message and abend if the parse
+is ambiguous,
+and go on to do normal stuff if it is not.
+What you should do in this case is call
+[ambiguity_metric()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguity_metric)
+first.
+ambiguity_metric()
+returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something <= 0.
+And ambiguity_metric() does *not* put you into forest mode.
 
-In pseudo-code:
-
-    $self -> recce -> read(\$text);
-
-    my($metric) = $self -> recce -> ambiguity_metric;
-
-    if ($metric <= 0)
-    {
-    	$self -> handle_error;
-    }
-    elsif ($metric == 1)
-    {
-    	# Process 1 tree.
-
-    	my($value) = $self -> recce -> value;
-
-    	$self -> process($$value);
-    }
-    else
-    {
-    	# Process N trees.
-
-    	while (my $value = $self -> recce -> value)
-    	{
-    		$self -> process($$value);
-    	}
-    }
-
-Alternately, you may have an ambiguous parse and specifically wish to operate in 'forest mode'.
-Enter Marpa::R2::ASF. See its docs for details. Here, ASF stands for Abstract Syntax Forest.
-
-Lastly, you may be wondering if there is an accessor, called mode() say, which returns 'forest' or 'tree'.
-Err, no. I guess somebody didn't think of that :-). mode() is not needed of course. Just call
-ambiguity_metric() and you know where you are.
+Less often, you want to both print out a message describing the parse's ambiguity,
+and then go on to deal with it in "tree mode".
+In this case, you can call the
+[series_restart()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#series_restart) method.
+series_restart() puts you back into "tree mode".
 
 <a name="q7"></a>
 7 What is the meaning of L0 and G1?
