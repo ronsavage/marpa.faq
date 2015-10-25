@@ -134,68 +134,54 @@ for how to short-circuit semantic analysis.</p>
 
 <h2>6 Why did I get: Parse failed. value() called when recognizer is not in tree mode\nThe current mode is "forest"</h2>
 
-<p>The culprit is Marpa::R2::Scanless::R's <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguous">ambiguous()</a> method.</p>
+<p>The culprit is Marpa::R2::Scanless::R's
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguous">ambiguous()</a> method.</p>
 
-<p>So, after calling read() you're in 'tree mode'. But calling ambiguous() puts the recognizer into
-'forest mode', and that's probably not what you want (yet).</p>
+<p>Forest mode is something most users don't care about.
+It is used for Marpa's Abstract Syntax Forests.
+See Marpa::R2::ASF if you want to know more about those.
+The usual mode is "tree mode", and most of Marpa's calls,
+such as value(), require you to be in "tree mode".</p>
 
-<p>Jeffrey's idea was that users should call <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguity_metric">ambiguity_metric()</a>
-first, since it returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something &lt;= 0.</p>
+<p>ambiguous() uses forest mode to print a detailed description of the ambiguity.
+(By the way, try getting <em>that</em> out of another parser.)
+And ambiguous() leaves you in forest mode, which means you cannot do much of
+the usual processing, such as calling value().
+So how do you get around this problem?</p>
 
-<p>Clearly, I hope, calling ambiguity_metric() does not put the recognizer into 'forest mode'.</p>
+<p>There are two ways, depending on what you are trying to do.
+Most often, you regard an ambiguity in your parse as an error,
+so you want to print helpful message and abend if the parse
+is ambiguous,
+and go on to do normal stuff if it is not.
+What you should do in this case is call
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguity_metric">ambiguity_metric()</a>
+first.
+ambiguity_metric()
+returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something &lt;= 0.
+And ambiguity_metric() does <em>not</em> put you into forest mode.</p>
 
-<p>In pseudo-code:</p>
-
-<pre class="prettyprint linenums"><code>$self -&gt; recce -&gt; read(\$text);
-
-my($metric) = $self -&gt; recce -&gt; ambiguity_metric;
-
-if ($metric &lt;= 0)
-{
-    $self -&gt; handle_error;
-}
-elsif ($metric == 1)
-{
-    # Process 1 tree.
-
-    my($value) = $self -&gt; recce -&gt; value;
-
-    $self -&gt; process($$value);
-}
-else
-{
-    # Process N trees.
-
-    while (my $value = $self -&gt; recce -&gt; value)
-    {
-        $self -&gt; process($$value);
-    }
-}
-</code></pre>
-
-<p>Alternately, you may have an ambiguous parse and specifically wish to operate in 'forest mode'.
-Enter Marpa::R2::ASF. See its docs for details. Here, ASF stands for Abstract Syntax Forest.</p>
-
-<p>Lastly, you may be wondering if there is an accessor, called mode() say, which returns 'forest' or 'tree'.
-Err, no. I guess somebody didn't think of that :-). mode() is not needed of course. Just call
-ambiguity_metric() and you know where you are.</p>
+<p>Less often, you want to both print out a message describing the parse's ambiguity,
+and then go on to deal with it in "tree mode".
+In this case, you can call the
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#series_restart">series_restart()</a> method.
+series_restart() puts you back into "tree mode".</p>
 
 <p><a name="q7"></a></p>
 
 <h2>7 What is the meaning of L0 and G1?</h2>
 
 <p>L0 defines exactly what tokens are acceptable in the input stream. So, these are the rules defining the
-syntax of the tokens, but not the syntax of how these tokens can be combined.</p>
+syntax of the tokens, but not the syntax of how these tokens can be combined. G1 defines the structure of
+the language - the ways in which the tokens can be combined. In other words, G1 is structural and therefore
+a 'parser' in the strictest sense, and L0 is its lexer. ('L' for lexer.)</p>
 
-<p>G1 defines the structure of the language. These rules define legal statements within the given language.
-Legal statements are thus legal combinations of tokens.</p>
+<p>One distinction between G1 and L0 is very important in desigin a grammar/lexer combination: G1 rules have
+a semantics. L0 rules do <em>not</em>.</p>
 
-<p>The idea is that G1 is structural, and grammars are in the Ln series are lexers. ("L" for lexer.)</p>
-
-<p>Also, G1 rules have a semantics, whereas L0 rules do not.</p>
-
-<p>L0 and G1 discussed in <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL">Marpa::R2::Scanless::DSL</a>, and, very
-briefly, in <a href="https://metacpan.org/module/Marpa::R2::Semantics">Marpa::R2::Semantics</a>. In both cases, search for 'L0'.</p>
+<p>L0 and G1 discussed in <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL">Marpa::R2::Scanless::DSL</a>,
+and, very briefly, in <a href="https://metacpan.org/module/Marpa::R2::Semantics">Marpa::R2::Semantics</a>. In both
+cases, search for 'L0'.</p>
 
 <p><a name="q8"></a></p>
 
