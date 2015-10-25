@@ -165,12 +165,16 @@ ambiguity_metric() and you know where you are.
 7 What is the meaning of L0 and G1?
 -----------------------------------
 L0 defines exactly what tokens are acceptable in the input stream. So, these are the rules defining the
-syntax of the tokens, but not the syntax of how these tokens can be combined.  G1 defines the structure of the language -- the ways in which the tokens can be combined.  In other words, G1 is structural and therefore a "parser" in the strictest sense, and L0 is its lexer. ("L" for lexer.)
+syntax of the tokens, but not the syntax of how these tokens can be combined. G1 defines the structure of
+the language - the ways in which the tokens can be combined. In other words, G1 is structural and therefore
+a 'parser' in the strictest sense, and L0 is its lexer. ('L' for lexer.)
 
-One distinction between G1 and L0 is very important in desigin a grammar/lexer combination: G1 rules have a semantics.  L0 rules do *not*.
+One distinction between G1 and L0 is very important in desigin a grammar/lexer combination: G1 rules have
+a semantics. L0 rules do *not*.
 
-L0 and G1 discussed in [Marpa::R2::Scanless::DSL](https://metacpan.org/module/Marpa::R2::Scanless::DSL), and, very
-briefly, in [Marpa::R2::Semantics](https://metacpan.org/module/Marpa::R2::Semantics). In both cases, search for 'L0'.
+L0 and G1 discussed in [Marpa::R2::Scanless::DSL](https://metacpan.org/module/Marpa::R2::Scanless::DSL),
+and, very briefly, in [Marpa::R2::Semantics](https://metacpan.org/module/Marpa::R2::Semantics). In both
+cases, search for 'L0'.
 
 <a name="q8"></a>
 8 How do I parse comments?
