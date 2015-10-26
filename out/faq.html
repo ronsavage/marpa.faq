@@ -58,8 +58,9 @@
 <li><a href="#q29">29 Are there C/Lua/Python/etc bindings for libmarpa?</a></li>
 <li><a href="#q30">30 What are the Marpa Papers?</a></li>
 <li><a href="#q31">31 What grammar do I use when eol ("\n", new-line) is significant?</a></li>
-<li><a href="#q32">32 What's the meaning of: A lexeme in G1 is not a lexeme in any of the lexers</a></li>
+<li><a href="#q32">32 What's the meaning of: A lexeme in G1 is not a lexeme in any of the lexers?</a></li>
 <li><a href="#q33">33 When I use the case-insensitive suffix ':i' my program dies</a></li>
+<li><a href="#q34">34 When do I use actions and when do I use events?</a></li>
 </ul>
 
 <p><a name="q1"></a></p>
@@ -140,8 +141,8 @@ for how to short-circuit semantic analysis.</p>
 
 <p>Forest mode is something most users don't care about.
 It is used for Marpa's Abstract Syntax Forests.
-See Marpa::R2::ASF if you want to know more about those.
-The usual mode is "tree mode", and most of Marpa's calls,
+See <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/ASF.pod">Marpa::R2::ASF</a> if you want to know
+more about those. The usual mode is "tree mode", and most of Marpa's calls,
 such as value(), require you to be in "tree mode".</p>
 
 <p>ambiguous() uses forest mode to print a detailed description of the ambiguity.
@@ -167,6 +168,34 @@ and then go on to deal with it in "tree mode".
 In this case, you can call the
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#series_restart">series_restart()</a> method.
 series_restart() puts you back into "tree mode".</p>
+
+<p>And here is some code copied directly from V 2 of
+<a href="https://metacpan.org/release/Genealogy-Gedcom-Date">Genealogy::Gedcom::Date</a>. The method decode_result()
+is listed below, and Dumper() is from
+<a href="https://metacpan.org/release/Data-Dumper-Concise">Data::Dumper::Concise</a>. Of course the calling code
+checks that the return from ambiguity_metric() is > 1:</p>
+
+<pre class="prettyprint linenums"><code>    my($count) = 0;
+
+    while (my $value = $self -&gt; recce -&gt; value)
+    {
+        $value = $self -&gt; decode_result($$value); # Returns an arrayref, hence the 'for' below.
+
+        $self -&gt; log(debug =&gt; "Solution @{[++$count]}: \n" . Dumper($_) ) for @$value;
+    }
+</code></pre>
+
+<p>But remember, to handle ambiguity, you don't need to use this code. You can take a completely different
+route with <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/ASF.pod">Marpa::R2::ASF</a>.</p>
+
+<p>And there are still more choices: Leave the ambiguity as an error, re-work the grammar,
+or perhaps switch to events attached to lexemes.</p>
+
+<p>In the latter case, if 2 or more events are fired by the same lexeme you can write code
+which chooses 1 of those events, and you then tell Marpa to continue with that choice. For code using
+this technique, see <a href="https://metacpan.org/release/GraphViz2-Marpa">GraphViz2::Marpa</a>,
+<a href="https://metacpan.org/release/Text-Balanced-Marpa">Text::Balanced::Marpa</a> or
+<a href="https://metacpan.org/release/Text-Delimited-Marpa">Text::Delimited::Marpa</a>.</p>
 
 <p><a name="q7"></a></p>
 
@@ -801,7 +830,7 @@ of how they need to handle eol.</p>
 
 <p><a name="q32"></a></p>
 
-<h2>32 What's the meaning of: A lexeme in G1 is not a lexeme in any of the lexers</h2>
+<h2>32 What's the meaning of: A lexeme in G1 is not a lexeme in any of the lexers?</h2>
 
 <p>It means a lexeme (a symbol) appears on the left-hand-side of a '~' rule but should not have
 also appeared on the right-hand-side of a '~' rule.</p>
@@ -813,6 +842,19 @@ also appeared on the right-hand-side of a '~' rule.</p>
 <p>This is probably because you're using actions on rules, and you changed a lexeme from, say, "and ~ 'and'"
 to "and ~ 'and':i". After you add the ':i', the parameter passed in to your action function will have an
 extra arrayref around it, compared to what is was without the ':i'. Just dereference it with $t1 = $$t1[0].</p>
+
+<p><a name="q34"></a></p>
+
+<h2>34 When do I use actions and when do I use events?</h2>
+
+<p>Actions are attached to rules, so when an action is fired, you know exaclty which rule is being triggered
+by the 'current' text. And the data structure Marpa passes to your action sub contains the results of
+other rules, down to the lexeme level.</p>
+
+<p>With events attached to lexemes, you know the lexeme but not the rule. Of course you can interrogate Marpa
+about which rule is currently firing. For that, see <a href='#q18'>Q18</a>.</p>
+
+<p>This choice is yet one more way in which Marpa differs so hugely from traditional parsers.</p>
         </div>
     </div>
     <div class="row footer">
