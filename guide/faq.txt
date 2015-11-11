@@ -786,9 +786,12 @@ extra arrayref around it, compared to what is was without the ':i'. Just derefer
 --------------------------------------------------
 Actions are attached to rules, so when an action is fired, you know exaclty which rule is being triggered
 by the 'current' text. And the data structure Marpa passes to your action sub contains the results of
-other rules, down to the lexeme level.
+that rule's subordinate rules, down to the lexeme level.
 
 With events attached to lexemes, you know the lexeme but not the rule. Of course you can interrogate Marpa
 about which rule is currently firing. For that, see <a href='#q18'>Q18</a>.
 
 This choice is yet one more way in which Marpa differs so hugely from traditional parsers.
+
+Also, see [this article](http://savage.net.au/Ron/html/Understanding.Marpa-style.action.subs.parameters.html)
+for an explanation of how Marpa passes parameters into action subs.
