@@ -288,7 +288,7 @@ Note also that Marpa supports a 'priority' adverb, discussed in the
 It's possible to design a grammar such that we can say certain tokens are hidden. This is discussed under
 [RHS-alternatives in Marpa::R2::Scanless::DSL](https://metacpan.org/module/Marpa::R2::Scanless::DSL#RHS-alternatives).
 
-Here is an example (from [Graph::Easy::Marpa::Parser](https://metacpan.org/module/Graph::Easy::Marpa::Parser)):
+Here is an example (from [MarpaX::Demo::StringParser](https://metacpan.org/module/MarpaX::Demo::StringParser)):
 
 	node_definition  ::= node_statement
 	                 | node_statement graph_definition
@@ -347,7 +347,7 @@ Case 3 (succeeds):
 Briefly, quantified rules (here, using the '+'), are only allowed when the right-hand side contains a single
 alternative. Thus case 1 fails due to the combination of '+' and '|'.
 
-This is documented under [#Quantified-rules in Marpa::R2::Scanless::DSL](https://metacpan.org/module/Marpa::R2::Scanless::DSL#Quantified-rules).
+This is documented under ['Quantified rule' in Marpa::R2::Scanless::DSL](https://metacpan.org/module/Marpa::R2::Scanless::DSL#Quantified-rule).
 
 So we must re-write rule 1 (with some context):
 
@@ -404,13 +404,13 @@ Note: I (Ron) think Jeffrey uses pseudo in the name 'nulled pseudo-lexeme' becau
 they can't actually be lexemes.
 
 For sample code which shows a way of handling such an issue see
-[null.lexeme.demo.pl](http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.pl) and
-[null.lexeme.demo.1.pl](http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.1.pl).
+[null.lexeme.demo.pl](http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.p.l.txt) and
+[null.lexeme.demo.1.pl](http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.1.p.l.txt).
 
 <a name="q17"></a>
 17 How do I find out where I am within the input stream?
 --------------------------------------------------------
-See [the line_column() method in Marpa::R2::Scanless::R](https://metacpan.org/module/Marpa::R2::Scanless::R#line_column()).
+See [the line_column() method in Marpa::R2::Scanless::R](https://metacpan.org/module/Marpa::R2::Scanless::R#line_column).
 
 <a name="q18"></a>
 18 How do I find out which rule applies at some point in the input stream (e.g. during a pause)?
@@ -425,7 +425,7 @@ It is the line number within the BNF of the rule being processed.
 
 Note: If your grammar uses \r, that will affect the line count.
 
-Further, see [the line_column() method in Marpa::R2::Scanless::R](https://metacpan.org/module/Marpa::R2::Scanless::R#line_column())
+Further, see [the line_column() method in Marpa::R2::Scanless::R](https://metacpan.org/module/Marpa::R2::Scanless::R#line_column)
 for various special characters some of which may affect this line count.
 
 <a name="q20"></a>
@@ -491,7 +491,7 @@ You may safely assume this latter method is a very advanced technique!
 <a name="q21"></a>
 21 Where is Ruby Slippers parsing documented?
 ---------------------------------------------
-Start with [Marpa::R2::Semantics](https://metacpan.org/module/Marpa::R2::Recognizer#Ruby-Slippers-parsing).
+Start with [Marpa::R2::Scanless::R's terminals_expected()](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#terminals_expected).
 This document has several references to Ruby Slippers.
 
 See also Jeffrey's articles: [Ruby Slippers parsing](http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2011/11/marpa-and-the-ruby-slippers.html),
@@ -555,7 +555,7 @@ whereas you may prefer to use a different data structure.
 * After a successful parse, the result of the parse is processed to recover those hashrefs
 
 This result is returned by the value() method of the recognizer class.
-See [value() in Marpa::R2::Scanless::R](https://metacpan.org/module/Marpa::R2::Scanless::R#value()).
+See [value() in Marpa::R2::Scanless::R](https://metacpan.org/module/Marpa::R2::Scanless::R#value).
 
 There is one basic problem to solve along the way: The data structure Marpa makes available as the result of the parse
 can be a deeply nested set of _arrayrefs_, depending on how deeply within the grammar the action sub is named.
@@ -723,7 +723,7 @@ They all use similar mechanisms for unravelling data structures.
 The are many Perl modules which use events.
 
 Try [MarpaX::Languages::Perl::PackUnpack](https://metacpan.org/release/MarpaX-Languages-Perl-PackUnpack)
-or [GraphViz2::Marpa](https://metacpan.org/release/MarpaX-Languages-Perl-PackUnpack).
+or [GraphViz2::Marpa](https://metacpan.org/release/GraphViz2-Marpa).
 
 <a name="q26"></a>
 26 Where can I find code which builds its grammar on-the-fly?
@@ -737,7 +737,7 @@ A complex case: [MarpaX::Languages::SQL2003::AST](https://metacpan.org/release/M
 ------------------
 * http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html
 
-* The list of features in [Chapter 2 - Marpa's Advantages](chapter2.html)
+* The list of features in [Chapter 2 - Marpa's Advantages](http://savage.net.au/Perl-modules/html/marpa.papers/chapter2.html)
 
 <a name="q28"></a>
 28 Papers on Parsing Theory
