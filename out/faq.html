@@ -146,8 +146,9 @@ also appeared on the right-hand-side of a '~' rule.</p>
 
 <p>You cannot chain lexemes using the '~' symbol. The following 2 L0 rules do not work:</p>
 
-<p>name    ~ string
-string  ~ [[:print:]]</p>
+<pre class="prettyprint linenums"><code>name    ~ string
+string  ~ [[:print:]]
+</code></pre>
 
 <p>Here, the lexeme 'string' is used on the right-hand side of the 1st rule and on the left-hand side of the 2nd,
 but is not used in any G0 rule (using '::=').</p>
@@ -163,10 +164,11 @@ and so is good for complex or extended discussions.</p>
 
 <p><a href="http://savage.net.au/Marpa.html">Marpa's homepage</a>.</p>
 
-<p><a name="q102"></a>
-102 What is Libmarpa?
-11-------------------
-Libmarpa is the core Marpa library, written in C, which implements the Marpa parse engine - the Marpa algorithm itself.
+<p><a name="q102"></a></p>
+
+<h2>102 What is Libmarpa?</h2>
+
+<p>Libmarpa is the core Marpa library, written in C, which implements the Marpa parse engine - the Marpa algorithm itself.
 It is low-level, but it is documented and can be installed and used separately.</p>
 
 <p><a href="https://jeffreykegler.github.io/Marpa-web-site/libmarpa.html">Homepage</a>.</p>

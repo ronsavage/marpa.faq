@@ -131,8 +131,8 @@ also appeared on the right-hand-side of a '~' rule.
 ---------------------------------------------------
 You cannot chain lexemes using the '~' symbol. The following 2 L0 rules do not work:
 
-name	~ string
-string	~ [[:print:]]
+	name	~ string
+	string	~ [[:print:]]
 
 Here, the lexeme 'string' is used on the right-hand side of the 1st rule and on the left-hand side of the 2nd,
 but is not used in any G0 rule (using '::=').
