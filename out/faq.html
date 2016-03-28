@@ -65,6 +65,7 @@
 <li><a href="#q134">134 When do I use actions and when do I use events?</a></li>
 <li><a href="#q135">135 How does Marpa pass parameters to action subs?</a></li>
 <li><a href="#q136">136 SPPF parsing</a></li>
+<li><a href="#q137">137 Parse exhaustion</a></li>
 </ul>
 
 <p><a name='q1'></a></p>
@@ -245,7 +246,7 @@ syntax of the tokens, but not the syntax of how these tokens can be combined. G1
 the language - the ways in which the tokens can be combined. In other words, G1 is structural and therefore
 a 'parser' in the strictest sense, and L0 is its lexer. ('L' for lexer.)</p>
 
-<p>One distinction between G1 and L0 is very important in desigin a grammar/lexer combination: G1 rules have
+<p>One distinction between G1 and L0 is very important in designing a grammar/lexer combination: G1 rules have
 a semantics. L0 rules do <em>not</em>.</p>
 
 <p>L0 and G1 discussed in <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL">Marpa::R2::Scanless::DSL</a>,
@@ -914,6 +915,11 @@ for an explanation of how Marpa passes parameters into action subs.</p>
 which he invented independently of Elizabeth Scott.</p>
 
 <p>For details of her work, <a href="http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/SCOTT,%20Elizabeth%20-%20SPPF-Style%20Parsing%20From%20Earley%20Recognizers.pdf">see here</a>.</p>
+
+<h2>137 Parse exhaustion</h2>
+
+<p><a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod">See</a>, and
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion">this setting</a>.</p>
         </div>
     </div>
     <div class="row footer">
