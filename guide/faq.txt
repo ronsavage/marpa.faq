@@ -56,6 +56,10 @@ Table of Contents
 * [135 How does Marpa pass parameters to action subs?](#q135)
 * [136 SPPF parsing](#q136)
 * [137 Parse exhaustion](#q137)
+* [138 What is the difference between prediction events and pre-lexeme events?](#q138)
+* [139 Precedence, associativity, priority and rank](#q139)
+* [140 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?](#q140)
+* [141 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?](#q141)
 
 <a name='q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -855,3 +859,101 @@ For details of her work, [see here](http://dinhe.net/~aredridel/.notmine/PDFs/Pa
 [See](https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod), and
 [this setting](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion).
 
+<a name='q138'></a>
+138 What is the difference between prediction events and pre-lexeme events?
+---------------------------------------------------------------------------
+A prediction event will be triggered when its lexeme is predicted (i.e. expected) at some point in
+the input stream. A pre-lexeme event can only be triggered at the start of a lexeme which has been
+explicitly detected in the input stream.
+
+<a name='q139'></a>
+139 Precedence, associativity, priority and rank
+------------------------------------------------
+This answer was added after a discussion on IRC,
+[starting here](http://irclog.perlgeek.de/marpa/2016-05-22#i_12525635).
+
+Briefly, try tackling this issue in this order:
+
+* Re-write the grammer
+
+* Consider using Marpa's 'priority' adverb, discussed
+[here](https://metacpan.org/pod/Marpa::R2::Scanless::DSL#priority), and its 'rank' adverb, discussed
+[here](https://metacpan.org/pod/Marpa::R2::Scanless::DSL#rank).
+
+* Observe that there is another way of
+[prioritizing rules](https://metacpan.org/pod/Marpa::R2::Scanless::DSL#Prioritized-rule).
+
+* Lastly, parse order can be influenced by
+[rule ranking](https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod).
+
+<a name='q140'></a>
+140 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?
+-------------------------------------------------------------------------------------------------------------------
+This is Jeffrey speaking: You'll probably want to work your way through many of my
+[blog posts](http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html), especially this one:
+[The Marpa Algorithm](http://jeffreykegler.github.com/Ocean-of-Awareness-blog/individual/2011/11/what-is-the-marpa-algorithm.html).
+
+If you don't want your parser to fall into the second best category you
+need to implement all of:
+
+* Joop Leo's improvement. It's hard but worth it. It makes Earley's
+algorithm linear for all deterministic context-free grammars, which is
+a big, big deal. Without it, for example, your parser won't really be
+able to handle true second-order languages -- languages which are the
+output of other programs, including languages produced as the output of
+other languages.
+
+* The grammar rewrite Aycock and Horspool discovered for null terminals.
+This was a nasty and persistent problem with Earley's until A&H found
+their fix.
+
+* Your parse engine should complete all work in one Earley set before
+doing any work in the next one.  This will allow your parser to do better
+debugging; to use advanced methods like the Ruby Slippers; to be used
+on an event-driven basis; and to be paired with custom procedural logic.
+
+Many of the other improvements IMHO you will want to skip, including the
+LR(0) states in the Aycock and Horspool paper. In general, I suggest
+you be skeptical of those improvements which do not produce better
+results in big-O terms, but instead merely reduce the number of Earley
+items by a constant amount. These do not seem to produced measurable
+speed-ups at parsing time, but they must be undone at evaluation time.
+They will make it very hard to add an event mechanism to your parser,
+and will make debugging and tracing more complex.
+
+Most of these suggestions are things I found out the hard way. In writing
+Marpa, I started by incorporating A&H's LR(0) states, then added Leo's
+improvement as an afterthought. I then discovered that the A&H LR(0)
+states were more trouble then they were worth, and reverted to traditional
+Earley items. All of this involved a lot of wasted effort, effort which
+I hope you can avoid.
+
+<a name='q141'></a>
+141 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?
+----------------------------------------------------------------------------------------------------
+There is a section in the Marpa::R2 documents that
+[deals specifically with this](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/DSL.pod#Precedence-and-ambiguous-grammars).
+
+But that section contains no examples. So here is one. Let your input be:
+
+  1 2 + 3 4
+
+Consider this precedenced statement:
+
+  E ::= Number || E E || E '+' E
+
+The parse is unambiguous. Here is the only parse:
+
+  ((1,2),+,(3,4))
+
+But suppose we change the grammar to add unary plus, so that the precedenced statement is now:
+
+  E ::= Number || '+' E || E E || E '+' E
+
+Now the parse is ambiguous -- these are the two parses:
+
+  (((1,2),(+,3)),4) and ((1,2),+,(3,4))
+
+Notice that both of these parses obey precedence. Precedence can be
+seen as removing ambiguity, but it does not remove *all* ambiguity.
+It only eliminates those parses which do not obey the precedence.
