@@ -897,51 +897,39 @@ Experience suggests writing the parser in this order:
 
 * A basic Earley's parser.
 
-* The Aycock&Horspool grammar rewrite, to fix issues with nulls.
+* The Aycock & Horspool grammar rewrite, to fix issues with nulls.
 
 * Joop Leo's improvement.
 
-* Elizabeth Scott's SPPF, or some other binarization of the output.
+* <a href='#q136'>Elizabeth Scott's SPPF</a>, or some other binarization of the output.
 
 Marpa was not actually developed in this order --
-it would have been much easier if it was.
+it would have been much easier if it had been.
+
+*The Aycock & Horspool fix for null terminals*:
+Null terminals and rules were a nasty and persistent problem with Earley's until A&H found their
+fix.
 
 *Joop Leo's improvement*:
-This is hard but necessary if you want your parser not
-to fall into the second rank.
-Leo improved Earley's
-algorithm to be linear for all deterministic context-free grammars, which is
-a big, big deal.
-Without Leo's improvement, for example, your parser won't really be
-able to handle true second-order languages -- languages which are the
-output of other programs, including languages produced as the output of
-other languages.
-
-*The Aycock&Horspool fix for null terminals*:
-Null terminals and rules were a nasty and persistent problem with Earley's
-until A&H found their fix.
+This is hard but necessary if you want your avoid having your parser being regarded as second class.
+Leo improved Earley's algorithm to be linear for all deterministic context-free grammars, which is
+a big, big deal. Without Leo's improvement, for example, your parser won't really be able to
+handle true second-order languages -- languages which are the output of other programs, including
+languages produced as the output of other languages.
 
 *The Marpa ordering*:
-The Marpa algorithms takes pains
-to have
-the parse engine complete all work in one Earley set before
-doing any work in the next one.
-This allows the parser to do better
-debugging;
-to use advanced methods like the Ruby Slippers; to be used
-on an event-driven basis;
-and to be paired with custom procedural logic.
+The Marpa algorithms takes pains to have the parse engine complete all work in one Earley set
+before doing any work in the next one. This allows the parser to do better debugging; to use
+advanced methods like the Ruby Slippers; to be used on an event-driven basis; and to be paired
+with custom procedural logic.
 
 *Earley hacks you may want to skip*:
-Many of the other improvements IMHO you will want to skip, including the
-LR(0) states in the Aycock and Horspool paper.
-In general, I suggest
-you be skeptical of those improvements which do not produce better
-results in big-O terms, but instead merely reduce the number of Earley
-items by a constant amount. These do not seem to produced measurable
-speed-ups at parsing time, but they must be undone at evaluation time.
-They will make it very hard to add an event mechanism to your parser,
-and will make debugging and tracing more complex.
+Many of the other improvements IMHO you will want to skip, including the LR(0) states in the
+Aycock & Horspool paper. In general, I suggest you be skeptical of those improvements which do
+not produce better results in big-O terms, but instead merely reduce the number of Earley items
+by a constant amount. These do not seem to produced measurable speed-ups at parsing time, but
+they must be undone at evaluation time. They will make it very hard to add an event mechanism to
+your parser, and will make debugging and tracing more complex.
 
 <a name='q141'></a>
 141 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?

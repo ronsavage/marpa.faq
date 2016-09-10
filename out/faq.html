@@ -965,40 +965,42 @@ explicitly detected in the input stream.</p>
 <a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html">blog posts</a>, especially this one:
 <a href="http://jeffreykegler.github.com/Ocean-of-Awareness-blog/individual/2011/11/what-is-the-marpa-algorithm.html">The Marpa Algorithm</a>.</p>
 
-<p>If you don't want your parser to fall into the second best category you
-need to implement all of:</p>
+<p>Experience suggests writing the parser in this order:</p>
 
 <ul>
-<li><p>Joop Leo's improvement. It's hard but worth it. It makes Earley's
-algorithm linear for all deterministic context-free grammars, which is
-a big, big deal. Without it, for example, your parser won't really be
-able to handle true second-order languages -- languages which are the
-output of other programs, including languages produced as the output of
-other languages.</p></li>
-<li><p>The grammar rewrite Aycock and Horspool discovered for null terminals.
-This was a nasty and persistent problem with Earley's until A&amp;H found
-their fix.</p></li>
-<li><p>Your parse engine should complete all work in one Earley set before
-doing any work in the next one.  This will allow your parser to do better
-debugging; to use advanced methods like the Ruby Slippers; to be used
-on an event-driven basis; and to be paired with custom procedural logic.</p></li>
+<li><p>A basic Earley's parser.</p></li>
+<li><p>The Aycock &amp; Horspool grammar rewrite, to fix issues with nulls.</p></li>
+<li><p>Joop Leo's improvement.</p></li>
+<li><p><a href='#q136'>Elizabeth Scott's SPPF</a>, or some other binarization of the output.</p></li>
 </ul>
 
-<p>Many of the other improvements IMHO you will want to skip, including the
-LR(0) states in the Aycock and Horspool paper. In general, I suggest
-you be skeptical of those improvements which do not produce better
-results in big-O terms, but instead merely reduce the number of Earley
-items by a constant amount. These do not seem to produced measurable
-speed-ups at parsing time, but they must be undone at evaluation time.
-They will make it very hard to add an event mechanism to your parser,
-and will make debugging and tracing more complex.</p>
+<p>Marpa was not actually developed in this order --
+it would have been much easier if it had been.</p>
 
-<p>Most of these suggestions are things I found out the hard way. In writing
-Marpa, I started by incorporating A&amp;H's LR(0) states, then added Leo's
-improvement as an afterthought. I then discovered that the A&amp;H LR(0)
-states were more trouble then they were worth, and reverted to traditional
-Earley items. All of this involved a lot of wasted effort, effort which
-I hope you can avoid.</p>
+<p><em>The Aycock &amp; Horspool fix for null terminals</em>:
+Null terminals and rules were a nasty and persistent problem with Earley's until A&amp;H found their
+fix.</p>
+
+<p><em>Joop Leo's improvement</em>:
+This is hard but necessary if you want your avoid having your parser being regarded as second class.
+Leo improved Earley's algorithm to be linear for all deterministic context-free grammars, which is
+a big, big deal. Without Leo's improvement, for example, your parser won't really be able to
+handle true second-order languages -- languages which are the output of other programs, including
+languages produced as the output of other languages.</p>
+
+<p><em>The Marpa ordering</em>:
+The Marpa algorithms takes pains to have the parse engine complete all work in one Earley set
+before doing any work in the next one. This allows the parser to do better debugging; to use
+advanced methods like the Ruby Slippers; to be used on an event-driven basis; and to be paired
+with custom procedural logic.</p>
+
+<p><em>Earley hacks you may want to skip</em>:
+Many of the other improvements IMHO you will want to skip, including the LR(0) states in the
+Aycock &amp; Horspool paper. In general, I suggest you be skeptical of those improvements which do
+not produce better results in big-O terms, but instead merely reduce the number of Earley items
+by a constant amount. These do not seem to produced measurable speed-ups at parsing time, but
+they must be undone at evaluation time. They will make it very hard to add an event mechanism to
+your parser, and will make debugging and tracing more complex.</p>
 
 <p><a name='q141'></a></p>
 
