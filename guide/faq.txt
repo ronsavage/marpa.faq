@@ -907,18 +907,18 @@ Marpa was not actually developed in this order --
 it would have been much easier if it had been.
 
 *The Aycock & Horspool fix for null terminals*:
-Null terminals and rules were a nasty and persistent problem with Earley's until A&H found their
+Null terminals and rules were a nasty and persistent problem with Earley's until A&H found the
 fix.
 
 *Joop Leo's improvement*:
-This is hard but necessary if you want your avoid having your parser being regarded as second class.
+This is hard but necessary if you want to avoid having your parser being regarded as second class.
 Leo improved Earley's algorithm to be linear for all deterministic context-free grammars, which is
 a big, big deal. Without Leo's improvement, for example, your parser won't really be able to
 handle true second-order languages -- languages which are the output of other programs, including
 languages produced as the output of other languages.
 
 *The Marpa ordering*:
-The Marpa algorithms takes pains to have the parse engine complete all work in one Earley set
+The Marpa algorithm takes pains to have the parse engine complete all work in one Earley set
 before doing any work in the next one. This allows the parser to do better debugging; to use
 advanced methods like the Ruby Slippers; to be used on an event-driven basis; and to be paired
 with custom procedural logic.
