@@ -60,6 +60,7 @@ Table of Contents
 * [139 Precedence, associativity, priority and rank](#q139)
 * [140 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?](#q140)
 * [141 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?](#q141)
+* [142 How do I contribute to this FAQ?](#q142)
 
 <a name='q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -960,3 +961,9 @@ Now the parse is ambiguous -- these are the two parses:
 Notice that both of these parses obey precedence. Precedence can be
 seen as removing ambiguity, but it does not remove *all* ambiguity.
 It only eliminates those parses which do not obey the precedence.
+
+<a name='q142'></a>
+142 How do I contribute to this FAQ?
+------------------------------------
+The FAQ is on github. Just [raise an issue](https://github.com/ronsavage/marpa.faq). If you're not familiar
+with github, just click on '(!) Issues 0'. The 0 is the # of open issues, so it may be > 0.
