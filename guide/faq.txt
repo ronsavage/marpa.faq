@@ -347,7 +347,7 @@ Note also that Marpa supports a 'priority' adverb, discussed in the
 It's possible to design a grammar such that we can say certain tokens are hidden. This is discussed under
 [RHS-alternatives in Marpa::R2::Scanless::DSL](https://metacpan.org/module/Marpa::R2::Scanless::DSL#RHS-alternatives).
 
-Here is an example (from [MarpaX::Demo::StringParser](https://metacpan.org/module/MarpaX::Demo::StringParser)):
+Here is an example (from [MarpaX::Languages::Dash](https://metacpan.org/module/MarpaX::Languages::Dash)):
 
 	node_definition  ::= node_statement
 	                 | node_statement graph_definition
@@ -1020,7 +1020,7 @@ Ron Savage uses this technique in a number of modules:
 
 * [MarpaX::Demo::SampleScripts](https://metacpan.org/release/MarpaX-Demo-SampleScripts)
 
-* [MarpaX::Demo::StringParser](https://metacpan.org/release/MarpaX-Demo-StringParser)
+* [MarpaX::Languages::Dash](https://metacpan.org/release/MarpaX-Languages-Dash)
 
 * [MarpaX::Grammar::GraphViz2](https://metacpan.org/release/MarpaX-Grammar-GraphViz2)
 
