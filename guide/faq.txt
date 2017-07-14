@@ -64,7 +64,8 @@ Table of Contents
 * [143 How do I contribute to this FAQ?](#q143)
 * [144 How do I use external parsing?](#q144)
 * [145 How do I distinguish between identifiers and keywords?](#q145)
-* [146 How do I write BNF to specify exceptions to a pattern, or the complement of a pattern?](#q146)
+* [146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?](#q146)
+* [147 How do I write the BNF when the first token is optional?](#q147)
 
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -1056,8 +1057,8 @@ More sample code is in [this article](http://stackoverflow.com/questions/2710984
 on Stackoverflow.
 
 <a name = 'q146'></a>
-146 How do I write BNF to specify exceptions to a pattern, or the complement of a pattern?
-------------------------------------------------------------------------------------------
+146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?
+----------------------------------------------------------------------------------------------
 Currently there is no way to specify that directly in Marpa::R2, because context free grammars (CFGs) are not closed
 under complement. That is: If L1 and L2 are both BNF grammars, it is not necessarily possible to write L1 - L2 in BNF.
 
@@ -1072,3 +1073,13 @@ which uses his version of BNF. See:
 
 This approach consists of building an [ASF - Abstract Syntax Forest](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
 of parse results and then processing the trees in that forest.
+
+<a name = 'q147'></a>
+147 How do I write the BNF when the first token is optional?
+------------------------------------------------------------
+Note: [GraphViz2::Marpa](https://metacpan.org/release/GraphViz2-Marpa) requires this technique, since it's working
+from [this BNF](http://www.graphviz.org/content/dot-language).
+
+Make sure you use enough tokens in your BNF. Do not try to compress the BNF when dealing with this issue.
+
+[Sample code](https://metacpan.org/source/RSAVAGE/GraphViz2-Marpa-2.11/lib/GraphViz2/Marpa.pm#L217).

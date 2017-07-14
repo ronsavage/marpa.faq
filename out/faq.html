@@ -74,7 +74,8 @@
 <li><a href="#q143">143 How do I contribute to this FAQ?</a></li>
 <li><a href="#q144">144 How do I use external parsing?</a></li>
 <li><a href="#q145">145 How do I distinguish between identifiers and keywords?</a></li>
-<li><a href="#q146">146 How do I write BNF to specify exceptions to a pattern, or the complement of a pattern?</a></li>
+<li><a href="#q146">146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?</a></li>
+<li><a href="#q147">147 How do I write the BNF when the first token is optional?</a></li>
 </ul>
 
 <p><a name = 'q1'></a></p>
@@ -1125,7 +1126,7 @@ on Stackoverflow.</p>
 
 <p><a name = 'q146'></a></p>
 
-<h2>146 How do I write BNF to specify exceptions to a pattern, or the complement of a pattern?</h2>
+<h2>146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?</h2>
 
 <p>Currently there is no way to specify that directly in Marpa::R2, because context free grammars (CFGs) are not closed
 under complement. That is: If L1 and L2 are both BNF grammars, it is not necessarily possible to write L1 - L2 in BNF.</p>
@@ -1141,6 +1142,17 @@ which uses his version of BNF. See:</p>
 
 <p>This approach consists of building an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">ASF - Abstract Syntax Forest</a>
 of parse results and then processing the trees in that forest.</p>
+
+<p><a name = 'q147'></a></p>
+
+<h2>147 How do I write the BNF when the first token is optional?</h2>
+
+<p>Note: <a href="https://metacpan.org/release/GraphViz2-Marpa">GraphViz2::Marpa</a> requires this technique, since it's working
+from <a href="http://www.graphviz.org/content/dot-language">this BNF</a>.</p>
+
+<p>Make sure you use enough tokens in your BNF. Do not try to compress the BNF when dealing with this issue.</p>
+
+<p><a href="https://metacpan.org/source/RSAVAGE/GraphViz2-Marpa-2.11/lib/GraphViz2/Marpa.pm#L217">Sample code</a>.</p>
         </div>
     </div>
     <div class="row footer">
