@@ -135,16 +135,13 @@ this technique, see [GraphViz2::Marpa](https://metacpan.org/release/GraphViz2-Ma
 <a name = 'q2'></a>
 2 Error: A lexeme in G1 is not a lexeme in any of the lexers?
 -------------------------------------------------------------
-Marpa automatically determines which symbols are "lexemes".
-To do this, it checks for all the symbols that the G1 grammar considers to be
-lexemes,
-and all the symbols that the L0 grammar considers to be lexemes.
-It requires these two lists to match.
+Marpa automatically determines which symbols are 'lexemes'. To do this, it checks for all the
+symbols that the G1 grammar considers to be lexemes, and all the symbols that the L0 grammar
+considers to be lexemes. It requires these two lists to match.
 
-A symbol is a G1 lexeme if it appears on the RHS of a G1 rule, but never
-appears on the LHS of any G1 rule.
-A symbol is an L0 lexeme if it appears on the LHS of an L0 rule, but never
-appears on the RHS of any L0 rule.
+A symbol is a G1 lexeme if it appears on the RHS of a G1 rule, but never appears on the LHS of
+any G1 rule. A symbol is an L0 lexeme if it appears on the LHS of an L0 rule, but never appears
+on the RHS of any L0 rule.
 
 <a name = 'q3'></a>
 3 Error: A lexeme in lexer L0 is not a lexeme in G1

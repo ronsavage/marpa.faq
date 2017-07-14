@@ -149,21 +149,19 @@ this technique, see <a href="https://metacpan.org/release/GraphViz2-Marpa">Graph
 
 <h2>2 Error: A lexeme in G1 is not a lexeme in any of the lexers?</h2>
 
-<p>It means a lexeme (a symbol) appears on the left-hand-side of a '~' rule but should not have
-also appeared on the right-hand-side of a '~' rule.</p>
+<p>Marpa automatically determines which symbols are 'lexemes'. To do this, it checks for all the
+symbols that the G1 grammar considers to be lexemes, and all the symbols that the L0 grammar
+considers to be lexemes. It requires these two lists to match.</p>
+
+<p>A symbol is a G1 lexeme if it appears on the RHS of a G1 rule, but never appears on the LHS of
+any G1 rule. A symbol is an L0 lexeme if it appears on the LHS of an L0 rule, but never appears
+on the RHS of any L0 rule.</p>
 
 <p><a name = 'q3'></a></p>
 
 <h2>3 Error: A lexeme in lexer L0 is not a lexeme in G1</h2>
 
-<p>You cannot chain lexemes using the '~' symbol. The following 2 L0 rules do not work:</p>
-
-<pre class="prettyprint linenums"><code>name    ~ string
-string  ~ [[:print:]]
-</code></pre>
-
-<p>Here, the lexeme 'string' is used on the right-hand side of the 1st rule and on the left-hand side of the 2nd,
-but is not used in any G0 rule (using '::=').</p>
+<p>See <a href='#q2'>the previous FAQ question</a>.</p>
 
 <p><a name = 'q4'></a></p>
 
