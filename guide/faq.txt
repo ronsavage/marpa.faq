@@ -135,19 +135,21 @@ this technique, see [GraphViz2::Marpa](https://metacpan.org/release/GraphViz2-Ma
 <a name = 'q2'></a>
 2 Error: A lexeme in G1 is not a lexeme in any of the lexers?
 -------------------------------------------------------------
-It means a lexeme (a symbol) appears on the left-hand-side of a '~' rule but should not have
-also appeared on the right-hand-side of a '~' rule.
+Marpa automatically determines which symbols are "lexemes".
+To do this, it checks for all the symbols that the G1 grammar considers to be
+lexemes,
+and all the symbols that the L0 grammar considers to be lexemes.
+It requires these two lists to match.
+
+A symbol is a G1 lexeme if it appears on the RHS of a G1 rule, but never
+appears on the LHS of any G1 rule.
+A symbol is an L0 lexeme if it appears on the LHS of an L0 rule, but never
+appears on the RHS of any L0 rule.
 
 <a name = 'q3'></a>
 3 Error: A lexeme in lexer L0 is not a lexeme in G1
 ---------------------------------------------------
-You cannot chain lexemes using the '~' symbol. The following 2 L0 rules do not work:
-
-	name	~ string
-	string	~ [[:print:]]
-
-Here, the lexeme 'string' is used on the right-hand side of the 1st rule and on the left-hand side of the 2nd,
-but is not used in any G0 rule (using '::=').
+See <a href='#q2'>the previous FAQ question</a>.
 
 <a name = 'q4'></a>
 4 Error message: Marpa exited at (line, column) = ($line, $column) within the input string
