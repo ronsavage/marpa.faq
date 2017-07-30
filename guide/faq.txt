@@ -66,6 +66,7 @@ Table of Contents
 * [145 How do I distinguish between identifiers and keywords?](#q145)
 * [146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?](#q146)
 * [147 How do I write the BNF when the first token is optional?](#q147)
+* [148 Is there a tabular view of the DSL?](#q148)
 
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -1082,3 +1083,9 @@ from [this BNF](http://www.graphviz.org/content/dot-language).
 Make sure you use enough tokens in your BNF. Do not try to compress the BNF when dealing with this issue.
 
 [Sample code](https://metacpan.org/source/RSAVAGE/GraphViz2-Marpa-2.11/lib/GraphViz2/Marpa.pm#L217).
+
+<a name = 'q148'></a>
+148 Is there a tabular view of the DSL?
+---------------------------------------
+
+Yes: [A Tabular View of Marpa::R2's DSL](http://savage.net.au/Marpa/html/Marpa.R2.DSL.Structure.html).
