@@ -77,6 +77,8 @@
 <li><a href="#q146">146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?</a></li>
 <li><a href="#q147">147 How do I write the BNF when the first token is optional?</a></li>
 <li><a href="#q148">148 Is there a tabular view of the DSL?</a></li>
+<li><a href="#q149">149 The Libmarpa API and missing valuator steps</a></li>
+<li><a href="#q150">150 Are there any speed comparisons for Marpa against other parsers?</a></li>
 </ul>
 
 <p><a name = 'q1'></a></p>
@@ -148,7 +150,7 @@ this technique, see <a href="https://metacpan.org/release/GraphViz2-Marpa">Graph
 
 <p><a name = 'q2'></a></p>
 
-<h2>2 Error: A lexeme in G1 is not a lexeme in any of the lexers?</h2>
+<h2>2 Error: A lexeme in G1 is not a lexeme in any of the lexers</h2>
 
 <p>Marpa automatically determines which symbols are 'lexemes'. To do this, it checks for all the
 symbols that the G1 grammar considers to be lexemes, and all the symbols that the L0 grammar
@@ -1158,6 +1160,22 @@ from <a href="http://www.graphviz.org/content/dot-language">this BNF</a>.</p>
 <h2>148 Is there a tabular view of the DSL?</h2>
 
 <p>Yes: <a href="http://savage.net.au/Marpa/html/Marpa.R2.DSL.Structure.html">A Tabular View of Marpa::R2's DSL</a>.</p>
+
+<p><a name = 'q149'></a></p>
+
+<h2>149 The Libmarpa API and missing valuator steps</h2>
+
+<p>When working with libmarpa, if you notice things like missing instructions of types
+MARPA_STEP_RULE and MARPA_STEP_NULLING_SYMBOL, make sure you are calling marpa_g_force_valued()
+immediately upon grammar creation.</p>
+
+<p>For details see <a href="https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ">this Marpa Google Group post</a>.</p>
+
+<p><a name = 'q150'></a></p>
+
+<h2>150 Are there any speed comparisons for Marpa against other parsers?</h2>
+
+<p>Not directly, but <a href="https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/">see this exchange on Reddit</a>.</p>
         </div>
     </div>
     <div class="row footer">

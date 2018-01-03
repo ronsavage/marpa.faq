@@ -67,6 +67,8 @@ Table of Contents
 * [146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?](#q146)
 * [147 How do I write the BNF when the first token is optional?](#q147)
 * [148 Is there a tabular view of the DSL?](#q148)
+* [149 The Libmarpa API and missing valuator steps](#q149)
+* [150 Are there any speed comparisons for Marpa against other parsers?](#q150)
 
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -134,8 +136,8 @@ this technique, see [GraphViz2::Marpa](https://metacpan.org/release/GraphViz2-Ma
 [Text::Delimited::Marpa](https://metacpan.org/release/Text-Delimited-Marpa).
 
 <a name = 'q2'></a>
-2 Error: A lexeme in G1 is not a lexeme in any of the lexers?
--------------------------------------------------------------
+2 Error: A lexeme in G1 is not a lexeme in any of the lexers
+------------------------------------------------------------
 Marpa automatically determines which symbols are 'lexemes'. To do this, it checks for all the
 symbols that the G1 grammar considers to be lexemes, and all the symbols that the L0 grammar
 considers to be lexemes. It requires these two lists to match.
@@ -1089,3 +1091,18 @@ Make sure you use enough tokens in your BNF. Do not try to compress the BNF when
 ---------------------------------------
 
 Yes: [A Tabular View of Marpa::R2's DSL](http://savage.net.au/Marpa/html/Marpa.R2.DSL.Structure.html).
+
+<a name = 'q149'></a>
+149 The Libmarpa API and missing valuator steps
+-----------------------------------------------
+When working with libmarpa, if you notice things like missing instructions of types
+MARPA_STEP_RULE and MARPA_STEP_NULLING_SYMBOL, make sure you are calling marpa_g_force_valued()
+immediately upon grammar creation.
+
+For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ).
+
+<a name = 'q150'></a>
+150 Are there any speed comparisons for Marpa against other parsers?
+--------------------------------------------------------------------
+
+Not directly, but [see this exchange on Reddit](https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/).
