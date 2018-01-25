@@ -69,6 +69,7 @@ Table of Contents
 * [148 Is there a tabular view of the DSL?](#q148)
 * [149 The Libmarpa API and missing valuator steps](#q149)
 * [150 Are there any speed comparisons for Marpa against other parsers?](#q150)
+* [151 How can I trace what the L0 parser is doing?](#q151)
 
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -1106,3 +1107,15 @@ For details see [this Marpa Google Group post](https://groups.google.com/forum/#
 --------------------------------------------------------------------
 
 Not directly, but [see this exchange on Reddit](https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/).
+
+<a name = 'q151'></a>
+151 How can I trace what the L0 parser is doing?
+------------------------------------------------
+
+Use the trace_terminals parameter to
+[Marpa::R2::Scanless::R's constructor](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#trace_terminals).
+
+See [GraphViz2::Marpa's usage](https://metacpan.org/source/RSAVAGE/GraphViz2-Marpa-2.11/lib/GraphViz2/Marpa.pm#L436) for sample code.
+
+trace_terminals takes values from 0 to 99, with higher numbers requesting more verbose output. Start with 1 and then
+jump to 99.

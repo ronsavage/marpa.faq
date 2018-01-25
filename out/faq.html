@@ -79,6 +79,7 @@
 <li><a href="#q148">148 Is there a tabular view of the DSL?</a></li>
 <li><a href="#q149">149 The Libmarpa API and missing valuator steps</a></li>
 <li><a href="#q150">150 Are there any speed comparisons for Marpa against other parsers?</a></li>
+<li><a href="#q151">151 How can I trace what the L0 parser is doing?</a></li>
 </ul>
 
 <p><a name = 'q1'></a></p>
@@ -1176,6 +1177,18 @@ immediately upon grammar creation.</p>
 <h2>150 Are there any speed comparisons for Marpa against other parsers?</h2>
 
 <p>Not directly, but <a href="https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/">see this exchange on Reddit</a>.</p>
+
+<p><a name = 'q151'></a></p>
+
+<h2>151 How can I trace what the L0 parser is doing?</h2>
+
+<p>Use the trace_terminals parameter to
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#trace_terminals">Marpa::R2::Scanless::R's constructor</a>.</p>
+
+<p>See <a href="https://metacpan.org/source/RSAVAGE/GraphViz2-Marpa-2.11/lib/GraphViz2/Marpa.pm#L436">GraphViz2::Marpa's usage</a> for sample code.</p>
+
+<p>trace_terminals takes values from 0 to 99, with higher numbers requesting more verbose output. Start with 1 and then
+jump to 99.</p>
         </div>
     </div>
     <div class="row footer">
