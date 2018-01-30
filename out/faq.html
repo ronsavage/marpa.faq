@@ -1203,17 +1203,17 @@ jump to 99.</p>
 
 <h2>152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?</h2>
 
-<p>Assume the identifier is something like $char_1$char2, where $char_1 must belong to</p>
+<p>Assume the identifier is something like $head$tail, where $head must belong to</p>
 
 <pre class="prettyprint linenums"><code>[_A-Za-z]
 </code></pre>
 
-<p>but $char_2 is allowed to belong to</p>
+<p>but $tail is allowed to belong to</p>
 
 <pre class="prettyprint linenums"><code>[_A-Za-z0-9]*
 </code></pre>
 
-<p>meaning $char_2 may be empty or many chars long. Try this:</p>
+<p>meaning $tail may be empty or many chars long. Try this:</p>
 
 <pre class="prettyprint linenums"><code>:lexeme            ~ capture_name  pause =&gt; before  event =&gt; capture_name
 capture_name       ~ capture_name_head capture_name_tail

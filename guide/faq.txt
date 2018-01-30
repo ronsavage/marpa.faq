@@ -1130,15 +1130,15 @@ jump to 99.
 152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?
 ---------------------------------------------------------------------------------------------------
 
-Assume the identifier is something like $char_1$char2, where $char_1 must belong to
+Assume the identifier is something like $head$tail, where $head must belong to
 
 	[_A-Za-z]
 
-but $char_2 is allowed to belong to
+but $tail is allowed to belong to
 
 	[_A-Za-z0-9]*
 
-meaning $char_2 may be empty or many chars long. Try this:
+meaning $tail may be empty or many chars long. Try this:
 
 	:lexeme            ~ capture_name  pause => before  event => capture_name
 	capture_name       ~ capture_name_head capture_name_tail
