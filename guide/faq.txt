@@ -70,6 +70,7 @@ Table of Contents
 * [149 The Libmarpa API and missing valuator steps](#q149)
 * [150 Are there any speed comparisons for Marpa against other parsers?](#q150)
 * [151 How can I trace what the L0 parser is doing?](#q151)
+* [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?](#q152)
 
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -896,19 +897,24 @@ explicitly detected in the input stream.
 This answer was added after a discussion on IRC,
 [starting here](http://irclog.perlgeek.de/marpa/2016-05-22#i_12725635).
 
-Briefly, try tackling this issue in this order:
+Keep this in mind: Lexeme priority only works if the lexemes are exactly the same length, and start
+at the same location. This is a limitation in R2 which will be lifted in R3.
+
+So, briefly, try tackling this issue in this order:
 
 * Re-write the grammer
+
+Yes, seriously.
 
 * Consider using Marpa's 'priority' adverb, discussed
 [here](https://metacpan.org/pod/Marpa::R2::Scanless::DSL#priority), and its 'rank' adverb, discussed
 [here](https://metacpan.org/pod/Marpa::R2::Scanless::DSL#rank).
 
 * Observe that there is another way of
-[prioritizing rules](https://metacpan.org/pod/Marpa::R2::Scanless::DSL#Prioritized-rule).
+[prioritizing rules, using '|' versus '||'](https://metacpan.org/pod/Marpa::R2::Scanless::DSL#Prioritized-rule).
 
 * Lastly, parse order can be influenced by
-[rule ranking](https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod).
+[rule ranking](https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method).
 
 <a name = 'q141'></a>
 141 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?
@@ -1119,3 +1125,26 @@ See [GraphViz2::Marpa's usage](https://metacpan.org/source/RSAVAGE/GraphViz2-Mar
 
 trace_terminals takes values from 0 to 99, with higher numbers requesting more verbose output. Start with 1 and then
 jump to 99.
+
+<a name = 'q152'></a>
+152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?
+---------------------------------------------------------------------------------------------------
+
+Assume the identifier is something like $char_1$char2, where $char_1 must belong to
+
+	[_A-Za-z]
+
+but $char_2 is allowed to belong to
+
+	[_A-Za-z0-9]*
+
+meaning $char_2 may be empty or many chars long. Try this:
+
+	:lexeme            ~ capture_name  pause => before  event => capture_name
+	capture_name       ~ capture_name_head capture_name_tail
+
+	capture_name_head  ~ [_A-Za-z]
+
+	capture_name_tail  ~ [_A-Za-z0-9]*
+
+And no, you do not need to use events. (I do, in Regexp::Parsertron :-).
