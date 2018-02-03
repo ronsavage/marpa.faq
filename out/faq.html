@@ -969,16 +969,16 @@ explicitly detected in the input stream.</p>
 <p>This answer was added after a discussion on IRC,
 <a href="http://irclog.perlgeek.de/marpa/2016-05-22#i_12725635">starting here</a>.</p>
 
-<p>Keep this in mind: Lexeme priority only works if the lexemes are exactly the same length, and start
-at the same location. This is a limitation in R2 which will be lifted in R3.</p>
-
-<p>So, briefly, try tackling this issue in this order:</p>
+<p>Try tackling these 4 issues in this order:</p>
 
 <ul>
 <li>Re-write the grammer</li>
 </ul>
 
 <p>Yes, seriously.</p>
+
+<p>Keep this in mind: Lexeme priority only works if the lexemes are exactly the same length, and start
+at the same location. This is a limitation in R2 which will be lifted in R3.</p>
 
 <ul>
 <li><p>Consider using Marpa's 'priority' adverb, discussed
