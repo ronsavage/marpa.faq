@@ -21,6 +21,7 @@ Table of Contents
 * [2 Error: A lexeme in G1 is not a lexeme in any of the lexers](#q2)
 * [3 Error: A lexeme in lexer L0 is not a lexeme in G1](#q3)
 * [4 Error message: Marpa exited at (line, column) = ($line, $column) within the input string](#q4)
+* [5 Error in SLIF parse: No lexeme found at line 1, column 5](#q5)
 * [101 Where do I go for help?](#q101)
 * [102 What is Libmarpa?](#q102)
 * [103 Is Marpa deterministic?](#q103)
@@ -164,6 +165,20 @@ prefix of some input that can lead to a successful parse.
 
 Marpa is not reporting a problem during the read(), because you can add more to the input string,
 and Marpa does not know that you do not plan to do this.
+
+<a name = 'q5'></a>
+5 Error in SLIF parse: No lexeme found at line 1, column 5
+----------------------------------------------------------
+The full error text will look like:
+
+	Error in SLIF parse: No lexeme found at line 1, column 5
+	* String before error: (?^:
+	* The error was at line 1, column 5, and at character 0x0029 ')', ...
+	* here: )
+
+The part which says 'No lexeme found' means no lexeme <em>according to your grammar</em>. The actual
+character found is listed here as ')', but your BNF does not define that character as being a lexeme
+in that context.
 
 <a name = 'q101'></a>
 101 Where do I go for help?
