@@ -72,6 +72,7 @@ Table of Contents
 * [150 Are there any speed comparisons for Marpa against other parsers?](#q150)
 * [151 How can I trace what the L0 parser is doing?](#q151)
 * [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?](#q152)
+* [153 Are there any on-line tools for testing grammars?](#q153)
 
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
@@ -1163,3 +1164,9 @@ meaning $tail may be empty or many chars long. Try this:
 	capture_name_tail  ~ [_A-Za-z0-9]*
 
 And no, you do not need to use events. (I do, in Regexp::Parsertron :-).
+
+<a name = 'q153'></a>
+153 Are there any on-line tools for testing grammars?
+-----------------------------------------------------
+
+Yes. See [Grammophone](https://mdaines.github.io/grammophone/).
