@@ -1158,7 +1158,8 @@ meaning $tail may be empty or many chars long. Try this:
 
 	:lexeme            ~ capture_name  pause => before  event => capture_name
 	capture_name       ~ capture_name_head capture_name_tail
-
+Lewis, II, P. M. and Stearns, R. E. Syntax-directed transduction. J. ACM, 15(3):465–
+488, 1968.
 	capture_name_head  ~ [_A-Za-z]
 
 	capture_name_tail  ~ [_A-Za-z0-9]*
@@ -1169,4 +1170,5 @@ And no, you do not need to use events. (I do, in Regexp::Parsertron :-).
 153 Are there any on-line tools for testing grammars?
 -----------------------------------------------------
 
-Yes. See [Grammophone](https://mdaines.github.io/grammophone/).
+Yes. See [Grammophone](https://mdaines.github.io/grammophone/).  Also, specifically for testing LL,
+see [this LL(k) tester](http://www.fit.vutbr.cz/~ikocman/llkptg/).
