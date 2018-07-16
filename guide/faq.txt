@@ -147,9 +147,13 @@ Marpa automatically determines which symbols are 'lexemes'. To do this, it check
 symbols that the G1 grammar considers to be lexemes, and all the symbols that the L0 grammar
 considers to be lexemes. It requires these two lists to match.
 
+Lexemes in G1 are defined in rules using := and lexemes in L0 are defined by rules using ~.
+
 A symbol is a G1 lexeme if it appears on the RHS of a G1 rule, but never appears on the LHS of
 any G1 rule. A symbol is an L0 lexeme if it appears on the LHS of an L0 rule, but never appears
 on the RHS of any L0 rule.
+
+See also <a href='#q6'>Q 6</a>.
 
 <a name = 'q3'></a>
 3 Error: A lexeme in lexer L0 is not a lexeme in G1
@@ -200,6 +204,8 @@ and the second occurrance of X is on the right of the second rule. You can't do 
 So the error message can be read as saying (and should say):
 
 'An L0 lexeme (X in the rule X ~ Y) cannot appear on the RHS of another L0 rule (Z ~ X)'.
+
+See also <a href='#q2'>Q 2</a>.
 
 <a name = 'q101'></a>
 101 Where do I go for help?
