@@ -20,8 +20,9 @@ Table of Contents
 * [1 Error: Parse failed. value() called when recognizer is not in tree mode](#q1)
 * [2 Error: A lexeme in G1 is not a lexeme in any of the lexers](#q2)
 * [3 Error: A lexeme in lexer L0 is not a lexeme in G1](#q3)
-* [4 Error message: Marpa exited at (line, column) = ($line, $column) within the input string](#q4)
-* [5 Error in SLIF parse: No lexeme found at line 1, column 5](#q5)
+* [4 Error: Marpa exited at (line, column) = ($line, $column) within the input string](#q4)
+* [5 Error: No lexeme found at line 1, column 5](#q5)
+* [6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule](#q6)
 * [101 Where do I go for help?](#q101)
 * [102 What is Libmarpa?](#q102)
 * [103 Is Marpa deterministic?](#q103)
@@ -180,6 +181,25 @@ The full error text will look like:
 The part which says 'No lexeme found' means no lexeme <em>according to your grammar</em>. The actual
 character found is listed here as ')', but your BNF does not define that character as being a lexeme
 in that context.
+
+<a name = 'q6'></a>
+6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule
+------------------------------------------------------------
+Consider these rules, which define lexemes in L0 (they are in L0 because ~ is used):
+
+X ~ Y
+Z ~ X
+Y ~ 'y'
+
+The usage of X in Z ~ X will trigger the error.
+
+This means a lexeme in L0 (defined as is X by the tilde in the rule X ~ Y) cannot be used to
+define another lexeme (Z as in Z ~ X). The first occurrance of X is on the left of the first rule
+and the second occurrance of X is on the right of the second rule. You can't do that in Marpa::R2.
+
+So the error message can be read as saying (and should say):
+
+'An L0 lexeme (X in the rule X ~ Y) cannot appear on the RHS of another L0 rule (Z ~ X)'.
 
 <a name = 'q101'></a>
 101 Where do I go for help?
