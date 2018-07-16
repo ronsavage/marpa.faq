@@ -187,9 +187,9 @@ in that context.
 ------------------------------------------------------------
 Consider these rules, which define lexemes in L0 (they are in L0 because ~ is used):
 
-X ~ Y
-Z ~ X
-Y ~ 'y'
+	X ~ Y
+	Z ~ X
+	Y ~ 'y'
 
 The usage of X in Z ~ X will trigger the error.
 
