@@ -74,7 +74,7 @@ Table of Contents
 * [151 How can I trace what the L0 parser is doing?](#q151)
 * [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?](#q152)
 * [153 Are there any on-line tools for testing grammars?](#q153)
-* [154 What do I do when the IRC logbot stops?][#q154]
+* [154 What do I do when the IRC logbot stops?](#q154)
 
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
