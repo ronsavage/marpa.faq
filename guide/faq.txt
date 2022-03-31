@@ -213,6 +213,9 @@ See also <a href='#q2'>Q 2</a>.
 ---------------------------
 The IRC channel may get the quickest response: irc.freenode.net#marpa.
 
+The [website manpages.org](https://manpages.org/) has good docs on the theoretical details.
+Just type marpa into the search box and hit Enter.
+
 [The Google Group](https://groups.google.com/forum/#!forum/marpa-parser) has message threading,
 and so is good for complex or extended discussions.
 
