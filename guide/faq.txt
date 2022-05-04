@@ -229,6 +229,8 @@ It is low-level, but it is documented and can be installed and used separately.
 
 [Homepage](https://jeffreykegler.github.io/Marpa-web-site/libmarpa.html).
 
+[Index of Terms](http://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/latest/index.html).
+
 [Formal docs](https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html).
 
 <a name = 'q103'></a>
