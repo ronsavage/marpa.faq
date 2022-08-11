@@ -1160,7 +1160,9 @@ For details see [this Marpa Google Group post](https://groups.google.com/forum/#
 150 Are there any speed comparisons for Marpa against other parsers?
 --------------------------------------------------------------------
 
-Not directly, but [see this exchange on Reddit](https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/).
+[See this 2022 discussion of MarpaX::ESLIF on the Marpa IRC channel](https://colabti.org/irclogger/irclogger_log/marpa?date=2022-08-05).
+
+[See this 2014 exchange on Reddit](https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/).
 
 <a name = 'q151'></a>
 151 How can I trace what the L0 parser is doing?
