@@ -51,7 +51,7 @@ Table of Contents
 * [128 Where can I find code which builds its grammar on-the-fly?](#q128)
 * [129 Other Resources](#q129)
 * [130 Papers on Parsing Theory](#q130)
-* [131 Are there C/Lua/Python/etc bindings for libmarpa?](#q131)
+* [131 Are there C/Perl/Rust/etc bindings for libmarpa?](#q131)
 * [132 What are the Marpa Papers?](#q132)
 * [133 What grammar do I use when eol ("\n", new-line) is significant?](#q133)
 * [134 When I use the case-insensitive suffix ':i' my program dies](#q134)
@@ -866,10 +866,23 @@ A complex case: [MarpaX::Languages::SQL2003::AST](https://metacpan.org/release/M
 [Aria's list](http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/).
 
 <a name = 'q131'></a>
-131 Are there C/Lua/Python/etc bindings for libmarpa?
+131 Are there C/Perl/Rust/etc bindings for libmarpa?
 -----------------------------------------------------
 
-[Various language bindings for libmarpa](https://github.com/rns/libmarpa-bindings)
+The original bindings are
+[Libmarpa, a C library](https://github.com/jeffreykegler/libmarpa),
+and
+[Marpa::R2, a Perl module](https://metacpan.org/pod/Marpa::R2).
+Marpa::R2 has been in stable release for many years,
+and is based on Libmarpa.
+
+A [Rust wrapper](https://github.com/jrobsonchase/marpa) exists
+which has proved useful in development.
+It is
+[also available as a crate](https://crates.io/crates/marpa/).
+
+Other bindings are being prototyped,
+or are in early development.
 
 <a name = 'q132'></a>
 132 What are the Marpa Papers?
