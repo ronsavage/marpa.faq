@@ -70,7 +70,7 @@ Table of Contents
 * [147 How do I write the BNF when the first token is optional?](#q147)
 * [148 Is there a tabular view of the DSL?](#q148)
 * [149 The Libmarpa API and missing valuator steps](#q149)
-* [150 Are there any speed comparisons for Marpa against other parsers?](#q150)
+* [150 Are there any comparisons of Marpa against other parsers for speed and practicality?](#q150)
 * [151 How can I trace what the L0 parser is doing?](#q151)
 * [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?](#q152)
 * [153 Are there any on-line tools for testing grammars?](#q153)
@@ -659,7 +659,7 @@ must be declared as functions in the named semantics package, because that's whe
 <a name = 'q126'></a>
 126 Declaring an Action Class
 -----------------------------
-Firstly, See also <a href='#q136'>Q136 on how Marpa passes parameters to action subs</a>.
+Firstly, see also <a href='#q136'>Q136 on how Marpa passes parameters to action subs</a>.
 
 Now, the previous item in this FAQ discussed at length various issues regarding how to cleanly generate data within action
 subs, and how to pass that data back to the main-line code which called Marpa.
@@ -1171,12 +1171,29 @@ immediately upon grammar creation.
 For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ).
 
 <a name = 'q150'></a>
-150 Are there any speed comparisons for Marpa against other parsers?
+150 Are there any comparisons of Marpa against other parsers for speed and practicality?
 --------------------------------------------------------------------
 
-[See this 2022 discussion of MarpaX::ESLIF on the Marpa IRC channel](https://colabti.org/irclogger/irclogger_log/marpa?date=2022-08-05).
+MarpaX::ESLIF is an optimized version of Marpa::R2.
+[Its 2022 announcement on the Marpa IRC channel](https://colabti.org/irclogger/irclogger_log/marpa?date=2022-08-05)
+discusses their relative speeds.
 
-[See this 2014 exchange on Reddit](https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/).
+Jeffrey Kegler and Terence Parr (author of ANTLR) had
+[a brief exchange on Reddit in 2014](https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/).
+
+Lars Dieckow (daxim) performed a "shootout"
+among various parsers, including Perl 6, Marpa and ANTLR,
+and reported his results in
+[a 2017 talk](https://youtu.be/lFBEf0o-4sY?si=ieaN2UZ6XhzTTdwz).
+
+[This paper](https://dl.acm.org/doi/pdf/10.1145/3360553)
+describes both ANTLR and Marpa as "industrial grade"
+and pits them against each other in a performance benchmark.
+The paper is in the refereed literature and its
+authors (Henriksen, Bilardi and Pingali) are independent of
+the Marpa and ANTLR communities.
+
+
 
 <a name = 'q151'></a>
 151 How can I trace what the L0 parser is doing?
