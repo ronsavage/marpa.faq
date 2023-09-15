@@ -5,7 +5,7 @@ perl scripts/guide.pl
 DIR=Perl-modules/html/marpa.faq
 export DIR
 
-# $DR is doc root (on Debian's RAM disk): /dev/shm/html
+# $DR is doc root (on Debian's RAM disk): /run/shm/html
 
 mkdir -p $DR/$DIR
 cp out/* $DR/$DIR
