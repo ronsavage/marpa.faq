@@ -24,7 +24,15 @@
 
 <p><a href="https://github.com/ronsavage/marpa.papers.git">The Marpa Papers repo</a></p>
 
-<h2>Table of Contents</h2>
+<h2>Table of Contents grouped by Topic</h2>
+
+<h2>About Marpa</h2>
+
+<ul>
+<li><a href="#q102">102 What is Libmarpa?</a></li>
+</ul>
+
+<h2>Error Messages</h2>
 
 <ul>
 <li><a href="#q1">1 Error: Parse failed. value() called when recognizer is not in tree mode</a></li>
@@ -33,13 +41,22 @@
 <li><a href="#q4">4 Error: Marpa exited at (line, column) = ($line, $column) within the input string</a></li>
 <li><a href="#q5">5 Error: No lexeme found at line 1, column 5</a></li>
 <li><a href="#q6">6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule</a></li>
-<li><a href="#q101">101 Where do I go for help?</a></li>
-<li><a href="#q102">102 What is Libmarpa?</a></li>
-<li><a href="#q103">103 Is Marpa deterministic?</a></li>
-<li><a href="#q104">104 What is the difference between ambiguity and non-determinism?</a></li>
+</ul>
+
+<h2>Problems</h2>
+
+<ul>
 <li><a href="#q107">107 Why doesn't my ambiguous grammar return more than 1 parse tree?</a></li>
+<li><a href="#q117">117 Why does using '+' or '*' in a rule only work sometimes?</a></li>
+<li><a href="#q118">118 Can a lexeme have length == 0?</a></li>
+<li><a href="#q142">142 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?</a></li>
+<li><a href="#q149">149 The Libmarpa API and missing valuator steps</a></li>
+</ul>
+
+<h2>Tricks and techniques</h2>
+
+<ul>
 <li><a href="#q108">108 How do I implement disambiguation logic?</a></li>
-<li><a href="#q109">109 What is the meaning of L0 and G1?</a></li>
 <li><a href="#q110">110 How do I parse comments?</a></li>
 <li><a href="#q111">111 How do I parse numbers?</a></li>
 <li><a href="#q112">112 How do I represent choice in the grammar?</a></li>
@@ -47,8 +64,6 @@
 <li><a href="#q114">114 What's the difference between '|' and '||' in grammar definitions?</a></li>
 <li><a href="#q115">115 What does it mean to hide (mask) tokens?</a></li>
 <li><a href="#q116">116 How do I implement recursion in a grammar?</a></li>
-<li><a href="#q117">117 Why does using '+' or '*' in a rule only work sometimes?</a></li>
-<li><a href="#q118">118 Can a lexeme have length == 0?</a></li>
 <li><a href="#q119">119 How do I find out where I am within the input stream?</a></li>
 <li><a href="#q120">120 How do I find out which rule applies at some point in the input stream (e.g. during a pause)?</a></li>
 <li><a href="#q121">121 What is the meaning of the line number in a Marpa error message?</a></li>
@@ -59,34 +74,66 @@
 <li><a href="#q126">126 Declaring an Action Class</a></li>
 <li><a href="#q127">127 Where can I find code using events?</a></li>
 <li><a href="#q128">128 Where can I find code which builds its grammar on-the-fly?</a></li>
-<li><a href="#q129">129 Other Resources</a></li>
-<li><a href="#q130">130 Papers on Parsing Theory</a></li>
-<li><a href="#q131">131 Are there C/Perl/Rust/etc bindings for libmarpa?</a></li>
-<li><a href="#q132">132 What are the Marpa Papers?</a></li>
 <li><a href="#q133">133 What grammar do I use when eol ("\n", new-line) is significant?</a></li>
 <li><a href="#q134">134 When I use the case-insensitive suffix ':i' my program dies</a></li>
 <li><a href="#q135">135 When do I use actions and when do I use events?</a></li>
 <li><a href="#q136">136 How does Marpa pass parameters to action subs?</a></li>
-<li><a href="#q137">137 SPPF parsing</a></li>
-<li><a href="#q138">138 Parse exhaustion</a></li>
-<li><a href="#q139">139 What is the difference between prediction events and pre-lexeme events?</a></li>
-<li><a href="#q140">140 Precedence, associativity, priority and rank</a></li>
-<li><a href="#q141">141 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?</a></li>
-<li><a href="#q142">142 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?</a></li>
-<li><a href="#q143">143 How do I contribute to this FAQ?</a></li>
 <li><a href="#q144">144 How do I use external parsing?</a></li>
 <li><a href="#q145">145 How do I distinguish between identifiers and keywords?</a></li>
 <li><a href="#q146">146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?</a></li>
 <li><a href="#q147">147 How do I write the BNF when the first token is optional?</a></li>
 <li><a href="#q148">148 Is there a tabular view of the DSL?</a></li>
-<li><a href="#q149">149 The Libmarpa API and missing valuator steps</a></li>
-<li><a href="#q150">150 Are there any comparisons of Marpa against other parsers for speed and practicality?</a></li>
 <li><a href="#q151">151 How can I trace what the L0 parser is doing?</a></li>
-<li><a href="#q152">152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?</a></li>
+<li><a href="#q152">152 How do I define lexemes for identifiers where the 1st char is from a subset of the other 
+chars?</a></li>
+<li><a href="#q139">139 What is the difference between prediction events and pre-lexeme events?</a></li>
+<li><a href="#q140">140 Precedence, associativity, priority and rank</a></li>
+</ul>
+
+<h2>Details on how Marpa works</h2>
+
+<ul>
+<li><a href="#q103">103 Is Marpa deterministic?</a></li>
+<li><a href="#q104">104 What is the difference between ambiguity and non-determinism?</a></li>
+<li><a href="#q109">109 What is the meaning of L0 and G1?</a></li>
+<li><a href="#q137">137 SPPF parsing</a></li>
+<li><a href="#q138">138 Parse exhaustion</a></li>
+</ul>
+
+<h2>Links and resources</h2>
+
+<ul>
+<li><a href="#q101">101 Where do I go for help?</a></li>
+<li><a href="#q129">129 Other Resources</a></li>
+<li><a href="#q130">130 Papers on Parsing Theory</a></li>
+<li><a href="#q131">131 Are there C/Perl/Rust/etc bindings for libmarpa?</a></li>
+<li><a href="#q132">132 What are the Marpa Papers?</a></li>
+<li><a href="#q141">141 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?</a></li>
+<li><a href="#q143">143 How do I contribute to this FAQ?</a></li>
+<li><a href="#q150">150 Are there any comparisons of Marpa against other parsers for speed and practicality?</a></li>
 <li><a href="#q153">153 Are there any on-line tools for testing grammars?</a></li>
 <li><a href="#q154">154 What do I do when the IRC logbot stops?</a></li>
 <li><a href="#q155">155 Where can I find a timeline (history) of parsing?</a></li>
 </ul>
+
+<h2>Answers grouped by Topic</h2>
+
+<h2>About Marpa</h2>
+
+<p><a name = 'q102'></a></p>
+
+<h2>102 What is Libmarpa?</h2>
+
+<p>Libmarpa is the core Marpa library, written in C, which implements the Marpa parse engine - the Marpa algorithm itself.
+It is low-level, but it is documented and can be installed and used separately.</p>
+
+<p><a href="https://jeffreykegler.github.io/Marpa-web-site/libmarpa.html">Homepage</a>.</p>
+
+<p><a href="http://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/latest/index.html">Index of Terms</a>.</p>
+
+<p><a href="https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html">Formal docs</a>.</p>
+
+<h2>Error Messages</h2>
 
 <p><a name = 'q1'></a></p>
 
@@ -229,6 +276,21 @@ and the second occurrance of X is on the RHS of the second rule. You can't do th
 
 <p>See also <a href='#q2'>Q 2</a>.</p>
 
+<h2>Problems</h2>
+
+<p><a name = 'q107'></a></p>
+
+<h2>107 Why doesn't my ambiguous grammar return more than 1 parse tree?</h2>
+
+<p>Probably because your grammar includes</p>
+
+<pre class="prettyprint linenums"><code>lexeme default = latm =&gt; 1 # Active the Longest Acceptable Token Match option.
+</code></pre>
+
+<p>Try commenting that line out after, perhaps, re-reading the previous question's answer.</p>
+
+<p>See also the questions 8 and 9.</p>
+
 <p><a name = 'q101'></a></p>
 
 <h2>101 Where do I go for help?</h2>
@@ -242,19 +304,6 @@ Just type marpa into the search box and hit Enter.</p>
 and so is good for complex or extended discussions.</p>
 
 <p><a href="http://savage.net.au/Marpa.html">Marpa's homepage</a>.</p>
-
-<p><a name = 'q102'></a></p>
-
-<h2>102 What is Libmarpa?</h2>
-
-<p>Libmarpa is the core Marpa library, written in C, which implements the Marpa parse engine - the Marpa algorithm itself.
-It is low-level, but it is documented and can be installed and used separately.</p>
-
-<p><a href="https://jeffreykegler.github.io/Marpa-web-site/libmarpa.html">Homepage</a>.</p>
-
-<p><a href="http://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/latest/index.html">Index of Terms</a>.</p>
-
-<p><a href="https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html">Formal docs</a>.</p>
 
 <p><a name = 'q103'></a></p>
 
@@ -294,19 +343,6 @@ alternatives, as in PEG.</p>
 <p>A non-deterministic parser, like Marpa, can produce both ambiguous and unambiguous parses.</p>
 
 <p><a href="http://irclog.perlgeek.de/marpa/2016-10-07#i_13360238">Example code</a>.</p>
-
-<p><a name = 'q107'></a></p>
-
-<h2>107 Why doesn't my ambiguous grammar return more than 1 parse tree?</h2>
-
-<p>Probably because your grammar includes</p>
-
-<pre class="prettyprint linenums"><code>lexeme default = latm =&gt; 1 # Active the Longest Acceptable Token Match option.
-</code></pre>
-
-<p>Try commenting that line out after, perhaps, re-reading the previous question's answer.</p>
-
-<p>See also the next 2 questions.</p>
 
 <p><a name = 'q108'></a></p>
 
