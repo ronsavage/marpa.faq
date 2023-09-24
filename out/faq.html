@@ -291,58 +291,135 @@ and the second occurrance of X is on the RHS of the second rule. You can't do th
 
 <p>See also the questions 8 and 9.</p>
 
-<p><a name = 'q101'></a></p>
+<p><a name = 'q117'></a></p>
 
-<h2>101 Where do I go for help?</h2>
+<h2>117 Why does using '+' or '*' in a rule only work sometimes?</h2>
 
-<p>The IRC channel may get the quickest response: irc.freenode.net#marpa.</p>
+<p>I assume you're referring to cases like this:</p>
 
-<p>The <a href="https://manpages.org/">website manpages.org</a> has good docs on the theoretical details.
-Just type marpa into the search box and hit Enter.</p>
+<p>Case 1 (fails):</p>
 
-<p><a href="https://groups.google.com/forum/#!forum/marpa-parser">The Google Group</a> has message threading,
-and so is good for complex or extended discussions.</p>
+<pre class="prettyprint linenums"><code>node_definition  ::= node_statement+
+                 | node_statement graph_definition
+</code></pre>
 
-<p><a href="http://savage.net.au/Marpa.html">Marpa's homepage</a>.</p>
+<p>Case 2 (succeeds):</p>
 
-<p><a name = 'q103'></a></p>
+<pre class="prettyprint linenums"><code>coordinate_list  ::= coordinate+
+</code></pre>
 
-<h2>103 Is Marpa deterministic?</h2>
+<p>Case 3 (succeeds):</p>
 
-<p>No. Marpa is non-deterministic, unlike traditional parsers. Marpa tries everything, all at once.</p>
+<pre class="prettyprint linenums"><code>whitespace       ~ [\s]+
+</code></pre>
 
-<p>This may take some getting used to, in the sense that probably what you're used to is a deterministic parse.</p>
+<p>Briefly, quantified rules (here, using the '+'), are only allowed when the right-hand side contains a single
+alternative. Thus case 1 fails due to the combination of '+' and '|'.</p>
 
-<p>If two alternatives (in a prioritized rule say, separated by '|' or '||') happen to match some source,
-Marpa produces 2 parse trees.</p>
+<p>This is documented under <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL#Quantified-rule">'Quantified rule' in Marpa::R2::Scanless::DSL</a>.</p>
 
-<p>The parser, then, catches all ambiguities, but the SLIF lexer does <em>not</em>, whether it is LTM or LATM.
-LTM is Longest Token Match, and LATM is Longest Acceptable Token Match.</p>
+<p>So we must re-write rule 1 (with some context):</p>
 
-<p>The SLIF lexer does a longest tokens (plural) match. So it does recognize ambiguous tokens if they are longest tokens.</p>
+<pre class="prettyprint linenums"><code>graph_definition  ::= node_definition
+                  | edge_definition
+                  | subgraph_definition
 
-<p>Ambiguous tokens which are shorter than the match one (whether the discipline is LATM or LTM) are ignored
-by the lexer.</p>
+node_definition  ::= node_statement
+                 | node_statement graph_definition
 
-<p>Consequently, this means the ambiguous matched tokens must be all the same length.</p>
+node_statement   ::= node_name
+                 | node_name attribute_definition
+                 | node_statement (',') node_statement
+</code></pre>
 
-<p>See also the next 2 questions.</p>
+<p>Now the rule 'node_definition ::= node_statement' allows a node definition to consist of a single node statement.</p>
 
-<p><a name = 'q104'></a></p>
+<p>And the alternative (via the '|') 'node_definition ::= node_statement graph_definition' allows a node
+definition to consist of a node statement followed by a graph definition, which just happens to include the line
+'graph_definition ::= node_definition'!</p>
 
-<h2>104 What is the difference between ambiguity and non-determinism?</h2>
+<p>So we've managed to write the grammar using indirect recursion, thus allowing an indefinite list of node
+definitions to follow one another. And the last rule allows the input stream to separate them with commas as
+well as the usual spaces.</p>
 
-<p>Ambiguous means there is more than one parse.</p>
+<p>In other words: Why does the SLIF require quantifiers to be separate statements?</p>
 
-<p>Non-deterministic means that, in the course of discovering the parse or parses, multiple paths may
-be pursued at the same time.</p>
+<p>It's different from regular expressions, which everyone is accustomed to, and seems awkward.</p>
 
-<p>A deterministic parser must always produce an unambiguous parse, if only by ignoring the other
-alternatives, as in PEG.</p>
+<p>The reason is that, with a parser, you expect to attach a semantics to all the rules -
+with regular expressions where is no such expectation.</p>
 
-<p>A non-deterministic parser, like Marpa, can produce both ambiguous and unambiguous parses.</p>
+<p>So if Marpa allowed ' A ::= B+ (C | D) exp*', how would you specify how the arguments are
+passed to the semantics?</p>
 
-<p><a href="http://irclog.perlgeek.de/marpa/2016-10-07#i_13360238">Example code</a>.</p>
+<p>If just as a list, they have to be re-parsed all over again.</p>
+
+<p>This problem can be solved, but the easiest way around it is to write it out as separate
+statements, with the quantifiers by themselves, and the semantics can then be attached to
+the statements.</p>
+
+<p><a name = 'q118'></a></p>
+
+<h2>118 Can a lexeme have length == 0?</h2>
+
+<p>No.</p>
+
+<p>Marpa allows L0 rules that might be zero-length (for example, 'baZ ~ [Z]*') on the idea that it might be convenient
+to write them that way. But no zero-length lexeme will ever be accepted as a result of such rules.</p>
+
+<p>If you think out the conceptual issues, you might see nulled lexemes are 'fraught' with them. At any given point,
+which null lexemes should you recognize? And how many of them? A parser could guess what you really mean here, but
+to my (Jeffrey's) mind it is just as well to force you to be explicit on this issue.</p>
+
+<p>Note: I (Ron) think Jeffrey uses pseudo in the name 'nulled pseudo-lexeme' because, being effectively of 0 length,
+they can't actually be lexemes.</p>
+
+<p>For sample code which shows a way of handling such an issue see
+<a href="http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.p.l.txt">null.lexeme.demo.pl</a> and
+<a href="http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.1.p.l.txt">null.lexeme.demo.1.pl</a>.</p>
+
+<p><a name = 'q142'></a></p>
+
+<h2>142 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?</h2>
+
+<p>There is a section in the Marpa::R2 documents that
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/DSL.pod#Precedence-and-ambiguous-grammars">deals specifically with this</a>.</p>
+
+<p>But that section contains no examples. So here is one. Let your input be:</p>
+
+<p>1 2 + 3 4</p>
+
+<p>Consider this precedenced statement:</p>
+
+<p>E ::= Number || E E || E '+' E</p>
+
+<p>The parse is unambiguous. Here is the only parse:</p>
+
+<p>((1,2),+,(3,4))</p>
+
+<p>But suppose we change the grammar to add unary plus, so that the precedenced statement is now:</p>
+
+<p>E ::= Number || '+' E || E E || E '+' E</p>
+
+<p>Now the parse is ambiguous -- these are the two parses:</p>
+
+<p>(((1,2),(+,3)),4) and ((1,2),+,(3,4))</p>
+
+<p>Notice that both of these parses obey precedence. Precedence can be
+seen as removing ambiguity, but it does not remove <em>all</em> ambiguity.
+It only eliminates those parses which do not obey the precedence.</p>
+
+<p><a name = 'q149'></a></p>
+
+<h2>149 The Libmarpa API and missing valuator steps</h2>
+
+<p>When working with libmarpa, if you notice things like missing instructions of types
+MARPA_STEP_RULE and MARPA_STEP_NULLING_SYMBOL, make sure you are calling marpa_g_force_valued()
+immediately upon grammar creation.</p>
+
+<p>For details see <a href="https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ">this Marpa Google Group post</a>.</p>
+
+<h2>Tricks and techniques</h2>
 
 <p><a name = 'q108'></a></p>
 
@@ -353,23 +430,7 @@ for how to short-circuit semantic analysis.</p>
 
 <p>See also <a href="https://gist.github.com/dginev/6419166">this gist</a>.</p>
 
-<p>See also the previous and next questions.</p>
-
-<p><a name = 'q109'></a></p>
-
-<h2>109 What is the meaning of L0 and G1?</h2>
-
-<p>L0 defines exactly what tokens are acceptable in the input stream. So, these are the rules defining the
-syntax of the tokens, but not the syntax of how these tokens can be combined. G1 defines the structure of
-the language - the ways in which the tokens can be combined. In other words, G1 is structural and therefore
-a 'parser' in the strictest sense, and L0 is its lexer. ('L' for lexer.)</p>
-
-<p>One distinction between G1 and L0 is very important in designing a grammar/lexer combination: G1 rules have
-a semantics. L0 rules do <em>not</em>.</p>
-
-<p>L0 and G1 discussed in <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL">Marpa::R2::Scanless::DSL</a>,
-and, very briefly, in <a href="https://metacpan.org/module/Marpa::R2::Semantics">Marpa::R2::Semantics</a>. In both
-cases, search for 'L0'.</p>
+<p>See also Q 107 and Q 109.</p>
 
 <p><a name = 'q110'></a></p>
 
@@ -512,94 +573,7 @@ Stream 2: [node.a]  [node.b]
 
 <h2>116 How do I implement recursion in a grammar?</h2>
 
-<p>See the next item.</p>
-
-<p><a name = 'q117'></a></p>
-
-<h2>117 Why does using '+' or '*' in a rule only work sometimes?</h2>
-
-<p>I assume you're referring to cases like this:</p>
-
-<p>Case 1 (fails):</p>
-
-<pre class="prettyprint linenums"><code>node_definition  ::= node_statement+
-                 | node_statement graph_definition
-</code></pre>
-
-<p>Case 2 (succeeds):</p>
-
-<pre class="prettyprint linenums"><code>coordinate_list  ::= coordinate+
-</code></pre>
-
-<p>Case 3 (succeeds):</p>
-
-<pre class="prettyprint linenums"><code>whitespace       ~ [\s]+
-</code></pre>
-
-<p>Briefly, quantified rules (here, using the '+'), are only allowed when the right-hand side contains a single
-alternative. Thus case 1 fails due to the combination of '+' and '|'.</p>
-
-<p>This is documented under <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL#Quantified-rule">'Quantified rule' in Marpa::R2::Scanless::DSL</a>.</p>
-
-<p>So we must re-write rule 1 (with some context):</p>
-
-<pre class="prettyprint linenums"><code>graph_definition  ::= node_definition
-                  | edge_definition
-                  | subgraph_definition
-
-node_definition  ::= node_statement
-                 | node_statement graph_definition
-
-node_statement   ::= node_name
-                 | node_name attribute_definition
-                 | node_statement (',') node_statement
-</code></pre>
-
-<p>Now the rule 'node_definition ::= node_statement' allows a node definition to consist of a single node statement.</p>
-
-<p>And the alternative (via the '|') 'node_definition ::= node_statement graph_definition' allows a node
-definition to consist of a node statement followed by a graph definition, which just happens to include the line
-'graph_definition ::= node_definition'!</p>
-
-<p>So we've managed to write the grammar using indirect recursion, thus allowing an indefinite list of node
-definitions to follow one another. And the last rule allows the input stream to separate them with commas as
-well as the usual spaces.</p>
-
-<p>In other words: Why does the SLIF require quantifiers to be separate statements?</p>
-
-<p>It's different from regular expressions, which everyone is accustomed to, and seems awkward.</p>
-
-<p>The reason is that, with a parser, you expect to attach a semantics to all the rules -
-with regular expressions where is no such expectation.</p>
-
-<p>So if Marpa allowed ' A ::= B+ (C | D) exp*', how would you specify how the arguments are
-passed to the semantics?</p>
-
-<p>If just as a list, they have to be re-parsed all over again.</p>
-
-<p>This problem can be solved, but the easiest way around it is to write it out as separate
-statements, with the quantifiers by themselves, and the semantics can then be attached to
-the statements.</p>
-
-<p><a name = 'q118'></a></p>
-
-<h2>118 Can a lexeme have length == 0?</h2>
-
-<p>No.</p>
-
-<p>Marpa allows L0 rules that might be zero-length (for example, 'baZ ~ [Z]*') on the idea that it might be convenient
-to write them that way. But no zero-length lexeme will ever be accepted as a result of such rules.</p>
-
-<p>If you think out the conceptual issues, you might see nulled lexemes are 'fraught' with them. At any given point,
-which null lexemes should you recognize? And how many of them? A parser could guess what you really mean here, but
-to my (Jeffrey's) mind it is just as well to force you to be explicit on this issue.</p>
-
-<p>Note: I (Ron) think Jeffrey uses pseudo in the name 'nulled pseudo-lexeme' because, being effectively of 0 length,
-they can't actually be lexemes.</p>
-
-<p>For sample code which shows a way of handling such an issue see
-<a href="http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.p.l.txt">null.lexeme.demo.pl</a> and
-<a href="http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.1.p.l.txt">null.lexeme.demo.1.pl</a>.</p>
+<p>See Q 117.</p>
 
 <p><a name = 'q119'></a></p>
 
@@ -955,48 +929,6 @@ or <a href="https://metacpan.org/release/GraphViz2-Marpa">GraphViz2::Marpa</a>.<
 
 <p>A complex case: <a href="https://metacpan.org/release/MarpaX-Languages-SQL2003-AST">MarpaX::Languages::SQL2003::AST</a>.</p>
 
-<p><a name = 'q129'></a></p>
-
-<h2>129 Other Resources</h2>
-
-<ul>
-<li><p>http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html</p></li>
-<li><p>The list of features in <a href="http://savage.net.au/Perl-modules/html/marpa.papers/chapter2.html">Chapter 2 - Marpa's Advantages</a></p></li>
-</ul>
-
-<p><a name = 'q130'></a></p>
-
-<h2>130 Papers on Parsing Theory</h2>
-
-<p><a href="http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/">Aria's list</a>.</p>
-
-<p><a name = 'q131'></a></p>
-
-<h2>131 Are there C/Perl/Rust/etc bindings for libmarpa?</h2>
-
-<p>The original bindings are
-<a href="https://github.com/jeffreykegler/libmarpa">Libmarpa, a C library</a>,
-and
-<a href="https://metacpan.org/pod/Marpa::R2">Marpa::R2, a Perl module</a>.
-Marpa::R2 has been in stable release for many years,
-and is based on Libmarpa.</p>
-
-<p>A <a href="https://github.com/jrobsonchase/marpa">Rust wrapper</a> exists
-which has proved useful in development.
-It is
-<a href="https://crates.io/crates/marpa/">also available as a crate</a>.</p>
-
-<p>Other bindings are being prototyped,
-or are in early development.</p>
-
-<p><a name = 'q132'></a></p>
-
-<h2>132 What are the Marpa Papers?</h2>
-
-<p><a href="http://savage.net.au/Perl-modules/html/marpa.papers/">They are a small book of Marpa-related matters</a>,
-and are highly recommended reading for (a) Getting Started, (b) Marpa's Advantages, and
-(c) Advanced Usage.</p>
-
 <p><a name = 'q133'></a></p>
 
 <h2>133 What grammar do I use when eol ("\n", new-line) is significant?</h2>
@@ -1039,141 +971,6 @@ for an explanation of how Marpa passes parameters into action subs.</p>
 <p>See also <a name = 'q125'>Q125 How do I associate an action class with my grammar?</a> and
 <a name = 'q126'>Q126 Declaring an Action Class</a>, and
 <a name = 'q134'>Q134 When I use the case-insensitive suffix ':i' my program dies</a>.</p>
-
-<p><a name = 'q137'></a></p>
-
-<h2>137 SPPF parsing</h2>
-
-<p>Marpa uses SPPF parsing, but not under that name. Jeffrey Kegler calls his version a 'parse bocage',
-which he invented independently of Elizabeth Scott.</p>
-
-<p>For details of her work, <a href="http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/SCOTT,%20Elizabeth%20-%20SPPF-Style%20Parsing%20From%20Earley%20Recognizers.pdf">see here</a>.</p>
-
-<p><a name = 'q138'></a></p>
-
-<h2>138 Parse exhaustion</h2>
-
-<p><a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod">See</a>, and
-<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion">this setting</a>.</p>
-
-<p><a name = 'q139'></a></p>
-
-<h2>139 What is the difference between prediction events and pre-lexeme events?</h2>
-
-<p>A prediction event will be triggered when its lexeme is predicted (i.e. expected) at some point in
-the input stream. A pre-lexeme event can only be triggered at the start of a lexeme which has been
-explicitly detected in the input stream.</p>
-
-<p><a name = 'q140'></a></p>
-
-<h2>140 Precedence, associativity, priority and rank</h2>
-
-<p>This answer was added after a discussion on IRC,
-<a href="http://irclog.perlgeek.de/marpa/2016-05-22#i_12725635">starting here</a>.</p>
-
-<p>Try tackling these 4 issues in this order:</p>
-
-<ul>
-<li>Re-write the grammer</li>
-</ul>
-
-<p>Yes, seriously.</p>
-
-<p>Keep this in mind: Lexeme priority only works if the lexemes are exactly the same length, and start
-at the same location. This is a limitation in R2 which will be lifted in R3.</p>
-
-<ul>
-<li><p>Consider using Marpa's 'priority' adverb, discussed
-<a href="https://metacpan.org/pod/Marpa::R2::Scanless::DSL#priority">here</a>, and its 'rank' adverb, discussed
-<a href="https://metacpan.org/pod/Marpa::R2::Scanless::DSL#rank">here</a>.</p></li>
-<li><p>Observe that there is another way of
-<a href="https://metacpan.org/pod/Marpa::R2::Scanless::DSL#Prioritized-rule">prioritizing rules, using '|' versus '||'</a>.</p></li>
-<li><p>Lastly, parse order can be influenced by
-<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method">rule ranking</a>.</p></li>
-</ul>
-
-<p><a name = 'q141'></a></p>
-
-<h2>141 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?</h2>
-
-<p>This is Jeffrey speaking: You'll probably want to work your way through many of my
-<a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html">blog posts</a>, especially this one:
-<a href="http://jeffreykegler.github.com/Ocean-of-Awareness-blog/individual/2011/11/what-is-the-marpa-algorithm.html">The Marpa Algorithm</a>.</p>
-
-<p>Experience suggests writing the parser in this order:</p>
-
-<ul>
-<li><p>A basic Earley's parser.</p></li>
-<li><p>The Aycock &amp; Horspool grammar rewrite, to fix issues with nulls.</p></li>
-<li><p>Joop Leo's improvement.</p></li>
-<li><p><a href='#q137'>Elizabeth Scott's SPPF</a>, or some other binarization of the output.</p></li>
-</ul>
-
-<p>Marpa was not actually developed in this order --
-it would have been much easier if it had been.</p>
-
-<p><em>The Aycock &amp; Horspool fix for null terminals</em>:
-Null terminals and rules were a nasty and persistent problem with Earley's until A&amp;H found the
-fix.</p>
-
-<p><em>Joop Leo's improvement</em>:
-This is hard but necessary if you want to avoid having your parser being regarded as second class.
-Leo improved Earley's algorithm to be linear for all deterministic context-free grammars, which is
-a big, big deal. Without Leo's improvement, for example, your parser won't really be able to
-handle true second-order languages -- languages which are the output of other programs, including
-languages produced as the output of other languages.</p>
-
-<p><em>The Marpa ordering</em>:
-The Marpa algorithm takes pains to have the parse engine complete all work in one Earley set
-before doing any work in the next one. This allows the parser to do better debugging; to use
-advanced methods like the Ruby Slippers; to be used on an event-driven basis; and to be paired
-with custom procedural logic.</p>
-
-<p><em>Earley hacks you may want to skip</em>:
-Many of the other improvements IMHO you will want to skip, including the LR(0) states in the
-Aycock &amp; Horspool paper. In general, I suggest you be skeptical of those improvements which do
-not produce better results in big-O terms, but instead merely reduce the number of Earley items
-by a constant amount. These do not seem to produced measurable speed-ups at parsing time, but
-they must be undone at evaluation time. They will make it very hard to add an event mechanism to
-your parser, and will make debugging and tracing more complex.</p>
-
-<p><a name = 'q142'></a></p>
-
-<h2>142 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?</h2>
-
-<p>There is a section in the Marpa::R2 documents that
-<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/DSL.pod#Precedence-and-ambiguous-grammars">deals specifically with this</a>.</p>
-
-<p>But that section contains no examples. So here is one. Let your input be:</p>
-
-<p>1 2 + 3 4</p>
-
-<p>Consider this precedenced statement:</p>
-
-<p>E ::= Number || E E || E '+' E</p>
-
-<p>The parse is unambiguous. Here is the only parse:</p>
-
-<p>((1,2),+,(3,4))</p>
-
-<p>But suppose we change the grammar to add unary plus, so that the precedenced statement is now:</p>
-
-<p>E ::= Number || '+' E || E E || E '+' E</p>
-
-<p>Now the parse is ambiguous -- these are the two parses:</p>
-
-<p>(((1,2),(+,3)),4) and ((1,2),+,(3,4))</p>
-
-<p>Notice that both of these parses obey precedence. Precedence can be
-seen as removing ambiguity, but it does not remove <em>all</em> ambiguity.
-It only eliminates those parses which do not obey the precedence.</p>
-
-<p><a name = 'q143'></a></p>
-
-<h2>143 How do I contribute to this FAQ?</h2>
-
-<p>The FAQ is on github. Just <a href="https://github.com/ronsavage/marpa.faq">raise an issue</a>. If you're not familiar
-with github, just click on '(!) Issues 0'. The 0 is the # of open issues, so it may be > 0.</p>
 
 <p><a name = 'q144'></a></p>
 
@@ -1273,39 +1070,6 @@ from <a href="http://www.graphviz.org/content/dot-language">this BNF</a>.</p>
 
 <p>Yes: <a href="http://savage.net.au/Marpa/html/Marpa.R2.DSL.Structure.html">A Tabular View of Marpa::R2's DSL</a>.</p>
 
-<p><a name = 'q149'></a></p>
-
-<h2>149 The Libmarpa API and missing valuator steps</h2>
-
-<p>When working with libmarpa, if you notice things like missing instructions of types
-MARPA_STEP_RULE and MARPA_STEP_NULLING_SYMBOL, make sure you are calling marpa_g_force_valued()
-immediately upon grammar creation.</p>
-
-<p>For details see <a href="https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ">this Marpa Google Group post</a>.</p>
-
-<p><a name = 'q150'></a></p>
-
-<h2>150 Are there any comparisons of Marpa against other parsers for speed and practicality?</h2>
-
-<p>MarpaX::ESLIF is an optimized version of Marpa::R2.
-<a href="https://colabti.org/irclogger/irclogger_log/marpa?date=2022-08-05">Its 2022 announcement on the Marpa IRC channel</a>
-discusses their relative speeds.</p>
-
-<p>Jeffrey Kegler and Terence Parr (author of ANTLR) had
-<a href="https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/">a brief exchange on Reddit in 2014</a>.</p>
-
-<p>Lars Dieckow (daxim) performed a "shootout"
-among various parsers, including Perl 6, Marpa and ANTLR,
-and reported his results in
-<a href="https://youtu.be/lFBEf0o-4sY?si=ieaN2UZ6XhzTTdwz">a 2017 talk</a>.</p>
-
-<p><a href="https://dl.acm.org/doi/pdf/10.1145/3360553">This paper</a>
-describes both ANTLR and Marpa as "industrial grade"
-and pits them against each other in a performance benchmark.
-The paper is in the refereed literature and its
-authors (Henriksen, Bilardi and Pingali) are independent of
-the Marpa and ANTLR communities.</p>
-
 <p><a name = 'q151'></a></p>
 
 <h2>151 How can I trace what the L0 parser is doing?</h2>
@@ -1342,6 +1106,250 @@ capture_name_tail  ~ [_A-Za-z0-9]*
 </code></pre>
 
 <p>And no, you do not need to use events. (I do, in Regexp::Parsertron :-).</p>
+
+<p><a name = 'q139'></a></p>
+
+<h2>139 What is the difference between prediction events and pre-lexeme events?</h2>
+
+<p>A prediction event will be triggered when its lexeme is predicted (i.e. expected) at some point in
+the input stream. A pre-lexeme event can only be triggered at the start of a lexeme which has been
+explicitly detected in the input stream.</p>
+
+<p><a name = 'q140'></a></p>
+
+<h2>140 Precedence, associativity, priority and rank</h2>
+
+<p>This answer was added after a discussion on IRC,
+<a href="http://irclog.perlgeek.de/marpa/2016-05-22#i_12725635">starting here</a>.</p>
+
+<p>Try tackling these 4 issues in this order:</p>
+
+<ul>
+<li>Re-write the grammer</li>
+</ul>
+
+<p>Yes, seriously.</p>
+
+<p>Keep this in mind: Lexeme priority only works if the lexemes are exactly the same length, and start
+at the same location. This is a limitation in R2 which will be lifted in R3.</p>
+
+<ul>
+<li><p>Consider using Marpa's 'priority' adverb, discussed
+<a href="https://metacpan.org/pod/Marpa::R2::Scanless::DSL#priority">here</a>, and its 'rank' adverb, discussed
+<a href="https://metacpan.org/pod/Marpa::R2::Scanless::DSL#rank">here</a>.</p></li>
+<li><p>Observe that there is another way of
+<a href="https://metacpan.org/pod/Marpa::R2::Scanless::DSL#Prioritized-rule">prioritizing rules, using '|' versus '||'</a>.</p></li>
+<li><p>Lastly, parse order can be influenced by
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method">rule ranking</a>.</p></li>
+</ul>
+
+<h2>Details on how Marpa works</h2>
+
+<p><a name = 'q103'></a></p>
+
+<h2>103 Is Marpa deterministic?</h2>
+
+<p>No. Marpa is non-deterministic, unlike traditional parsers. Marpa tries everything, all at once.</p>
+
+<p>This may take some getting used to, in the sense that probably what you're used to is a deterministic parse.</p>
+
+<p>If two alternatives (in a prioritized rule say, separated by '|' or '||') happen to match some source,
+Marpa produces 2 parse trees.</p>
+
+<p>The parser, then, catches all ambiguities, but the SLIF lexer does <em>not</em>, whether it is LTM or LATM.
+LTM is Longest Token Match, and LATM is Longest Acceptable Token Match.</p>
+
+<p>The SLIF lexer does a longest tokens (plural) match. So it does recognize ambiguous tokens if they are longest tokens.</p>
+
+<p>Ambiguous tokens which are shorter than the match one (whether the discipline is LATM or LTM) are ignored
+by the lexer.</p>
+
+<p>Consequently, this means the ambiguous matched tokens must be all the same length.</p>
+
+<p>See also Q 104 and Q 105.</p>
+
+<p><a name = 'q104'></a></p>
+
+<p>On 2023-09-19 23:58, Jeffrey Kegler wrote:</p>
+
+<h2>104 What is the difference between ambiguity and non-determinism?</h2>
+
+<p>Ambiguous means there is more than one parse.</p>
+
+<p>Non-deterministic means that, in the course of discovering the parse or parses, multiple paths may
+be pursued at the same time.</p>
+
+<p>A deterministic parser must always produce an unambiguous parse, if only by ignoring the other
+alternatives, as in PEG.</p>
+
+<p>A non-deterministic parser, like Marpa, can produce both ambiguous and unambiguous parses.</p>
+
+<p><a href="http://irclog.perlgeek.de/marpa/2016-10-07#i_13360238">Example code</a>.</p>
+
+<p><a name = 'q109'></a></p>
+
+<h2>109 What is the meaning of L0 and G1?</h2>
+
+<p>L0 defines exactly what tokens are acceptable in the input stream. So, these are the rules defining the
+syntax of the tokens, but not the syntax of how these tokens can be combined. G1 defines the structure of
+the language - the ways in which the tokens can be combined. In other words, G1 is structural and therefore
+a 'parser' in the strictest sense, and L0 is its lexer. ('L' for lexer.)</p>
+
+<p>One distinction between G1 and L0 is very important in designing a grammar/lexer combination: G1 rules have
+a semantics. L0 rules do <em>not</em>.</p>
+
+<p>L0 and G1 discussed in <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL">Marpa::R2::Scanless::DSL</a>,
+and, very briefly, in <a href="https://metacpan.org/module/Marpa::R2::Semantics">Marpa::R2::Semantics</a>. In both
+cases, search for 'L0'.</p>
+
+<p><a name = 'q137'></a></p>
+
+<h2>137 SPPF parsing</h2>
+
+<p>Marpa uses SPPF parsing, but not under that name. Jeffrey Kegler calls his version a 'parse bocage',
+which he invented independently of Elizabeth Scott.</p>
+
+<p>For details of her work, <a href="http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/SCOTT,%20Elizabeth%20-%20SPPF-Style%20Parsing%20From%20Earley%20Recognizers.pdf">see here</a>.</p>
+
+<p><a name = 'q138'></a></p>
+
+<h2>138 Parse exhaustion</h2>
+
+<p><a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod">See</a>, and
+<a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion">this setting</a>.</p>
+
+<h2>Links and resources</h2>
+
+<p><a name = 'q101'></a></p>
+
+<h2>101 Where do I go for help?</h2>
+
+<p>The IRC channel may get the quickest response: irc.freenode.net#marpa.</p>
+
+<p>The <a href="https://manpages.org/">website manpages.org</a> has good docs on the theoretical details.
+Just type marpa into the search box and hit Enter.</p>
+
+<p><a href="https://groups.google.com/forum/#!forum/marpa-parser">The Google Group</a> has message threading,
+and so is good for complex or extended discussions.</p>
+
+<p><a href="http://savage.net.au/Marpa.html">Marpa's homepage</a>.</p>
+
+<p><a name = 'q129'></a></p>
+
+<h2>129 Other Resources</h2>
+
+<ul>
+<li><p>http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html</p></li>
+<li><p>The list of features in <a href="http://savage.net.au/Perl-modules/html/marpa.papers/chapter2.html">Chapter 2 - Marpa's Advantages</a></p></li>
+</ul>
+
+<p><a name = 'q130'></a></p>
+
+<h2>130 Papers on Parsing Theory</h2>
+
+<p><a href="http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/">Aria's list</a>.</p>
+
+<p><a name = 'q131'></a></p>
+
+<h2>131 Are there C/Perl/Rust/etc bindings for libmarpa?</h2>
+
+<p>The original bindings are
+<a href="https://github.com/jeffreykegler/libmarpa">Libmarpa, a C library</a>,
+and
+<a href="https://metacpan.org/pod/Marpa::R2">Marpa::R2, a Perl module</a>.
+Marpa::R2 has been in stable release for many years,
+and is based on Libmarpa.</p>
+
+<p>A <a href="https://github.com/jrobsonchase/marpa">Rust wrapper</a> exists
+which has proved useful in development.
+It is
+<a href="https://crates.io/crates/marpa/">also available as a crate</a>.</p>
+
+<p>Other bindings are being prototyped,
+or are in early development.</p>
+
+<p><a name = 'q132'></a></p>
+
+<h2>132 What are the Marpa Papers?</h2>
+
+<p><a href="http://savage.net.au/Perl-modules/html/marpa.papers/">They are a small book of Marpa-related matters</a>,
+and are highly recommended reading for (a) Getting Started, (b) Marpa's Advantages, and
+(c) Advanced Usage.</p>
+
+<p><a name = 'q141'></a></p>
+
+<h2>141 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?</h2>
+
+<p>This is Jeffrey speaking: You'll probably want to work your way through many of my
+<a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html">blog posts</a>, especially this one:
+<a href="http://jeffreykegler.github.com/Ocean-of-Awareness-blog/individual/2011/11/what-is-the-marpa-algorithm.html">The Marpa Algorithm</a>.</p>
+
+<p>Experience suggests writing the parser in this order:</p>
+
+<ul>
+<li><p>A basic Earley's parser.</p></li>
+<li><p>The Aycock &amp; Horspool grammar rewrite, to fix issues with nulls.</p></li>
+<li><p>Joop Leo's improvement.</p></li>
+<li><p><a href='#q137'>Elizabeth Scott's SPPF</a>, or some other binarization of the output.</p></li>
+</ul>
+
+<p>Marpa was not actually developed in this order --
+it would have been much easier if it had been.</p>
+
+<p><em>The Aycock &amp; Horspool fix for null terminals</em>:
+Null terminals and rules were a nasty and persistent problem with Earley's until A&amp;H found the
+fix.</p>
+
+<p><em>Joop Leo's improvement</em>:
+This is hard but necessary if you want to avoid having your parser being regarded as second class.
+Leo improved Earley's algorithm to be linear for all deterministic context-free grammars, which is
+a big, big deal. Without Leo's improvement, for example, your parser won't really be able to
+handle true second-order languages -- languages which are the output of other programs, including
+languages produced as the output of other languages.</p>
+
+<p><em>The Marpa ordering</em>:
+The Marpa algorithm takes pains to have the parse engine complete all work in one Earley set
+before doing any work in the next one. This allows the parser to do better debugging; to use
+advanced methods like the Ruby Slippers; to be used on an event-driven basis; and to be paired
+with custom procedural logic.</p>
+
+<p><em>Earley hacks you may want to skip</em>:
+Many of the other improvements IMHO you will want to skip, including the LR(0) states in the
+Aycock &amp; Horspool paper. In general, I suggest you be skeptical of those improvements which do
+not produce better results in big-O terms, but instead merely reduce the number of Earley items
+by a constant amount. These do not seem to produced measurable speed-ups at parsing time, but
+they must be undone at evaluation time. They will make it very hard to add an event mechanism to
+your parser, and will make debugging and tracing more complex.</p>
+
+<p><a name = 'q143'></a></p>
+
+<h2>143 How do I contribute to this FAQ?</h2>
+
+<p>The FAQ is on github. Just <a href="https://github.com/ronsavage/marpa.faq">raise an issue</a>. If you're not familiar
+with github, just click on '(!) Issues 0'. The 0 is the # of open issues, so it may be > 0.</p>
+
+<p><a name = 'q150'></a></p>
+
+<h2>150 Are there any comparisons of Marpa against other parsers for speed and practicality?</h2>
+
+<p>MarpaX::ESLIF is an optimized version of Marpa::R2.
+<a href="https://colabti.org/irclogger/irclogger_log/marpa?date=2022-08-05">Its 2022 announcement on the Marpa IRC channel</a>
+discusses their relative speeds.</p>
+
+<p>Jeffrey Kegler and Terence Parr (author of ANTLR) had
+<a href="https://www.reddit.com/r/programming/comments/2g1mww/the_marpa_parser/ckhl9ws/">a brief exchange on Reddit in 2014</a>.</p>
+
+<p>Lars Dieckow (daxim) performed a "shootout"
+among various parsers, including Perl 6, Marpa and ANTLR,
+and reported his results in
+<a href="https://youtu.be/lFBEf0o-4sY?si=ieaN2UZ6XhzTTdwz">a 2017 talk</a>.</p>
+
+<p><a href="https://dl.acm.org/doi/pdf/10.1145/3360553">This paper</a>
+describes both ANTLR and Marpa as "industrial grade"
+and pits them against each other in a performance benchmark.
+The paper is in the refereed literature and its
+authors (Henriksen, Bilardi and Pingali) are independent of
+the Marpa and ANTLR communities.</p>
 
 <p><a name = 'q153'></a></p>
 
