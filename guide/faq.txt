@@ -1,28 +1,23 @@
-The Marpa FAQ
-=============
+#The Marpa FAQ
 
-On-line docs
-------------
+##On-line docs
 
 [The Marpa FAQ Intro](http://savage.net.au/Perl-modules/html/marpa.faq/)
 
 [The Marpa Papers](http://savage.net.au/Perl-modules/html/marpa.papers/)
 
-Github repos
-------------
+##Github repos
 
 [The Marpa FAQ repo](https://github.com/ronsavage/marpa.faq.git)
 
 [The Marpa Papers repo](https://github.com/ronsavage/marpa.papers.git)
 
-Table of Contents grouped by Topic
-----------------------------------
-About Marpa
------------
+##Table of Contents grouped by Topic
+
+###About Marpa
 * [102 What is Libmarpa?](#q102)
 
-Error Messages
---------------
+###Error Messages
 * [1 Error: Parse failed. value() called when recognizer is not in tree mode](#q1)
 * [2 Error: A lexeme in G1 is not a lexeme in any of the lexers](#q2)
 * [3 Error: A lexeme in lexer L0 is not a lexeme in G1](#q3)
@@ -30,16 +25,14 @@ Error Messages
 * [5 Error: No lexeme found at line 1, column 5](#q5)
 * [6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule](#q6)
 
-Problems
---------
+###Problems
 * [107 Why doesn't my ambiguous grammar return more than 1 parse tree?](#q107)
 * [117 Why does using '+' or '*' in a rule only work sometimes?](#q117)
 * [118 Can a lexeme have length == 0?](#q118)
 * [142 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?](#q142)
 * [149 The Libmarpa API and missing valuator steps](#q149)
 
-Tricks and techniques
----------------------
+###Tricks and techniques
 * [108 How do I implement disambiguation logic?](#q108)
 * [110 How do I parse comments?](#q110)
 * [111 How do I parse numbers?](#q111)
@@ -73,16 +66,14 @@ chars?](#q152)
 * [139 What is the difference between prediction events and pre-lexeme events?](#q139)
 * [140 Precedence, associativity, priority and rank](#q140)
 
-Details on how Marpa works
---------------------------
+###Details on how Marpa works
 * [103 Is Marpa deterministic?](#q103)
 * [104 What is the difference between ambiguity and non-determinism?](#q104)
 * [109 What is the meaning of L0 and G1?](#q109)
 * [137 SPPF parsing](#q137)
 * [138 Parse exhaustion](#q138)
 
-Links and resources
--------------------
+###Links and resources
 * [101 Where do I go for help?](#q101)
 * [129 Other Resources](#q129)
 * [130 Papers on Parsing Theory](#q130)
@@ -95,10 +86,8 @@ Links and resources
 * [154 What do I do when the IRC logbot stops?](#q154)
 * [155 Where can I find a timeline (history) of parsing?](#q155)
 
-Answers grouped by Topic
-------------------------
-About Marpa
------------
+##Answers grouped by Topic
+###About Marpa
 <a name = 'q102'></a>
 102 What is Libmarpa?
 ---------------------
@@ -111,8 +100,7 @@ It is low-level, but it is documented and can be installed and used separately.
 
 [Formal docs](https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html).
 
-Error Messages
---------------
+###Error Messages
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
 -------------------------------------------------------------------------
@@ -245,8 +233,7 @@ So the error message can be read as saying (and should say):
 
 See also <a href='#q2'>Q 2</a>.
 
-Problems
---------
+###Problems
 <a name = 'q107'></a>
 107 Why doesn't my ambiguous grammar return more than 1 parse tree?
 -------------------------------------------------------------------
@@ -378,9 +365,7 @@ immediately upon grammar creation.
 
 For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ).
 
-Tricks and techniques
----------------------
-
+###Tricks and techniques
 <a name = 'q108'></a>
 108 How do I implement disambiguation logic?
 --------------------------------------------
@@ -1069,8 +1054,7 @@ at the same location. This is a limitation in R2 which will be lifted in R3.
 * Lastly, parse order can be influenced by
 [rule ranking](https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method).
 
-Details on how Marpa works
---------------------------
+###Details on how Marpa works
 <a name = 'q103'></a>
 103 Is Marpa deterministic?
 ---------------------------
@@ -1139,8 +1123,7 @@ For details of her work, [see here](http://dinhe.net/~aredridel/.notmine/PDFs/Pa
 [See](https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod), and
 [this setting](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion).
 
-Links and resources
--------------------
+###Links and resources
 <a name = 'q101'></a>
 101 Where do I go for help?
 ---------------------------

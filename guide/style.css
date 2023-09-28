@@ -17,6 +17,17 @@ h2 {
     margin-top: 32px;
 }
 
+h3 {
+    font-size: 20px;
+    margin-top: 20px;
+    background-color:	#f08f8f; // Reddish.
+//  border-color:	black;
+//  border-style:	solid;
+//  border-width:	2px;
+    color:		black;
+
+}
+
 p.example-filename {
     font-size: 10pt;
     margin-top: 0;
