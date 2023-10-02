@@ -21,7 +21,7 @@ use File::Slurp 'read_file', 'write_file';
 use File::Spec::Functions 'catfile';
 use File::Copy;
 use Data::Dumper;
-use Text::MultiMarkdown 'markdown';
+use Text::Markdown 'markdown';
 
 sub do_include {
     my ($filename) = @_;

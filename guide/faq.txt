@@ -18,12 +18,12 @@
 * [102 What is Libmarpa?](#q102)
 
 ###Error Messages
-* [1 Error: Parse failed. value() called when recognizer is not in tree mode]
-* [2 Error: A lexeme in G1 is not a lexeme in any of the lexers]
-* [3 Error: A lexeme in lexer L0 is not a lexeme in G1]
-* [4 Error: Marpa exited at (line, column) = ($line, $column) within the input string]
-* [5 Error: No lexeme found at (line column)]
-* [6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule]
+* [1 Error: Parse failed. value() called when recognizer is not in tree mode](#q1)
+* [2 Error: A lexeme in G1 is not a lexeme in any of the lexers](#q2)
+* [3 Error: A lexeme in lexer L0 iguide/faq.txts not a lexeme in G1](#q3)
+* [4 Error: Marpa exited at (line, column) = ($line, $column) within the input string](#q4)
+* [5 Error: No lexeme found at line 1, column 5](#q5)
+* [6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule](#q6)
 
 ###Problems
 * [107 Why doesn't my ambiguous grammar return more than 1 parse tree?](#q107)
@@ -36,7 +36,7 @@
 * [108 How do I implement disambiguation logic?](#q108)
 * [110 How do I parse comments?](#q110)
 * [111 How do I parse numbers?](#q111)
-* [112 How do I represent choice in the g#2 Error: A lexeme in G1 is not a lexeme in any of the lexersrammar?](#q112)
+* [112 How do I represent choice in the grammar?](#q112)
 * [113 Is there any other way of representing choice?](#q113)
 * [114 What's the difference between '|' and '||' in grammar definitions?](#q114)
 * [115 What does it mean to hide (mask) tokens?](#q115)
@@ -100,8 +100,8 @@ It is low-level, but it is documented and can be installed and used separately.
 
 [Formal docs](https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html).
 
-###Error Messages
-<a name = '1 Error: Parse failed. value() called when recognizer is not in tree mode'></a>
+##Error Messages
+<a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
 -------------------------------------------------------------------------
 The culprit is Marpa::R2::Scanless::R's
@@ -129,7 +129,7 @@ What you should do in this case is call
 first.
 ambiguity_metric()
 returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something <= 0.
-And ambiguity_metric() does *not* put you into forest mode. See also <a href='#4 Error: Marpa exited at (line, column) = ($line, $column) within the input string'>4 Error: Marpa exited at (line, column) = ($line, $column) within the input string</a>.
+And ambiguity_metric() does *not* put you into forest mode. See also <a href='#q4'>Q4 Error message: Marpa exited...</a>.
 
 Less often, you want to both print out a message describing the parse's ambiguity,
 and then go on to deal with it in 'tree mode'.
@@ -152,7 +152,7 @@ checks that the return from ambiguity_metric() is > 1:
 			$self -> log(debug => "Solution @{[++$count]}: \n" . Dumper($_) ) for @$value;
 		}
 
-For more on ambiguity_metric(), see also <a href='#4 Error: Marpa exited at (line, column) = ($line, $column) within the input string'>4 Error: Marpa exited at (line, column) = ($line, $column) within the input string</a>.
+For more on ambiguity_metric(), see <a href='#q4'>Q4</a>.
 
 But remember, to handle ambiguity, you don't need to use this code. You can take a completely different
 route with [Marpa::R2::ASF](https://metacpan.org/pod/distribution/Marpa-R2/pod/ASF.pod).
@@ -166,7 +166,7 @@ this technique, see [GraphViz2::Marpa](https://metacpan.org/release/GraphViz2-Ma
 [Text::Balanced::Marpa](https://metacpan.org/release/Text-Balanced-Marpa) or
 [Text::Delimited::Marpa](https://metacpan.org/release/Text-Delimited-Marpa).
 
-<a name = '2 Error: A lexeme in G1 is not a lexeme in any of the lexers'></a>
+<a name = 'q2'></a>
 2 Error: A lexeme in G1 is not a lexeme in any of the lexers
 ------------------------------------------------------------
 Marpa automatically determines which symbols are 'lexemes'. To do this, it checks for all the
@@ -179,16 +179,16 @@ A symbol is a G1 lexeme if it appears on the RHS of a G1 rule, but never appears
 any G1 rule. A symbol is an L0 lexeme if it appears on the LHS of an L0 rule, but never appears
 on the RHS of any L0 rule.
 
-See also <a href='#6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule'>6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule</a>.
+See also <a href='#q6'>Q 6</a>.
 
-<a name = '3 Error: A lexeme in lexer L0 is not a lexeme in G1'></a>
+<a name = 'q3'></a>
 3 Error: A lexeme in lexer L0 is not a lexeme in G1
 ---------------------------------------------------
-See <a href='#2 Error: A lexeme in G1 is not a lexeme in any of the lexers'>2 Error: A lexeme in G1 is not a lexeme in any of the lexers</a>.
+See <a href='#q2'>Q 2</a>.
 
-<a name = '4 Error: Marpa exited at (line, column) = ($line, $column) within the input string'></a>
-4 Error: Marpa exited at (line, column) = ($line, $column) within the input string
-----------------------------------------------------------------------------------
+<a name = 'q4'></a>
+4 Error message: Marpa exited at (line, column) = ($line, $column) within the input string
+------------------------------------------------------------------------------------------
 In the module [Genealogy::Gedcom::Date](https://metacpan.org/release/Genealogy-Gedcom-Date),
 this text is part of the error message when a call to Marpa ambiguity_metric() returned a value <= 0.
 
@@ -198,9 +198,9 @@ prefix of some input that can lead to a successful parse.
 Marpa is not reporting a problem during the read(), because you can add more to the input string,
 and Marpa does not know that you do not plan to do this.
 
-<a name = '5 Error: No lexeme found at (line column)'></a>
-5 Error: No lexeme found at (line column)
------------------------------------------
+<a name = 'q5'></a>
+5 Error in SLIF parse: No lexeme found at line 1, column 5
+----------------------------------------------------------
 The full error text will look like:
 
 	Error in SLIF parse: No lexeme found at line 1, column 5
@@ -212,7 +212,7 @@ The part which says 'No lexeme found' means no lexeme <em>according to your gram
 character found is listed here as ')', but your BNF does not define that character as being a lexeme
 in that context.
 
-<a name = '6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule'></a>
+<a name = 'q6'></a>
 6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule
 ------------------------------------------------------------
 Consider these rules, which define lexemes in L0 (they are in L0 because ~ is used):
@@ -231,7 +231,7 @@ So the error message can be read as saying (and should say):
 
 'An L0 lexeme (X in the rule X ~ Y) cannot appear on the RHS of another L0 rule (Z ~ X)'.
 
-See also <a href='#2 Error: A lexeme in G1 is not a lexeme in any of the lexers'>2 Error: A lexeme in G1 is not a lexeme in any of the lexers</a>.
+See also <a href='#q2'>Q 2</a>.
 
 ###Problems
 <a name = 'q107'></a>
