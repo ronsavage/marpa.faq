@@ -1,5 +1,7 @@
 #The Marpa FAQ
 
+Version 2.00 2023-10-04T15:20:12.
+
 ##On-line docs
 
 [The Marpa FAQ Intro](http://savage.net.au/Perl-modules/html/marpa.faq/)
