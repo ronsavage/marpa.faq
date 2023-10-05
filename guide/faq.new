@@ -21,7 +21,7 @@ Version 2.00 2023-10-04T15:20:12.
 
 ###Error Messages
 * [1 Error: Parse failed. value() called when recognizer is not in tree mode](#q1)
-* [2 Error: A lexeme in G1 is not a lexeme in any of the lexers](#q2)
+* [1 Error: A lexeme in G1 is not a lexeme in any of the lexers](#q1)
 * [3 Error: A lexeme in lexer L0 iguide/faq.txts not a lexeme in G1](#q3)
 * [4 Error: Marpa exited at (line, column) = ($line, $column) within the input string](#q4)
 * [5 Error: No lexeme found at line 1, column 5](#q5)
