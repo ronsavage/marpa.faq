@@ -39,24 +39,35 @@ sub run
 	my($in_file_name)	= 'guide/faq.txt';
 	my($out_file_name)	= 'guide/faq.new';
 	my(@lines)		= read_lines($in_file_name);
+	$$option{'verbose'}	//= 0;
 
 	say "Processing: $in_file_name. Line count: @{[$#lines + 1]}" if ($$option{'verbose'});
 
 	my(%errors, %error_parameters, %link2question, %offsets, %question2link);
 	my($link_number, $link_reference, $q_number, $text);
 
-	# Link references:
-	# <a name = 'q107'></a>
-	# <a name = 'q155'></a>
-	# Link targets:
+	# Link name:
 	# * [102 What is Libmarpa?](#q102)
+	# and target:
+	# <a name = 'q102'></a>
+	# 102 What is Libmarpa?
+
+	# Link name:
 	# * [155 Where can I find a timeline (history) of parsing?](#q155)
+	# and target:
+	# <a name = 'q155'></a>
+	# 155 Where can I find a timeline (history) of parsing?
+
+	# Link references:
+	# See also <a href='#q6'>Q 6</a>.
+	# See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
 	$errors{1}		= 'Duplicate question text';
 	$errors{2}		= 'Duplicate link number';
 	$errors{3}		= 'Mismatch between question number and link number';
-	my($qr_link_reference)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
-	my($qr_link_target)	= qr/\[(\d+)\s+([^]]+)\]\(\#q(\d+)\)/;
+	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(\#q(\d+)\)/;
+	my($qr_link_reference)	= qr/href\s*='#q(\d+)'/;	
+	my($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
 
@@ -68,26 +79,26 @@ sub run
 		{
 			$offsets{start_of_toc} = $i;
 
-			say "Start of TOC at line $i" if ($$option{'verbose'} == 2);
+			say "Start of TOC at line $i" if ($$option{'verbose'} == 1);
 		}
 		elsif ($lines[$i] eq '##Answers grouped by Topic')
 		{
 			$offsets{end_of_toc} = $i;
 
-			say "End of TOC @ at line $i" if ($$option{'verbose'} == 2);
+			say "End of TOC @ at line $i" if ($$option{'verbose'} == 1);
 		}
 		
 		# Stockpile Questions and their ids.
 
 		if ( ($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
 		{
-			if ($lines[$i] =~ $qr_link_target)
+			if ($lines[$i] =~ $qr_link_name)
 			{
 				$q_number	= $1;
 				$text		= $2;
 				$link_number	= $3;
 
-				say "Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 2);
+				say "(name) Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 2);
 
 				# Stockpile info for the error reporter.
 
@@ -124,18 +135,27 @@ sub run
 		}
 		elsif ($i > $offsets{end_of_toc})
 		{
-			say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 2);
+			if ($lines[$i] =~ $qr_link_target)
+			{
+				$link_reference = $1;
+
+				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 3);
+				say "(targ) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 3);
+			}
 
 			if ($lines[$i] =~ $qr_link_reference)
 			{
 				$link_reference = $1;
 
-				say "Line: $i. Text: $lines[$i]. Ref: <$link_reference>" if ($$option{'verbose'} == 2);
+				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 3);
+				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 3);
 			}
 		}
 	}
 
 	write_text($out_file_name, join("\n", @lines) . "\n");
+
+	return 0;
 
 } # End of run.
 
@@ -149,7 +169,7 @@ if ($option_parser -> getoptions
 (
  \%option,
  'help',
- 'verbose=i',
+ 'verbose:i', # The : means the option value is optional and here defaults to 0 via the code above.
 ) )
 {
 	pod2usage(1) if ($option{'help'});
@@ -175,7 +195,7 @@ preprocess.pl [options]
 
 	Options:
 	-help
-	-verbose 0|1
+	-verbose 0|1|2|3
 
 All switches can be reduced to a single letter.
 
