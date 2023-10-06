@@ -63,8 +63,7 @@ Version 2.00 2023-10-04T15:20:12.
 * [147 How do I write the BNF when the first token is optional?](#q147)
 * [148 Is there a tabular view of the DSL?](#q148)
 * [151 How can I trace what the L0 parser is doing?](#q151)
-* [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other 
-chars?](#q152)
+* [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?](#q152)
 * [139 What is the difference between prediction events and pre-lexeme events?](#q139)
 * [140 Precedence, associativity, priority and rank](#q140)
 
@@ -131,7 +130,7 @@ What you should do in this case is call
 first.
 ambiguity_metric()
 returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something <= 0.
-And ambiguity_metric() does *not* put you into forest mode. See also <a href='#q4'>Q4 Error message: Marpa exited...</a>.
+And ambiguity_metric() does *not* put you into forest mode. See also <a href='#q999'>Q4 Error message: Marpa exited...</a>.
 
 Less often, you want to both print out a message describing the parse's ambiguity,
 and then go on to deal with it in 'tree mode'.

@@ -63,8 +63,7 @@ Version 2.00 2023-10-04T15:20:12.
 * [147 How do I write the BNF when the first token is optional?](#q147)
 * [148 Is there a tabular view of the DSL?](#q148)
 * [151 How can I trace what the L0 parser is doing?](#q151)
-* [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other 
-chars?](#q152)
+* [152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?](#q152)
 * [139 What is the difference between prediction events and pre-lexeme events?](#q139)
 * [140 Precedence, associativity, priority and rank](#q140)
 
@@ -131,7 +130,7 @@ What you should do in this case is call
 first.
 ambiguity_metric()
 returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something <= 0.
-And ambiguity_metric() does *not* put you into forest mode. See also <a href='#q4'>Q4 Error message: Marpa exited...</a>.
+And ambiguity_metric() does *not* put you into forest mode. See also <a href='#q4'>Q 4 Error message: Marpa exited...</a>.
 
 Less often, you want to both print out a message describing the parse's ambiguity,
 and then go on to deal with it in 'tree mode'.
@@ -154,7 +153,7 @@ checks that the return from ambiguity_metric() is > 1:
 			$self -> log(debug => "Solution @{[++$count]}: \n" . Dumper($_) ) for @$value;
 		}
 
-For more on ambiguity_metric(), see <a href='#q4'>Q4</a>.
+For more on ambiguity_metric(), see <a href='#q4'>Q 4</a>.
 
 But remember, to handle ambiguity, you don't need to use this code. You can take a completely different
 route with [Marpa::R2::ASF](https://metacpan.org/pod/distribution/Marpa-R2/pod/ASF.pod).
@@ -617,8 +616,8 @@ See the script scripts/match.parentheses.02.pl, which ships with the module
 This discussion assumes you're using Marpa::R2 V 3.0 or later. Prior to that, there was complications
 using the per-parse parameter to value(), and elsewhere.
 
-See also <a href='#q126'>Q126 Declaring an Action Class</a> and
-<a href='#q136'>Q136 How does Marpa pass parameters to action subs?</a>.
+See also <a href='#q126'>Q 126 Declaring an Action Class</a> and
+<a href='#q136'>Q 136 How does Marpa pass parameters to action subs?</a>.
 
 References:
 
@@ -653,7 +652,7 @@ must be declared as functions in the named semantics package, because that's whe
 <a name = 'q126'></a>
 126 Declaring an Action Class
 -----------------------------
-Firstly, see also <a href='#q136'>Q136 on how Marpa passes parameters to action subs</a>.
+Firstly, see also <a href='#q136'>Q 136 on how Marpa passes parameters to action subs</a>.
 
 Now, the previous item in this FAQ discussed at length various issues regarding how to cleanly generate data within action
 subs, and how to pass that data back to the main-line code which called Marpa.
@@ -870,7 +869,7 @@ by the 'current' text. And the data structure Marpa passes to your action sub co
 that rule's subordinate rules, down to the lexeme level.
 
 With events attached to lexemes, you know the lexeme but not the rule. Of course you can interrogate Marpa
-about which rule is currently firing. For that, see <a href='#q18'>Q18</a>.
+about which rule is currently firing. For that, see <a href='#q18'>Q 18</a>.
 
 This choice is yet one more way in which Marpa differs so hugely from traditional parsers.
 

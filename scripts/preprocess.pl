@@ -105,7 +105,6 @@ sub run
 
 				# Stockpile info for the error reporter.
 
-				$error_parameters{i}		= $i;
 				$error_parameters{link_number}	= $link_number;
 				$error_parameters{q_number}	= $q_number;
 				$error_parameters{text}		= $text;
@@ -158,11 +157,14 @@ sub run
 
 			# Link references:
 			# See also <a href='#q6'>Q 6</a>.
+			# or
 			# See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
 			if ($lines[$i] =~ $qr_link_reference)
 			{
-				$link_reference = $1;
+				$link_reference				= $1;
+				$error_parameters{link_reference}	= $link_reference;
+				$references{$link_reference}		= $i;
 
 				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 4);
 				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 4);
@@ -170,13 +172,30 @@ sub run
 		}
 	}
 
+	$error_parameters{i}			= 0;
+	$error_parameters{link_number}		= 'EOF';
+	$error_parameters{q_number}		= 'EOF';
+	$error_parameters{text}			= 'EOF';
+
+	# Validate that in-situ links point to extant targets.
+
 	for $link_reference (sort keys %references)
 	{
+		$error_parameters{link_reference} = $link_reference;
+
+		say "Testing Link reference: $link_reference" if ($$option{'verbose'} == 4);
+
 		# Validate that the link target exists.
 
 		if (! $link2question{$link_reference})
 		{
+			say "bad  link_reference: $link_reference" if ($$option{'verbose'} == 4);
+
 			report_error(4, \%errors, \%error_parameters, \%link2question, \%question2link);
+		}
+		else
+		{
+			say "good link2question: $link2question{$link_reference}" if ($$option{'verbose'} == 4);
 		}
 	}
 
