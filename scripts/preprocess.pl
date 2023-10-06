@@ -18,14 +18,24 @@ sub report_error
 
 	say "Error #: $error_number. $$errors{$error_number}";
 
-	my($msg) = "Line: $$error_parameters{i}. Q: <$$error_parameters{q_number}>. "
+	my($msg);
+
+	if ($error_number <= 3)
+	{
+		$msg = "Line: $$error_parameters{i}. Q: <$$error_parameters{q_number}>. "
 			. "Link: <$$error_parameters{link_number}>. <$$error_parameters{text}>";
+	}
+	else
+	{
+		$msg = "Line: $$error_parameters{i}. Link reference: $$error_parameters{link_reference}";
+	}
 
 	match ($error_number : ==)
 	{
 		case(1) {say "$msg. Other link: $$question2link{$$error_parameters{text} }"}
 		case(2) {say "$msg. Other link: $$link2question{$$error_parameters{text} }"}
 		case(3) {say $msg}
+		case(4) {say $msg}
 	}
 	exit;
 
@@ -43,29 +53,14 @@ sub run
 
 	say "Processing: $in_file_name. Line count: @{[$#lines + 1]}" if ($$option{'verbose'});
 
-	my(%errors, %error_parameters, %link2question, %offsets, %question2link);
+	my(%errors, %error_parameters, %link2question, %offsets, %question2link, %references);
 	my($link_number, $link_reference, $q_number, $text);
-
-	# Link name:
-	# * [102 What is Libmarpa?](#q102)
-	# and target:
-	# <a name = 'q102'></a>
-	# 102 What is Libmarpa?
-
-	# Link name:
-	# * [155 Where can I find a timeline (history) of parsing?](#q155)
-	# and target:
-	# <a name = 'q155'></a>
-	# 155 Where can I find a timeline (history) of parsing?
-
-	# Link references:
-	# See also <a href='#q6'>Q 6</a>.
-	# See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
 	$errors{1}		= 'Duplicate question text';
 	$errors{2}		= 'Duplicate link number';
 	$errors{3}		= 'Mismatch between question number and link number';
-	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(\#q(\d+)\)/;
+	$errors{4}		= 'Link points to non-existant target';
+	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
 	my($qr_link_reference)	= qr/href\s*='#q(\d+)'/;	
 	my($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
 	$offsets{start_of_toc}	= 99999;
@@ -73,6 +68,8 @@ sub run
 
 	for my $i (0 .. $#lines)
 	{
+		$error_parameters{i} = $i;
+
 		# Find start and end of TOC.
 
 		if ($lines[$i] eq '##Table of Contents grouped by Topic')
@@ -92,6 +89,12 @@ sub run
 
 		if ( ($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
 		{
+			# Link name:
+			# * [102 What is Libmarpa?](#q102)
+			# or
+			# Link name:
+			# * [155 Where can I find a timeline (history) of parsing?](#q155)
+
 			if ($lines[$i] =~ $qr_link_name)
 			{
 				$q_number	= $1;
@@ -135,21 +138,45 @@ sub run
 		}
 		elsif ($i > $offsets{end_of_toc})
 		{
+			# Link target:
+			# <a name = 'q102'></a>
+			# 102 What is Libmarpa?
+			# or
+			# Link target:
+			# <a name = 'q155'></a>
+			# 155 Where can I find a timeline (history) of parsing?
+
 			if ($lines[$i] =~ $qr_link_target)
 			{
-				$link_reference = $1;
+				$link_reference				= $1;
+				$error_parameters{link_reference}	= $link_reference;
+				$references{$link_reference}		= $i;
 
 				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 3);
 				say "(targ) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 3);
 			}
 
+			# Link references:
+			# See also <a href='#q6'>Q 6</a>.
+			# See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
+
 			if ($lines[$i] =~ $qr_link_reference)
 			{
 				$link_reference = $1;
 
-				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 3);
-				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 3);
+				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 4);
+				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 4);
 			}
+		}
+	}
+
+	for $link_reference (sort keys %references)
+	{
+		# Validate that the link target exists.
+
+		if (! $link2question{$link_reference})
+		{
+			report_error(4, \%errors, \%error_parameters, \%link2question, \%question2link);
 		}
 	}
 
@@ -195,7 +222,7 @@ preprocess.pl [options]
 
 	Options:
 	-help
-	-verbose 0|1|2|3
+	-verbose 0|1|2|3|4
 
 All switches can be reduced to a single letter.
 
