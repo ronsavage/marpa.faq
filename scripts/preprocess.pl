@@ -12,11 +12,21 @@ use Syntax::Keyword::Match;
 
 # ------------------------------------------------
 
+sub renumber
+{
+	my($option) = @_;
+
+} # End of renumber.
+
+# ------------------------------------------------
+
 sub report_error
 {
 	my($error_number, $errors, $error_parameters, $link2question, $question2link) = @_;
 
 	say "Error #: $error_number. $$errors{$error_number}";
+
+	# Test error number because some info is not available when it's > 3.
 
 	my($msg);
 
@@ -37,7 +47,6 @@ sub report_error
 		case(3) {say $msg}
 		case(4) {say $msg}
 	}
-	exit;
 
 } # End of report_error.
 
@@ -49,11 +58,11 @@ sub run
 	my($in_file_name)	= 'guide/faq.txt';
 	my($out_file_name)	= 'guide/faq.new';
 	my(@lines)		= read_lines($in_file_name);
-	$$option{'verbose'}	//= 0;
+	$$option{report}	//= 0;
 
-	say "Processing: $in_file_name. Line count: @{[$#lines + 1]}" if ($$option{'verbose'});
+	say "Processing: $in_file_name. Line count: @{[$#lines + 1]}. Output: $out_file_name";
 
-	my(%errors, %error_parameters, %link2question, %offsets, %question2link, %references);
+	my(%errors, %error_parameters, %link2question, @list_of_refs, %offsets, %question2link, %references);
 	my($link_number, $link_reference, $q_number, $text);
 
 	$errors{1}		= 'Duplicate question text';
@@ -61,7 +70,7 @@ sub run
 	$errors{3}		= 'Mismatch between question number and link number';
 	$errors{4}		= 'Link points to non-existant target';
 	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
-	my($qr_link_reference)	= qr/href\s*='#q(\d+)'/;	
+	my($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
 	my($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
@@ -76,23 +85,22 @@ sub run
 		{
 			$offsets{start_of_toc} = $i;
 
-			say "Start of TOC at line $i" if ($$option{'verbose'} == 1);
+			say "Start of TOC at line $i" if ($$option{report} == 1);
 		}
 		elsif ($lines[$i] eq '##Answers grouped by Topic')
 		{
 			$offsets{end_of_toc} = $i;
 
-			say "End of TOC @ at line $i" if ($$option{'verbose'} == 1);
+			say "End of TOC @ at line $i" if ($$option{report} == 1);
 		}
 		
-		# Stockpile Questions and their ids.
+		# Stockpile Question definitions and their ids while within the ToC.
 
 		if ( ($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
 		{
-			# Link name:
+			# Sample link names:
 			# * [102 What is Libmarpa?](#q102)
 			# or
-			# Link name:
 			# * [155 Where can I find a timeline (history) of parsing?](#q155)
 
 			if ($lines[$i] =~ $qr_link_name)
@@ -101,7 +109,7 @@ sub run
 				$text		= $2;
 				$link_number	= $3;
 
-				say "(name) Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 2);
+				say "(name) Line: $i. Text: $lines[$i]" if ($$option{report} == 2);
 
 				# Stockpile info for the error reporter.
 
@@ -137,11 +145,10 @@ sub run
 		}
 		elsif ($i > $offsets{end_of_toc})
 		{
-			# Link target:
+			# Sample link target definitions:
 			# <a name = 'q102'></a>
 			# 102 What is Libmarpa?
 			# or
-			# Link target:
 			# <a name = 'q155'></a>
 			# 155 Where can I find a timeline (history) of parsing?
 
@@ -151,23 +158,29 @@ sub run
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
 
-				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 3);
-				say "(targ) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 3);
+				say "Testing Line: $i. Text: $lines[$i]" if ($$option{report} == 3);
+				say "(targ) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{report} == 3);
 			}
 
-			# Link references:
+			# Sample link references:
 			# See also <a href='#q6'>Q 6</a>.
-			# or
 			# See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
-			if ($lines[$i] =~ $qr_link_reference)
+			@list_of_refs = ($lines[$i] =~ /$qr_link_reference/g);
+
+			if ($#list_of_refs == 1)
+			{
+				say "Multiple links. i: $i. $lines[$i]";
+			}
+
+			if ($#list_of_refs >= 0)
 			{
 				$link_reference				= $1;
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
 
-				say "Testing Line: $i. Text: $lines[$i]" if ($$option{'verbose'} == 4);
-				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{'verbose'} == 4);
+				say "Testing Line: $i. Text: $lines[$i]" if ($$option{report} == 4);
+				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{report} == 4);
 			}
 		}
 	}
@@ -183,19 +196,19 @@ sub run
 	{
 		$error_parameters{link_reference} = $link_reference;
 
-		say "Testing Link reference: $link_reference" if ($$option{'verbose'} == 4);
+		say "Testing Link reference: $link_reference" if ($$option{report} == 4);
 
 		# Validate that the link target exists.
 
 		if (! $link2question{$link_reference})
 		{
-			say "bad  link_reference: $link_reference" if ($$option{'verbose'} == 4);
+			say "bad  link_reference: $link_reference" if ($$option{report} == 4);
 
 			report_error(4, \%errors, \%error_parameters, \%link2question, \%question2link);
 		}
 		else
 		{
-			say "good link2question: $link2question{$link_reference}" if ($$option{'verbose'} == 4);
+			say "good link2question: $link2question{$link_reference}" if ($$option{report} == 4);
 		}
 	}
 
@@ -215,7 +228,7 @@ if ($option_parser -> getoptions
 (
  \%option,
  'help',
- 'verbose:i', # The : means the option value is optional and here defaults to 0 via the code above.
+ 'report:i', # The : means the option value is optional and here defaults to 0 via the code above.
 ) )
 {
 	pod2usage(1) if ($option{'help'});
@@ -233,7 +246,12 @@ __END__
 
 =head1 NAME
 
-preprocess.pl - Convert guide/faq.txt into guide/faq.new
+preprocess.pl - Validate input (guide/faq.txt) and output new version.
+
+=head1 DESCRIPTION
+
+Validate guide/faq.txt and convert it into guide/faq.new.
+Renumber questions sequentially from 1 up.
 
 =head1 SYNOPSIS
 
@@ -241,7 +259,7 @@ preprocess.pl [options]
 
 	Options:
 	-help
-	-verbose 0|1|2|3|4
+	-report 0|1|2|3|4
 
 All switches can be reduced to a single letter.
 
@@ -255,18 +273,13 @@ Exit value: 0.
 
 Print help and exit.
 
-=item -verbose 0|1|2
+=item -report Integer
 
-If used, print some progress reports.
-The bigger the number, the more reports printed.
+Various numbers print various reports. See above for range of integers.
 
-Defaults to 0: Do not print.
+Defaults (0 or no switch): Only minimal stuff and errors.
 
 =back
-
-=head1 DESCRIPTION
-
-Convert guide/faq.txt into guide/faq.new.
 
 =cut
 
