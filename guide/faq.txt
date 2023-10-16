@@ -16,7 +16,7 @@ Version 2.00 2023-10-04T15:20:12.
 
 ##Table of Contents grouped by Topic
 
-###About Marpa
+###About Marpa1
 * [102 What is Libmarpa?](#q102)
 
 ###Error Messages
@@ -34,7 +34,7 @@ Version 2.00 2023-10-04T15:20:12.
 * [142 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?](#q142)
 * [149 The Libmarpa API and missing valuator steps](#q149)
 
-###Tricks and techniques
+###Tricks and Techniques
 * [108 How do I implement disambiguation logic?](#q108)
 * [110 How do I parse comments?](#q110)
 * [111 How do I parse numbers?](#q111)
@@ -67,7 +67,7 @@ Version 2.00 2023-10-04T15:20:12.
 * [139 What is the difference between prediction events and pre-lexeme events?](#q139)
 * [140 Precedence, associativity, priority and rank](#q140)
 
-###How Marpa works
+###How Marpa Works
 * [103 Is Marpa deterministic?](#q103)
 * [104 What is the difference between ambiguity and non-determinism?](#q104)
 * [109 What is the meaning of L0 and G1?](#q109)
@@ -366,7 +366,7 @@ immediately upon grammar creation.
 
 For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ).
 
-###Tricks and techniques
+###Tricks and Techniques
 <a name = 'q108'></a>
 108 How do I implement disambiguation logic?
 --------------------------------------------
@@ -1054,7 +1054,7 @@ at the same location. This is a limitation in R2 which will be lifted in R3.
 * Lastly, parse order can be influenced by
 [rule ranking](https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method).
 
-###How Marpa works
+###How Marpa Works
 <a name = 'q103'></a>
 103 Is Marpa deterministic?
 ---------------------------

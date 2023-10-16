@@ -14,10 +14,12 @@ use Syntax::Keyword::Match;
 
 sub renumber
 {
-	my($error_count, $lines, $link2question, $option, $question2link) = @_;
+	my($error_count, $lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc) = @_;
 
-	say "scalar keys link2question: ", scalar %$link2question;
-	say "scalar keys question2link: ", scalar %$question2link;
+	say "scalar keys link2question:    ", scalar %$link2question;
+	say "scalar keys question2link:    ", scalar %$question2link;
+	say "scalar keys sections_in_toc:  ", scalar %$sections_in_toc;
+	say "scalar keys sections_in_body: ", scalar %$sections_in_body;
 
 	return $error_count;
 
@@ -31,8 +33,6 @@ sub report_error
 
 	say "Error #: $error_number. $$errors{$error_number}";
 
-	# Test error number because some info is not available when it's > 3.
-
 	my($msg);
 
 	if ($error_number <= 3)
@@ -40,17 +40,20 @@ sub report_error
 		$msg = "Line: $$error_parameters{i}. Q: <$$error_parameters{q_number}>. "
 			. "Link: <$$error_parameters{link_number}>. <$$error_parameters{text}>";
 	}
-	else
+	elsif ($error_number <= 4)
 	{
 		$msg = "Line: $$error_parameters{i}. Link reference: $$error_parameters{link_reference}";
+	}
+	elsif ($error_number <= 6)
+	{
+		$msg = "Line: $$error_parameters{i}. Text: $$error_parameters{text}";
 	}
 
 	match ($error_number : ==)
 	{
 		case(1) {say "$msg. Other link: $$question2link{$$error_parameters{text} }"}
 		case(2) {say "$msg. Other link: $$link2question{$$error_parameters{text} }"}
-		case(3) {say $msg}
-		case(4) {say $msg}
+		case(3), case(4), case(5), case(6) {say $msg}
 	}
 
 } # End of report_error.
@@ -67,11 +70,11 @@ sub run
 
 	say "Input file: $in_file_name. Line count: @{[$#lines + 1]}. Output file: $out_file_name";
 
-	my($error_count, $link2question, $question2link) = validate(\@lines, $option);
+	my($error_count, $link2question, $question2link, $sections_in_body, $sections_in_toc) = validate(\@lines, $option);
 
 	say "Error count after validation: $error_count";
 
-	$error_count = renumber($error_count, \@lines, $link2question, $option, $question2link);
+	$error_count = renumber($error_count, \@lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc);
 
 	say "Error count after renumber:   $error_count";
 
@@ -87,17 +90,32 @@ sub validate
 {
 	my($lines, $option) = @_;
 
-	my(%errors, $error_count, %error_parameters, %link2question, @list_of_refs, %offsets, %question2link, %references);
-	my($link_number, $link_reference, $q_number, $text);
+	# Notes:
+	# o %link2question(key, value) 		=> (link #, text).
+	# o %question2link(key, value) 		=> (text, link #).
+	# %offsets{start_of_toc, end_of_toc}	=> (line #, line #). Line numbers are 0 .. N.
+	# %sections(key, value)			=> (name, line #).
+	# %section_present(key, value)		=> (name, line #).
+
+	my(%errors, $error_count, %error_parameters);
+	my($link_number, $link_reference, $link_target, %link2question, @list_of_refs);
+	my(%offsets);
+	my($q_number, %question2link);
+	my(%references);
+	my($section_name, %sections_in_toc, %sections_in_body);
+	my($text);
 
 	$errors{1}		= 'Duplicate question text';
 	$errors{2}		= 'Duplicate link number';
 	$errors{3}		= 'Mismatch between question number and link number';
 	$errors{4}		= 'Link points to non-existant target';
+	$errors{5}		= 'Section name in Body not present in ToC';
+	$errors{6}		= 'Section name in ToC not present in Body';
 	$error_count		= 0;
 	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
 	my($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
 	my($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
+	my($qr_section_name)	= qr/^###(.+)/;
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
 
@@ -120,22 +138,24 @@ sub validate
 			say "End of TOC @ at line $i" if ($$option{report} == 1);
 		}
 		
-		# Stockpile Question definitions and their ids while within the ToC.
+		# Stockpile:
+		# o Question definitions and their ids while within the ToC.
+		# o Section titles.
 
-		if ( ($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
+		if (($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
 		{
-			# Sample link names:
-			# * [102 What is Libmarpa?](#q102)
-			# or
-			# * [155 Where can I find a timeline (history) of parsing?](#q155)
-
 			if ($$lines[$i] =~ $qr_link_name)
 			{
+				# Sample link names:
+				# * [102 What is Libmarpa?](#q102)
+				# or
+				# * [155 Where can I find a timeline (history) of parsing?](#q155)
+	
 				$q_number	= $1;
 				$text		= $2;
 				$link_number	= $3;
 
-				say "(name) Line: $i. Text: $$lines[$i]" if ($$option{report} == 2);
+				say "Line: $i. Link name: [$q_number $text](#q$link_number)" if ($$option{report} == 4);
 
 				# Stockpile info for the error reporter.
 
@@ -174,24 +194,35 @@ sub validate
 				$question2link{$text}		= $link_number;
 
 			}
+			elsif ($$lines[$i] =~ $qr_section_name)
+			{
+				# Sample section names:
+				# ###About Marpa
+				# ###Resources
+
+				$section_name			= $1;
+				$sections_in_toc{$section_name}	= $i;
+
+				say "Testing line: $i. Found section '$section_name' in ToC. Text: $$lines[$i]" if ($$option{report} == 5);
+			}
 		}
 		elsif ($i > $offsets{end_of_toc})
 		{
-			# Sample link target definitions:
-			# <a name = 'q102'></a>
-			# 102 What is Libmarpa?
-			# or
-			# <a name = 'q155'></a>
-			# 155 Where can I find a timeline (history) of parsing?
-
 			if ($$lines[$i] =~ $qr_link_target)
 			{
-				$link_reference				= $1;
-				$error_parameters{link_reference}	= $link_reference;
-				$references{$link_reference}		= $i;
+				# Sample link target definitions:
+				# <a name = 'q102'></a>
+				# 102 What is Libmarpa?
+				# or
+				# <a name = 'q155'></a>
+				# 155 Where can I find a timeline (history) of parsing?
 
-				say "Testing Line: $i. Text: $$lines[$i]" if ($$option{report} == 3);
-				say "(targ) Line: $i. Ref: <$link_reference>. Text: $$lines[$i]" if ($$option{report} == 3);
+				$link_target			= $1;
+				$error_parameters{link_target}	= $link_target;
+				$references{$link_target}	= $i;
+
+				say "Testing line: $i. Text: $$lines[$i]"	if ($$option{report} == 3);
+				say "Line: $i. Link target: <$link_target>"	if ($$option{report} == 3);
 			}
 
 			# Sample link references:
@@ -211,8 +242,27 @@ sub validate
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
 
-				say "Testing Line: $i. Text: $$lines[$i]" if ($$option{report} == 4);
+				say "Testing line: $i. Text: $$lines[$i]" if ($$option{report} == 4);
 				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $$lines[$i]" if ($$option{report} == 4);
+			}
+
+			if ($$lines[$i] =~ $qr_section_name)
+			{
+				# Sample section names:
+				# ###About Marpa
+				# ###Resources
+
+				$section_name				= $1;
+				$sections_in_body{$section_name}	= $i;
+
+				say "Testing line: $i. Found section '$section_name' in Body. Text: $$lines[$i]" if ($$option{report} == 5);
+
+				if (! $sections_in_toc{$section_name})
+				{
+					$error_parameters{text} = $section_name;
+
+					report_error(5, \%errors, \%error_parameters, \%link2question, \%question2link);
+				}
 			}
 		}
 	}
@@ -228,7 +278,7 @@ sub validate
 	{
 		$error_parameters{link_reference} = $link_reference;
 
-		say "Testing Link reference: $link_reference" if ($$option{report} == 4);
+		say "Testing link reference: $link_reference" if ($$option{report} == 4);
 
 		# Validate that the link target exists.
 
@@ -246,7 +296,21 @@ sub validate
 		}
 	}
 
-	return ($error_count, \%link2question, \%question2link);
+	# Validate that the section names in the Body were present in the ToC.
+
+	for $section_name (sort keys %sections_in_body)
+	{
+		$error_parameters{i} = $sections_in_body{$section_name};
+
+		if (! defined $sections_in_toc{$section_name})
+		{
+			$error_parameters{text} = $section_name;
+
+			report_error(6, \%errors, \%error_parameters, \%link2question, \%question2link);
+		}
+	}
+
+	return ($error_count, \%link2question, \%question2link, \%sections_in_body, \%sections_in_toc);
 
 } # End of validate.
 
@@ -291,11 +355,11 @@ preprocess.pl [options]
 
 	Options:
 	-help
-	-report 0|1|2|3|4
+	-report Integer
 
 All switches can be reduced to a single letter.
 
-Exit value: 0.
+Exit value: 0 or error count.
 
 =head1 OPTIONS
 
@@ -307,7 +371,31 @@ Print help and exit.
 
 =item -report Integer
 
-Various numbers print various reports. See above for range of integers.
+Various numbers print various reports.
+
+=over 4
+
+=item 1
+
+Report Table of Contents stats and lines containing multiple cross-references.
+
+=item 2
+
+Not used.
+
+=item 3
+
+Report lines containing link targets.
+
+=item 4
+
+Report lines containing link references.
+
+=item 5
+
+Report section names.
+
+=back
 
 Defaults (0 or no switch): Only minimal stuff and errors.
 
