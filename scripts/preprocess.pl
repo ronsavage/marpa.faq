@@ -14,7 +14,12 @@ use Syntax::Keyword::Match;
 
 sub renumber
 {
-	my($option) = @_;
+	my($error_count, $lines, $link2question, $option, $question2link) = @_;
+
+	say "scalar keys link2question: ", scalar %$link2question;
+	say "scalar keys question2link: ", scalar %$question2link;
+
+	return $error_count;
 
 } # End of renumber.
 
@@ -64,7 +69,11 @@ sub run
 
 	my($error_count, $link2question, $question2link) = validate(\@lines, $option);
 
-	say "Error count: $error_count";
+	say "Error count after validation: $error_count";
+
+	$error_count = renumber($error_count, \@lines, $link2question, $option, $question2link);
+
+	say "Error count after renumber:   $error_count";
 
 	write_text($out_file_name, join("\n", @lines) . "\n") if ($error_count == 0);
 

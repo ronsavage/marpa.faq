@@ -67,14 +67,14 @@ Version 2.00 2023-10-04T15:20:12.
 * [139 What is the difference between prediction events and pre-lexeme events?](#q139)
 * [140 Precedence, associativity, priority and rank](#q140)
 
-###Details on how Marpa works
+###How Marpa works
 * [103 Is Marpa deterministic?](#q103)
 * [104 What is the difference between ambiguity and non-determinism?](#q104)
 * [109 What is the meaning of L0 and G1?](#q109)
 * [137 SPPF parsing](#q137)
 * [138 Parse exhaustion](#q138)
 
-###Links and resources
+###Resources
 * [101 Where do I go for help?](#q101)
 * [129 Other Resources](#q129)
 * [130 Papers on Parsing Theory](#q130)
@@ -101,7 +101,7 @@ It is low-level, but it is documented and can be installed and used separately.
 
 [Formal docs](https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html).
 
-##Error Messages
+###Error Messages
 <a name = 'q1'></a>
 1 Error: Parse failed. value() called when recognizer is not in tree mode
 -------------------------------------------------------------------------
@@ -1054,7 +1054,7 @@ at the same location. This is a limitation in R2 which will be lifted in R3.
 * Lastly, parse order can be influenced by
 [rule ranking](https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method).
 
-###Details on how Marpa works
+###How Marpa works
 <a name = 'q103'></a>
 103 Is Marpa deterministic?
 ---------------------------
@@ -1123,7 +1123,7 @@ For details of her work, [see here](http://dinhe.net/~aredridel/.notmine/PDFs/Pa
 [See](https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod), and
 [this setting](https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion).
 
-###Links and resources
+###Resources
 <a name = 'q101'></a>
 101 Where do I go for help?
 ---------------------------
