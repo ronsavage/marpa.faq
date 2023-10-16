@@ -868,7 +868,7 @@ by the 'current' text. And the data structure Marpa passes to your action sub co
 that rule's subordinate rules, down to the lexeme level.
 
 With events attached to lexemes, you know the lexeme but not the rule. Of course you can interrogate Marpa
-about which rule is currently firing. For that, see <a href='#q18'>Q 18</a>.
+about which rule is currently firing. For that, see <a href='#q120'>Q 120</a>.
 
 This choice is yet one more way in which Marpa differs so hugely from traditional parsers.
 
@@ -1075,7 +1075,7 @@ by the lexer.
 
 Consequently, this means the ambiguous matched tokens must be all the same length.
 
-See also <a href='#q104'>Q 104</a> and <a href='#q105'>Q 105</a>.
+See also <a href='#q104'>Q 104</a>.
 
 <a name = 'q104'></a>
 104 What is the difference between ambiguity and non-determinism?
