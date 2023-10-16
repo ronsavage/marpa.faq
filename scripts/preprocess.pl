@@ -60,34 +60,51 @@ sub run
 	my(@lines)		= read_lines($in_file_name);
 	$$option{report}	//= 0;
 
-	say "Processing: $in_file_name. Line count: @{[$#lines + 1]}. Output: $out_file_name";
+	say "Input file: $in_file_name. Line count: @{[$#lines + 1]}. Output file: $out_file_name";
 
-	my(%errors, %error_parameters, %link2question, @list_of_refs, %offsets, %question2link, %references);
+	my($error_count, $link2question, $question2link) = validate(\@lines, $option);
+
+	say "Error count: $error_count";
+
+	write_text($out_file_name, join("\n", @lines) . "\n") if ($error_count == 0);
+
+	return $error_count;
+
+} # End of run.
+
+# -----------------------------------------------
+
+sub validate
+{
+	my($lines, $option) = @_;
+
+	my(%errors, $error_count, %error_parameters, %link2question, @list_of_refs, %offsets, %question2link, %references);
 	my($link_number, $link_reference, $q_number, $text);
 
 	$errors{1}		= 'Duplicate question text';
 	$errors{2}		= 'Duplicate link number';
 	$errors{3}		= 'Mismatch between question number and link number';
 	$errors{4}		= 'Link points to non-existant target';
+	$error_count		= 0;
 	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
 	my($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
 	my($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
 
-	for my $i (0 .. $#lines)
+	for my $i (0 .. $#$lines)
 	{
 		$error_parameters{i} = $i;
 
 		# Find start and end of TOC.
 
-		if ($lines[$i] eq '##Table of Contents grouped by Topic')
+		if ($$lines[$i] eq '##Table of Contents grouped by Topic')
 		{
 			$offsets{start_of_toc} = $i;
 
 			say "Start of TOC at line $i" if ($$option{report} == 1);
 		}
-		elsif ($lines[$i] eq '##Answers grouped by Topic')
+		elsif ($$lines[$i] eq '##Answers grouped by Topic')
 		{
 			$offsets{end_of_toc} = $i;
 
@@ -103,13 +120,13 @@ sub run
 			# or
 			# * [155 Where can I find a timeline (history) of parsing?](#q155)
 
-			if ($lines[$i] =~ $qr_link_name)
+			if ($$lines[$i] =~ $qr_link_name)
 			{
 				$q_number	= $1;
 				$text		= $2;
 				$link_number	= $3;
 
-				say "(name) Line: $i. Text: $lines[$i]" if ($$option{report} == 2);
+				say "(name) Line: $i. Text: $$lines[$i]" if ($$option{report} == 2);
 
 				# Stockpile info for the error reporter.
 
@@ -121,6 +138,8 @@ sub run
 
 				if ($question2link{$text})
 				{
+					$error_count++;
+
 					report_error(1, \%errors, \%error_parameters, \%link2question, \%question2link);
 				}
 
@@ -128,6 +147,8 @@ sub run
 
 				if ($link2question{$link_number})
 				{
+					$error_count++;
+
 					report_error(2, \%errors, \%error_parameters, \%link2question, \%question2link);
 				}
 
@@ -135,6 +156,8 @@ sub run
 
 				if ($q_number != $link_number)
 				{
+					$error_count++;
+
 					report_error(3, \%errors, \%error_parameters, \%link2question, \%question2link);
 				}
 
@@ -152,25 +175,25 @@ sub run
 			# <a name = 'q155'></a>
 			# 155 Where can I find a timeline (history) of parsing?
 
-			if ($lines[$i] =~ $qr_link_target)
+			if ($$lines[$i] =~ $qr_link_target)
 			{
 				$link_reference				= $1;
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
 
-				say "Testing Line: $i. Text: $lines[$i]" if ($$option{report} == 3);
-				say "(targ) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{report} == 3);
+				say "Testing Line: $i. Text: $$lines[$i]" if ($$option{report} == 3);
+				say "(targ) Line: $i. Ref: <$link_reference>. Text: $$lines[$i]" if ($$option{report} == 3);
 			}
 
 			# Sample link references:
 			# See also <a href='#q6'>Q 6</a>.
 			# See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
-			@list_of_refs = ($lines[$i] =~ /$qr_link_reference/g);
+			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g);
 
 			if ($#list_of_refs == 1)
 			{
-				say "Multiple links. i: $i. $lines[$i]";
+				say "Multiple links. i: $i. $$lines[$i]" if ($$option{report} == 4);
 			}
 
 			if ($#list_of_refs >= 0)
@@ -179,8 +202,8 @@ sub run
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
 
-				say "Testing Line: $i. Text: $lines[$i]" if ($$option{report} == 4);
-				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $lines[$i]" if ($$option{report} == 4);
+				say "Testing Line: $i. Text: $$lines[$i]" if ($$option{report} == 4);
+				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $$lines[$i]" if ($$option{report} == 4);
 			}
 		}
 	}
@@ -202,6 +225,8 @@ sub run
 
 		if (! $link2question{$link_reference})
 		{
+			$error_count++;
+
 			say "bad  link_reference: $link_reference" if ($$option{report} == 4);
 
 			report_error(4, \%errors, \%error_parameters, \%link2question, \%question2link);
@@ -212,11 +237,9 @@ sub run
 		}
 	}
 
-	write_text($out_file_name, join("\n", @lines) . "\n");
+	return ($error_count, \%link2question, \%question2link);
 
-	return 0;
-
-} # End of run.
+} # End of validate.
 
 # -----------------------------------------------
 
