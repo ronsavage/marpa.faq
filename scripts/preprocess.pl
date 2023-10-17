@@ -10,20 +10,59 @@ use Pod::Usage;
 
 use Syntax::Keyword::Match;
 
+use Time::Piece;
+
 # ------------------------------------------------
 
-sub renumber
+sub number_sections
 {
-	my($error_count, $lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc) = @_;
+	my($lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc) = @_;
 
-	say "scalar keys link2question:    ", scalar %$link2question;
-	say "scalar keys question2link:    ", scalar %$question2link;
-	say "scalar keys sections_in_toc:  ", scalar %$sections_in_toc;
-	say "scalar keys sections_in_body: ", scalar %$sections_in_body;
+	my($debug);
 
-	return $error_count;
+	if ($debug)
+	{
+		say "scalar keys link2question:    ", scalar %$link2question;
+		say "scalar keys question2link:    ", scalar %$question2link;
+		say "scalar keys sections_in_toc:  ", scalar %$sections_in_toc;
+		say "scalar keys sections_in_body: ", scalar %$sections_in_body;
+	}
 
-} # End of renumber.
+	renumber_sections($lines, $sections_in_toc);
+	renumber_sections($lines, $sections_in_body);
+
+
+} # End of number_sections.
+
+# ------------------------------------------------
+
+sub renumber_sections
+{
+	my($lines, $sections) = @_;
+
+	my($line_number);
+	my($new_name);
+
+	my($section_id)		= 'A';
+	my($section_prefix)	= '###';
+
+	for my $section_name (sort keys %$sections) # Keys are line #s.
+	{
+		$line_number = $$sections{$section_name};
+
+		#say "Section id: $section_id. Name: $section_name";
+
+		if ($$lines[$line_number] =~ /$section_prefix$section_name(.*)/)
+		{
+			$new_name = "$section_prefix $section_id: $section_name";
+
+			say "Line: $line_number. $section_prefix$section_id: $section_name";
+		}
+
+		$section_id++;
+	}
+
+} # End of renumber_sections.
 
 # ------------------------------------------------
 
@@ -70,19 +109,47 @@ sub run
 
 	say "Input file: $in_file_name. Line count: @{[$#lines + 1]}. Output file: $out_file_name";
 
+	# Update version #. Do nothing if version # not found.
+
+	update_version(\@lines, $option);
+
+	# Validate ToC and Body.
+
 	my($error_count, $link2question, $question2link, $sections_in_body, $sections_in_toc) = validate(\@lines, $option);
 
 	say "Error count after validation: $error_count";
 
-	$error_count = renumber($error_count, \@lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc);
+	# Number section names. This assume the original text has no ids.
 
-	say "Error count after renumber:   $error_count";
+	number_sections(\@lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc);
 
 	write_text($out_file_name, join("\n", @lines) . "\n") if ($error_count == 0);
 
 	return $error_count;
 
 } # End of run.
+
+# -----------------------------------------------
+
+sub update_version
+{
+	my($lines, $option)	= @_;
+	my($new_version_number)	= '1.00';
+	my $now			= localtime; # Must be in scalar context.
+	my($qr_version_number)	= qr/Version (\d\.\d\d).+/;
+
+	for my $i (0 .. $#$lines)
+	{
+		if ($$lines[$i] =~ $qr_version_number)
+		{
+			$new_version_number	= $$option{version} || $new_version_number || $1;
+			$$lines[$i]		= "Version $new_version_number. " . $now -> datetime . '.';
+
+			say "New version: $$lines[$i]";
+		}
+	}
+
+} # End of update_version.
 
 # -----------------------------------------------
 
@@ -94,8 +161,8 @@ sub validate
 	# o %link2question(key, value) 		=> (link #, text).
 	# o %question2link(key, value) 		=> (text, link #).
 	# %offsets{start_of_toc, end_of_toc}	=> (line #, line #). Line numbers are 0 .. N.
-	# %sections(key, value)			=> (name, line #).
-	# %section_present(key, value)		=> (name, line #).
+	# %sections_in_body(key, value)		=> (name, line #).
+	# %sections_in_toc(key, value)		=> (name, line #).
 
 	my(%errors, $error_count, %error_parameters);
 	my($link_number, $link_reference, $link_target, %link2question, @list_of_refs);
@@ -324,7 +391,8 @@ if ($option_parser -> getoptions
 (
  \%option,
  'help',
- 'report:i', # The : means the option value is optional and here defaults to 0 via the code above.
+ 'report:i',	# The : means the option value is optional and here defaults to 0 via the code above.
+ 'version:s',	# The version # to insert into the output file.
 ) )
 {
 	pod2usage(1) if ($option{'help'});
@@ -356,6 +424,7 @@ preprocess.pl [options]
 	Options:
 	-help
 	-report Integer
+	-version d.dd
 
 All switches can be reduced to a single letter.
 
@@ -398,6 +467,12 @@ Report section names.
 =back
 
 Defaults (0 or no switch): Only minimal stuff and errors.
+
+=item -version d.dd
+
+The version # to insert into the output file.
+
+Defaults to the current version if found or 1.00.
 
 =back
 

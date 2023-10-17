@@ -1,6 +1,6 @@
 #The Marpa FAQ
 
-Version 2.00 2023-10-04T15:20:12.
+Version 2.01. 2023-10-17T11:20:04.
 
 ##On-line docs
 
@@ -16,7 +16,7 @@ Version 2.00 2023-10-04T15:20:12.
 
 ##Table of Contents grouped by Topic
 
-###About Marpa1
+###About Marpa
 * [102 What is Libmarpa?](#q102)
 
 ###Error Messages
