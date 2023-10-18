@@ -16,7 +16,7 @@ Version 2.00 2023-10-04T15:20:12.
 
 ##Table of Contents grouped by Topic
 
-###About Marpa1
+###About Marpa
 * [102 What is Libmarpa?](#q102)
 
 ###Error Messages
@@ -88,7 +88,7 @@ Version 2.00 2023-10-04T15:20:12.
 * [155 Where can I find a timeline (history) of parsing?](#q155)
 
 ##Answers grouped by Topic
-###About Marpa2
+###About Marpa
 <a name = 'q102'></a>
 102 What is Libmarpa?
 ---------------------

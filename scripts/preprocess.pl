@@ -2,6 +2,8 @@
 
 use 5.018;
 
+use boolean ':all'; # For isFalse().
+
 use File::Slurper qw/read_lines write_text/;
 
 use Getopt::Long;
@@ -72,7 +74,7 @@ sub report_error
 
 	say "Error #: $error_number. $$errors{$error_number}";
 
-	my($msg);
+	my($msg) = '';
 
 	if ($error_number <= 3)
 	{
@@ -178,6 +180,7 @@ sub validate
 	$errors{4}		= 'Link points to non-existant target';
 	$errors{5}		= 'Section name in Body not present in ToC';
 	$errors{6}		= 'Section name in ToC not present in Body';
+	$errors{7}		= 'Number of sections in ToC not equal to number in Body';
 	$error_count		= 0;
 	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
 	my($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
@@ -185,6 +188,7 @@ sub validate
 	my($qr_section_name)	= qr/^###(.+)/;
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
+	my($section_error)	= false;
 
 	for my $i (0 .. $#$lines)
 	{
@@ -326,6 +330,8 @@ sub validate
 
 				if (! $sections_in_toc{$section_name})
 				{
+					$section_error = true;
+
 					$error_count++;
 
 					$error_parameters{text} = $section_name;
@@ -375,6 +381,8 @@ sub validate
 
 		if (! defined $sections_in_body{$section_name})
 		{
+			$section_error = true;
+
 			$error_count++;
 
 			$error_parameters{text} = $section_name;
@@ -382,6 +390,18 @@ sub validate
 			#say "Line: $error_parameters{i}. Section $section_name not in Body";
 
 			report_error(6, \%errors, \%error_parameters, \%link2question, \%question2link);
+		}
+	}
+
+	# Validate that the section names in the ToC are in the same order as in the Body.
+
+	if (isFalse($section_error) )
+	{
+		if (join(', ', sort keys %sections_in_toc) ne join(', ', sort keys %sections_in_body) )
+		{
+			$error_count++;
+
+			report_error(7, \%errors, \%error_parameters, \%link2question, \%question2link);
 		}
 	}
 
