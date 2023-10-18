@@ -326,7 +326,11 @@ sub validate
 
 				if (! $sections_in_toc{$section_name})
 				{
+					$error_count++;
+
 					$error_parameters{text} = $section_name;
+
+					#say "Line: $i. Section $section_name not in ToC";
 
 					report_error(5, \%errors, \%error_parameters, \%link2question, \%question2link);
 				}
@@ -365,13 +369,17 @@ sub validate
 
 	# Validate that the section names in the Body were present in the ToC.
 
-	for $section_name (sort keys %sections_in_body)
+	for $section_name (sort keys %sections_in_toc)
 	{
-		$error_parameters{i} = $sections_in_body{$section_name};
+		$error_parameters{i} = $sections_in_toc{$section_name};
 
-		if (! defined $sections_in_toc{$section_name})
+		if (! defined $sections_in_body{$section_name})
 		{
+			$error_count++;
+
 			$error_parameters{text} = $section_name;
+
+			#say "Line: $error_parameters{i}. Section $section_name not in Body";
 
 			report_error(6, \%errors, \%error_parameters, \%link2question, \%question2link);
 		}
