@@ -4,6 +4,8 @@ use 5.018;
 
 use boolean ':all'; # For isFalse().
 
+use Data::Dumper::Concise; # For Dumper().
+
 use File::Slurper qw/read_lines write_text/;
 
 use Getopt::Long;
@@ -16,7 +18,7 @@ use Time::Piece;
 
 # ------------------------------------------------
 
-sub number_sections
+sub generate_section_ids
 {
 	my($lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc) = @_;
 
@@ -30,35 +32,48 @@ sub number_sections
 		say "scalar keys sections_in_body: ", scalar %$sections_in_body;
 	}
 
-	renumber_sections($lines, $sections_in_toc);
-	renumber_sections($lines, $sections_in_body);
+	renumber_sections('ToC', $lines, $sections_in_toc);
+	renumber_sections('Body', $lines, $sections_in_body);
 
 
-} # End of number_sections.
+} # End of generate_section_ids.
 
 # ------------------------------------------------
 
 sub renumber_sections
 {
-	my($lines, $sections) = @_;
+	my($context, $lines, $sections) = @_;
 
-	my($line_number);
+	# Invert the incoming hashref, so the line numbers become keys.
+	# Pad line numbers on left with zeros to assist sorting.
+
+	my(%section_locations);
+
+	for (keys %$sections)
+	{
+		$section_locations{sprintf('%04i', $$sections{$_})} = $_;
+	}
+
+	#say map{"Process $context: $_ => $section_locations{$_}\n"} sort keys %section_locations;
+
 	my($new_name);
+	my($section_name);
 
 	my($section_id)		= 'A';
 	my($section_prefix)	= '###';
 
-	for my $section_name (sort keys %$sections) # Keys are line #s.
+	for my $line_number (sort keys %section_locations)
 	{
-		$line_number = $$sections{$section_name};
+		$section_name = $section_locations{$line_number};
 
-		#say "Section id: $section_id. Name: $section_name";
+		#say "Renumber. Line: $line_number. Section name: $section_name";
 
 		if ($$lines[$line_number] =~ /$section_prefix$section_name(.*)/)
 		{
-			$new_name = "$section_prefix $section_id: $section_name";
+			$new_name		= "$section_prefix $section_id: $section_name";
+			$$lines[$line_number]	= "$section_prefix$section_id: $section_name";
 
-			say "Line: $line_number. $section_prefix$section_id: $section_name";
+			say "Line: $line_number. $$lines[$line_number]";
 		}
 
 		$section_id++;
@@ -121,9 +136,9 @@ sub run
 
 	say "Error count after validation: $error_count";
 
-	# Number section names. This assume the original text has no ids.
+	# Generate section ids (A, B, ...). This assumes the original text has no ids.
 
-	number_sections(\@lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc);
+	generate_section_ids(\@lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc);
 
 	write_text($out_file_name, join("\n", @lines) . "\n") if ($error_count == 0);
 
