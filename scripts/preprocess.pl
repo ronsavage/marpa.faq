@@ -32,8 +32,8 @@ sub generate_section_ids
 		say "scalar keys sections_in_body: ", scalar %$sections_in_body;
 	}
 
-	renumber_sections('ToC', $lines, $sections_in_toc);
-	renumber_sections('Body', $lines, $sections_in_body);
+	renumber_sections('ToC', $lines, $option, $sections_in_toc);
+	renumber_sections('Body', $lines, $option, $sections_in_body);
 
 
 } # End of generate_section_ids.
@@ -42,7 +42,7 @@ sub generate_section_ids
 
 sub renumber_sections
 {
-	my($context, $lines, $sections) = @_;
+	my($context, $lines, $option, $sections) = @_;
 
 	# Invert the incoming hashref, so the line numbers become keys.
 	# Pad line numbers on left with zeros to assist sorting.
@@ -54,7 +54,7 @@ sub renumber_sections
 		$section_locations{sprintf('%04i', $$sections{$_})} = $_;
 	}
 
-	#say map{"Process $context: $_ => $section_locations{$_}\n"} sort keys %section_locations;
+	say map{"Process $context: $_ => $section_locations{$_}\n"} sort keys %section_locations if ($$option{report} == 6);
 
 	my($new_name);
 	my($section_name);
@@ -66,23 +66,14 @@ sub renumber_sections
 	{
 		$section_name = $section_locations{$line_number};
 
-		#say "Renumber. Line: $line_number. Section name: $section_name";
+		say "Renumber. Line: $line_number. Section name: $section_name" if ($$option{report} == 6);
 
-		# Check first if the section ids are insitu. This will happen after all of these take place:
-		# Run preprocess.pl to generate guide/faq.new
-		# cp guide/faq.new guide/faq.txt
-		# build.sh (optional)
-		# Re-run preprocess.pl
-		#
-		# Since the input to the 2nd run of preprocess.pl will contain sections including ids as prefixes.
-		# So, we have to filter out the ids if they are found.
-
-		if ($$lines[$line_number] =~ /^$section_prefix[A..Z]: $section_name/)
+		if ($$lines[$line_number] =~ /^$section_prefix$section_name/)
 		{
 			$new_name		= "$section_prefix $section_id: $section_name";
 			$$lines[$line_number]	= "$section_prefix$section_id: $section_name";
 
-			say "Line: $line_number. $$lines[$line_number]";
+			say "Line: $line_number. $$lines[$line_number]" if ($$option{report} == 6);
 		}
 
 		$section_id++;
@@ -209,7 +200,7 @@ sub validate
 	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
 	my($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
 	my($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
-	my($qr_section_name)	= qr/^###(.+)/;
+	my($qr_section_name)	= qr/^###([A-Z]: )?(.+)/; # Ignore section ids added by a previous run.
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
 	my($section_error)	= false;
@@ -295,7 +286,7 @@ sub validate
 				# ###About Marpa
 				# ###Resources
 
-				$section_name			= $1;
+				$section_name			= $+;
 				$sections_in_toc{$section_name}	= $i;
 
 				say "Testing line: $i. Found section '$section_name' in ToC. Text: $$lines[$i]" if ($$option{report} == 5);
@@ -347,7 +338,7 @@ sub validate
 				# ###About Marpa
 				# ###Resources
 
-				$section_name				= $1;
+				$section_name				= $+;
 				$sections_in_body{$section_name}	= $i;
 
 				say "Testing line: $i. Found section '$section_name' in Body. Text: $$lines[$i]" if ($$option{report} == 5);
@@ -515,6 +506,10 @@ Report lines containing link references.
 =item 5
 
 Report section names.
+
+=item 6
+
+Report renumbering of section names.
 
 =back
 
