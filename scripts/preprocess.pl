@@ -68,7 +68,16 @@ sub renumber_sections
 
 		#say "Renumber. Line: $line_number. Section name: $section_name";
 
-		if ($$lines[$line_number] =~ /$section_prefix$section_name(.*)/)
+		# Check first if the section ids are insitu. This will happen after all of these take place:
+		# Run preprocess.pl to generate guide/faq.new
+		# cp guide/faq.new guide/faq.txt
+		# build.sh (optional)
+		# Re-run preprocess.pl
+		#
+		# Since the input to the 2nd run of preprocess.pl will contain sections including ids as prefixes.
+		# So, we have to filter out the ids if they are found.
+
+		if ($$lines[$line_number] =~ /^$section_prefix[A..Z]: $section_name/)
 		{
 			$new_name		= "$section_prefix $section_id: $section_name";
 			$$lines[$line_number]	= "$section_prefix$section_id: $section_name";
