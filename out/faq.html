@@ -11,6 +11,8 @@
         <div class="offset2 span8">
 <h1>The Marpa FAQ</h1>
 
+<p>Version 2.01. 2023-10-19T16:02:25.</p>
+
 <h2>On-line docs</h2>
 
 <p><a href="http://savage.net.au/Perl-modules/html/marpa.faq/">The Marpa FAQ Intro</a></p>
@@ -25,13 +27,13 @@
 
 <h2>Table of Contents grouped by Topic</h2>
 
-<h3>About Marpa</h3>
+<h3>A: About Marpa</h3>
 
 <ul>
 <li><a href="#q102">102 What is Libmarpa?</a></li>
 </ul>
 
-<h3>Error Messages</h3>
+<h3>B: Error Messages</h3>
 
 <ul>
 <li><a href="#q1">1 Error: Parse failed. value() called when recognizer is not in tree mode</a></li>
@@ -42,7 +44,7 @@
 <li><a href="#q6">6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule</a></li>
 </ul>
 
-<h3>Problems</h3>
+<h3>C: Problems</h3>
 
 <ul>
 <li><a href="#q107">107 Why doesn't my ambiguous grammar return more than 1 parse tree?</a></li>
@@ -52,7 +54,7 @@
 <li><a href="#q149">149 The Libmarpa API and missing valuator steps</a></li>
 </ul>
 
-<h3>Tricks and techniques</h3>
+<h3>D: Tricks and Techniques</h3>
 
 <ul>
 <li><a href="#q108">108 How do I implement disambiguation logic?</a></li>
@@ -83,13 +85,12 @@
 <li><a href="#q147">147 How do I write the BNF when the first token is optional?</a></li>
 <li><a href="#q148">148 Is there a tabular view of the DSL?</a></li>
 <li><a href="#q151">151 How can I trace what the L0 parser is doing?</a></li>
-<li><a href="#q152">152 How do I define lexemes for identifiers where the 1st char is from a subset of the other 
-chars?</a></li>
+<li><a href="#q152">152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?</a></li>
 <li><a href="#q139">139 What is the difference between prediction events and pre-lexeme events?</a></li>
 <li><a href="#q140">140 Precedence, associativity, priority and rank</a></li>
 </ul>
 
-<h3>Details on how Marpa works</h3>
+<h3>E: How Marpa Works</h3>
 
 <ul>
 <li><a href="#q103">103 Is Marpa deterministic?</a></li>
@@ -99,7 +100,7 @@ chars?</a></li>
 <li><a href="#q138">138 Parse exhaustion</a></li>
 </ul>
 
-<h3>Links and resources</h3>
+<h3>F: Resources</h3>
 
 <ul>
 <li><a href="#q101">101 Where do I go for help?</a></li>
@@ -117,7 +118,7 @@ chars?</a></li>
 
 <h2>Answers grouped by Topic</h2>
 
-<h3>About Marpa</h3>
+<h3>A: About Marpa</h3>
 
 <p><a name = 'q102'></a></p>
 
@@ -132,7 +133,7 @@ It is low-level, but it is documented and can be installed and used separately.<
 
 <p><a href="https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html">Formal docs</a>.</p>
 
-<h2>Error Messages</h2>
+<h3>B: Error Messages</h3>
 
 <p><a name = 'q1'></a></p>
 
@@ -163,7 +164,7 @@ What you should do in this case is call
 first.
 ambiguity_metric()
 returns 1 for an unambiguous parse and 2+ for an ambiguous parse. Errors return something &lt;= 0.
-And ambiguity_metric() does <em>not</em> put you into forest mode. See also <a href='#q4'>Q4 Error message: Marpa exited...</a>.</p>
+And ambiguity_metric() does <em>not</em> put you into forest mode. See also <a href='#q4'>Q 4</a>.</p>
 
 <p>Less often, you want to both print out a message describing the parse's ambiguity,
 and then go on to deal with it in 'tree mode'.
@@ -187,7 +188,7 @@ checks that the return from ambiguity_metric() is > 1:</p>
     }
 </code></pre>
 
-<p>For more on ambiguity_metric(), see <a href='#q4'>Q4</a>.</p>
+<p>For more on ambiguity_metric(), see <a href='#q4'>Q 4</a>.</p>
 
 <p>But remember, to handle ambiguity, you don't need to use this code. You can take a completely different
 route with <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/ASF.pod">Marpa::R2::ASF</a>.</p>
@@ -275,7 +276,7 @@ and the second occurrance of X is on the RHS of the second rule. You can't do th
 
 <p>See also <a href='#q2'>Q 2</a>.</p>
 
-<h3>Problems</h3>
+<h3>C: Problems</h3>
 
 <p><a name = 'q107'></a></p>
 
@@ -418,7 +419,7 @@ immediately upon grammar creation.</p>
 
 <p>For details see <a href="https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ">this Marpa Google Group post</a>.</p>
 
-<h3>Tricks and techniques</h3>
+<h3>D: Tricks and Techniques</h3>
 
 <p><a name = 'q108'></a></p>
 
@@ -686,8 +687,7 @@ and the series beginning with <a href="https://jeffreykegler.github.io/Ocean-of-
 <p>This discussion assumes you're using Marpa::R2 V 3.0 or later. Prior to that, there was complications
 using the per-parse parameter to value(), and elsewhere.</p>
 
-<p>See also <a href='#q126'>Q126 Declaring an Action Class</a> and
-<a href='#q136'>Q136 How does Marpa pass parameters to action subs?</a>.</p>
+<p>See also <a href='#q126'>Q 126</a> and <a href='#q136'>Q 136</a>.</p>
 
 <p>References:</p>
 
@@ -725,7 +725,7 @@ $self -&gt; recce
 
 <h2>126 Declaring an Action Class</h2>
 
-<p>Firstly, see also <a href='#q136'>Q136 on how Marpa passes parameters to action subs</a>.</p>
+<p>Firstly, see also <a href='#q136'>Q 136</a>.</p>
 
 <p>Now, the previous item in this FAQ discussed at length various issues regarding how to cleanly generate data within action
 subs, and how to pass that data back to the main-line code which called Marpa.</p>
@@ -958,7 +958,7 @@ by the 'current' text. And the data structure Marpa passes to your action sub co
 that rule's subordinate rules, down to the lexeme level.</p>
 
 <p>With events attached to lexemes, you know the lexeme but not the rule. Of course you can interrogate Marpa
-about which rule is currently firing. For that, see <a href='#q18'>Q18</a>.</p>
+about which rule is currently firing. For that, see <a href='#q120'>Q 120</a>.</p>
 
 <p>This choice is yet one more way in which Marpa differs so hugely from traditional parsers.</p>
 
@@ -1148,7 +1148,7 @@ at the same location. This is a limitation in R2 which will be lifted in R3.</p>
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method">rule ranking</a>.</p></li>
 </ul>
 
-<h3>Details on how Marpa works</h3>
+<h3>E: How Marpa Works</h3>
 
 <p><a name = 'q103'></a></p>
 
@@ -1171,7 +1171,7 @@ by the lexer.</p>
 
 <p>Consequently, this means the ambiguous matched tokens must be all the same length.</p>
 
-<p>See also <a href='#q104'>Q 104</a> and <a href='#q105'>Q 105</a>.</p>
+<p>See also <a href='#q104'>Q 104</a>.</p>
 
 <p><a name = 'q104'></a></p>
 
@@ -1223,7 +1223,7 @@ which he invented independently of Elizabeth Scott.</p>
 <p><a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod">See</a>, and
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion">this setting</a>.</p>
 
-<h3>Links and resources</h3>
+<h3>F: Resources</h3>
 
 <p><a name = 'q101'></a></p>
 
@@ -1295,7 +1295,7 @@ and are highly recommended reading for (a) Getting Started, (b) Marpa's Advantag
 <li><p>A basic Earley's parser.</p></li>
 <li><p>The Aycock &amp; Horspool grammar rewrite, to fix issues with nulls.</p></li>
 <li><p>Joop Leo's improvement.</p></li>
-<li><p><a href='#q137'>Elizabeth Scott's SPPF</a>, or some other binarization of the output.</p></li>
+<li><p><a href='#q137'>Q 137</a> re Elizabeth Scott's SPPF, or some other binarization of the output.</p></li>
 </ul>
 
 <p>Marpa was not actually developed in this order --
