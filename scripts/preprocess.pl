@@ -241,7 +241,7 @@ sub validate
 				$text		= $2;
 				$link_number	= $3;
 
-				say "Line: $i. Link name: [$q_number $text](#q$link_number)" if ($$option{report} == 4);
+				say "Line: $i. Link name: [$q_number $text](#q$link_number)" if ($$option{report} == 2);
 
 				# Stockpile info for the error reporter.
 
@@ -317,13 +317,10 @@ sub validate
 
 			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g);
 
-			if ($#list_of_refs == 1)
-			{
-				say "Multiple links. i: $i. $$lines[$i]" if ($$option{report} == 4);
-			}
-
 			if ($#list_of_refs >= 0)
 			{
+				say "Multiple links. i: $i. $$lines[$i]" if ($$option{report} == 4);
+
 				$link_reference				= $1;
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
@@ -493,7 +490,7 @@ Report Table of Contents stats and lines containing multiple cross-references.
 
 =item 2
 
-Not used.
+Report lines containing link names.
 
 =item 3
 
