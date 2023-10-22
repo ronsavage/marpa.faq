@@ -54,7 +54,7 @@ sub renumber_sections
 		$section_locations{sprintf('%04i', $$sections{$_})} = $_;
 	}
 
-	say map{"Process $context: $_ => $section_locations{$_}\n"} sort keys %section_locations if ($$option{report} == 6);
+	#say map{"Process $context: $_ => $section_locations{$_}\n"} sort keys %section_locations if ($$option{report} == 6);
 
 	my($new_name);
 	my($section_name);
@@ -66,14 +66,14 @@ sub renumber_sections
 	{
 		$section_name = $section_locations{$line_number};
 
-		say "Renumber. Line: $line_number. Section name: $section_name" if ($$option{report} == 6);
+		say "$context: Renumbering. Line: $line_number. $section_id: $section_name" if ($$option{report} == 6);
 
 		if ($$lines[$line_number] =~ /^$section_prefix$section_name/)
 		{
 			$new_name		= "$section_prefix $section_id: $section_name";
 			$$lines[$line_number]	= "$section_prefix$section_id: $section_name";
 
-			say "Line: $line_number. $$lines[$line_number]" if ($$option{report} == 6);
+			say "$context: Renumbered.  Line: $line_number. $$lines[$line_number]" if ($$option{report} == 6);
 		}
 
 		$section_id++;
