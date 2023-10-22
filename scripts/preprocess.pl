@@ -16,6 +16,10 @@ use Syntax::Keyword::Match;
 
 use Time::Piece;
 
+our($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
+our($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
+our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
+
 # ------------------------------------------------
 
 sub generate_section_ids
@@ -136,7 +140,7 @@ sub run
 
 	say "Error count after validation: $error_count";
 
-	# Generate section ids (A, B, ...). This assumes the original text has no ids.
+	# Generate section ids (A, B, ...). Original text may have or not have ids.
 
 	generate_section_ids(\@lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc);
 
@@ -197,9 +201,6 @@ sub validate
 	$errors{6}		= 'Section name in ToC not present in Body';
 	$errors{7}		= 'Number of sections in ToC not equal to number in Body';
 	$error_count		= 0;
-	my($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
-	my($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
-	my($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
 	my($qr_section_name)	= qr/^###([A-Z]: )?(.+)/; # Ignore section ids added by a previous run.
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
