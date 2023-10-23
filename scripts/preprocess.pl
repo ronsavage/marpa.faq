@@ -22,9 +22,9 @@ our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
 
 # ------------------------------------------------
 
-sub generate_section_ids
+sub generate_ids
 {
-	my($lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc) = @_;
+	my($lines, $link2question, $offsets, $option, $question2link, $sections_in_body, $sections_in_toc) = @_;
 
 	my($debug);
 
@@ -36,29 +36,41 @@ sub generate_section_ids
 		say "scalar keys sections_in_body: ", scalar %$sections_in_body;
 	}
 
-	renumber_sections('ToC', $lines, $option, $sections_in_toc);
-	renumber_sections('Body', $lines, $option, $sections_in_body);
+	my(%section_locations);
 
+	$section_locations{toc}		= {};
+	$section_locations{body}	= {};
 
-} # End of generate_section_ids.
+	renumber_sections('ToC', $lines, $option, $section_locations{toc}, $sections_in_toc);
+	renumber_sections('Body', $lines, $option, $section_locations{body} ,$sections_in_body);
+
+	renumber_questions($lines, $offsets, \%section_locations);
+
+} # End of generate_ids.
+
+# ------------------------------------------------
+
+sub renumber_questions
+{
+	my($lines, $offsets, $section_locations) = @_;
+
+} # End of renumber_questions.
 
 # ------------------------------------------------
 
 sub renumber_sections
 {
-	my($context, $lines, $option, $sections) = @_;
+	my($context, $lines, $option, $section_locations, $sections) = @_;
 
-	# Invert the incoming hashref, so the line numbers become keys.
+	# Invert the hashref %$sections so the line numbers become keys.
 	# Pad line numbers on left with zeros to assist sorting.
-
-	my(%section_locations);
 
 	for (keys %$sections)
 	{
-		$section_locations{sprintf('%04i', $$sections{$_})} = $_;
+		$$section_locations{sprintf('%04i', $$sections{$_})} = $_;
 	}
 
-	#say map{"Process $context: $_ => $section_locations{$_}\n"} sort keys %section_locations if ($$option{report} == 6);
+	#say map{"Process $context: $_ => $$section_locations{$_}\n"} sort keys %section_locations if ($$option{report} == 6);
 
 	my($new_name);
 	my($section_name);
@@ -66,9 +78,9 @@ sub renumber_sections
 	my($section_id)		= 'A';
 	my($section_prefix)	= '###';
 
-	for my $line_number (sort keys %section_locations)
+	for my $line_number (sort keys %$section_locations)
 	{
-		$section_name = $section_locations{$line_number};
+		$section_name = $$section_locations{$line_number};
 
 		say "$context: Renumbering. Line: $line_number. $section_id: $section_name" if ($$option{report} == 6);
 
@@ -136,13 +148,14 @@ sub run
 
 	# Validate ToC and Body.
 
-	my($error_count, $link2question, $question2link, $sections_in_body, $sections_in_toc) = validate(\@lines, $option);
+	my($error_count, $link2question, $offsets, $question2link, $sections_in_body, $sections_in_toc) = validate(\@lines, $option);
 
 	say "Error count after validation: $error_count";
 
 	# Generate section ids (A, B, ...). Original text may have or not have ids.
+	# Then, generate question ids (#q\d+).
 
-	generate_section_ids(\@lines, $link2question, $option, $question2link, $sections_in_body, $sections_in_toc);
+	generate_ids(\@lines, $link2question, $offsets, $option, $question2link, $sections_in_body, $sections_in_toc);
 
 	write_text($out_file_name, join("\n", @lines) . "\n") if ($error_count == 0);
 
@@ -216,13 +229,13 @@ sub validate
 		{
 			$offsets{start_of_toc} = $i;
 
-			say "Start of TOC at line $i" if ($$option{report} == 1);
+			say "Start of TOC. Line $i" if ($$option{report} == 1);
 		}
 		elsif ($$lines[$i] eq '##Answers grouped by Topic')
 		{
 			$offsets{end_of_toc} = $i;
 
-			say "End of TOC @ at line $i" if ($$option{report} == 1);
+			say "End of TOC.   Line $i" if ($$option{report} == 1);
 		}
 		
 		# Stockpile:
@@ -418,7 +431,7 @@ sub validate
 		}
 	}
 
-	return ($error_count, \%link2question, \%question2link, \%sections_in_body, \%sections_in_toc);
+	return ($error_count, \%link2question, \%offsets, \%question2link, \%sections_in_body, \%sections_in_toc);
 
 } # End of validate.
 
