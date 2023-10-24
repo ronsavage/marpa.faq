@@ -56,10 +56,10 @@ sub renumber_questions
 
 	# Scan ToC looking for questions names.
 
-	for my $i (sort keys %{$$section_locations{toc} })
-	{
-		say "Scanning ToC. Found $$lines[$i]" if ($$option{report} == 7);
-	}
+	my($toc_line_numbers)	= [sort keys %{$$section_locations{toc}];
+	my($body_line_numbers)	= [sort keys %{$$section_locations{body}];
+
+	say "Scanning ToC. Found $$lines[$i]" if ($$option{report} == 7) for my $i (0 .. $#$toc_line_numbers);
 
 } # End of renumber_questions.
 
