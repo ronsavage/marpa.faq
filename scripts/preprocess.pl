@@ -44,7 +44,7 @@ sub generate_ids
 	renumber_sections('ToC', $lines, $option, $section_locations{toc}, $sections_in_toc);
 	renumber_sections('Body', $lines, $option, $section_locations{body} ,$sections_in_body);
 
-	renumber_questions($lines, $offsets, \%section_locations);
+	renumber_questions($lines, $offsets, $option, \%section_locations);
 
 } # End of generate_ids.
 
@@ -52,7 +52,14 @@ sub generate_ids
 
 sub renumber_questions
 {
-	my($lines, $offsets, $section_locations) = @_;
+	my($lines, $offsets, $option, $section_locations) = @_;
+
+	# Scan ToC looking for questions names.
+
+	for my $i (sort keys %{$$section_locations{toc} })
+	{
+		say "Scanning ToC. Found $$lines[$i]" if ($$option{report} == 7);
+	}
 
 } # End of renumber_questions.
 
@@ -521,6 +528,10 @@ Report section names.
 =item 6
 
 Report renumbering of section names.
+
+= item 7
+
+Report lines in ToC containing question names (after renumbering sections) .
 
 =back
 
