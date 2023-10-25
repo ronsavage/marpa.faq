@@ -16,9 +16,26 @@ use Syntax::Keyword::Match;
 
 use Time::Piece;
 
-our($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
-our($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'>([^<]+)</;
-our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
+# Sample link names:
+# o * [102 What is Libmarpa?](#q102)
+#	or
+# o * [155 Where can I find a timeline (history) of parsing?](#q155)
+
+# Sample link references:
+# o See also <a href='#q6'>Q 6</a>.
+#	or
+# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
+
+# Sample link target definitions (2 successive lines):
+# o <a name = 'q102'></a>
+# o 102 What is Libmarpa?
+#	or
+# o <a name = 'q155'></a>
+# o 155 Where can I find a timeline (history) of parsing?
+
+our($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;	# Sets $1, $2 and $3.
+our($qr_link_reference)	= qr/(.+'#q)(\d+)('>Q )(\d+)</;		# Sets $1, $2, $3 and $4.
+our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;	# Sets $1.
 
 # ------------------------------------------------
 
@@ -80,8 +97,13 @@ sub renumber_questions
 	{
 		#say "Scanning $$lines[$i]" if ($$option{report} == 7);
 
-		if ($$lines[$i] =~ $qr_link_name)
+		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2 and $3.
 		{
+			# Sample link names:
+			# o * [102 What is Libmarpa?](#q102)
+			#	or
+			# o * [155 Where can I find a timeline (history) of parsing?](#q155)
+
 			$question_text		= $3;
 			$question_map{$3}	= ++$question_count;
 
@@ -97,19 +119,13 @@ sub renumber_questions
 		say;
 	}
 
-	my($link_reference);
+	# Sample link references:
+	# o See also <a href='#q6'>Q 6</a>.
+	# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
 	for my $i ($$body_line_numbers[0] .. $$body_line_numbers[$#$body_line_numbers])
 	{
-		while ($$lines[$i] =~ m/$qr_link_reference/g)
-		{
-			$link_reference	= $1;
-			$question_count	= $question_map{$link_reference};
-
-			say "$1 => $2 => $link_length, Line $i: $$lines[$i]";
-
-#			say "Body link ref: $link_reference => $question_count" if ($$option{report} == 8);
-		}
+#		$$lines[$i] =~ s/$qr_link_reference/$question_map{$1}/g; # Sets $1, $2, $3 and $4.
 	}
 
 } # End of renumber_questions.
@@ -183,7 +199,7 @@ sub report_error
 	{
 		case(1) {say "$msg. Other link: $$question2link{$$error_parameters{text} }"}
 		case(2) {say "$msg. Other link: $$link2question{$$error_parameters{text} }"}
-		case(3), case(4), case(5), case(6) {say $msg}
+		case(3), case(4), case(5), case(6), case(7), case(8) {say $msg}
 	}
 
 } # End of report_error.
@@ -232,7 +248,7 @@ sub update_version
 
 	for my $i (0 .. $#$lines)
 	{
-		if ($$lines[$i] =~ $qr_version_number)
+		if ($$lines[$i] =~ $qr_version_number) # Sets $1.
 		{
 			$new_version_number	= $$option{version} || $new_version_number || $1;
 			$$lines[$i]		= "Version $new_version_number. " . $now -> datetime . '.';
@@ -257,7 +273,7 @@ sub validate
 	# %sections_in_toc(key, value)		=> (name, line #).
 
 	my(%errors, $error_count, %error_parameters);
-	my($link_number, $link_reference, $link_target, %link2question, @list_of_refs);
+	my($link_number, $link_reference, $link_target, $link_text, %link2question, @list_of_refs);
 	my(%offsets);
 	my($q_number, %question2link);
 	my(%references);
@@ -271,8 +287,9 @@ sub validate
 	$errors{5}		= 'Section name in Body not present in ToC';
 	$errors{6}		= 'Section name in ToC not present in Body';
 	$errors{7}		= 'Number of sections in ToC not equal to number in Body';
+	$errors{8}		= 'Link reference mismatch';
 	$error_count		= 0;
-	my($qr_section_name)	= qr/^###([A-Z]: )?(.+)/; # Ignore section ids added by a previous run.
+	my($qr_section_name)	= qr/^###([A-Z]: )?(.+)/; # Ignore section ids added by a previous run. Sets $1.
 	$offsets{start_of_toc}	= 99999;
 	$offsets{end_of_toc}	= 99999;
 	my($section_error)	= false;
@@ -302,12 +319,12 @@ sub validate
 
 		if (($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
 		{
-			if ($$lines[$i] =~ $qr_link_name)
+			if ($$lines[$i] =~ $qr_link_name) # Sets $1, $2 and $3.
 			{
 				# Sample link names:
-				# * [102 What is Libmarpa?](#q102)
-				# or
-				# * [155 Where can I find a timeline (history) of parsing?](#q155)
+				# o * [102 What is Libmarpa?](#q102)
+				#	or
+				# o * [155 Where can I find a timeline (history) of parsing?](#q155)
 	
 				$q_number	= $1;
 				$text		= $2;
@@ -352,11 +369,11 @@ sub validate
 				$question2link{$text}		= $link_number;
 
 			}
-			elsif ($$lines[$i] =~ $qr_section_name)
+			elsif ($$lines[$i] =~ $qr_section_name) # Sets $1.
 			{
 				# Sample section names:
-				# ###About Marpa
-				# ###Resources
+				# o ###About Marpa
+				# o ###Resources
 
 				$section_name			= $+;
 				$sections_in_toc{$section_name}	= $i;
@@ -366,14 +383,16 @@ sub validate
 		}
 		elsif ($i > $offsets{end_of_toc})
 		{
-			if ($$lines[$i] =~ $qr_link_target)
+			# Stockpile stuff after the ToC, i.e. while within the Body.
+
+			if ($$lines[$i] =~ $qr_link_target) # Sets $1.
 			{
-				# Sample link target definitions:
-				# <a name = 'q102'></a>
-				# 102 What is Libmarpa?
-				# or
-				# <a name = 'q155'></a>
-				# 155 Where can I find a timeline (history) of parsing?
+				# Sample link target definitions (2 successive lines):
+				# o <a name = 'q102'></a>
+				# o 102 What is Libmarpa?
+				#	or
+				# o <a name = 'q155'></a>
+				# o 155 Where can I find a timeline (history) of parsing?
 
 				$link_target			= $1;
 				$error_parameters{link_target}	= $link_target;
@@ -384,16 +403,29 @@ sub validate
 			}
 
 			# Sample link references:
-			# See also <a href='#q6'>Q 6</a>.
-			# See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
+			# o See also <a href='#q6'>Q 6</a>.
+			# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
-			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g);
+			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g); # Sets $1, $2, $3 and $4.
 
 			if ($#list_of_refs >= 0)
 			{
 				say "Multiple links. i: $i. $$lines[$i]" if ($$option{report} == 4);
 
-				$link_reference				= $1;
+				$link_reference	= $2;
+				$link_text	= $4;
+
+				say "==> 2: $link_reference. 4: $link_text. Line: $$lines[$i]";
+
+				if ($link_reference ne $link_text)
+				{
+					$error_count++;
+
+					$error_parameters{text} = "$link_reference ne $link_target";
+
+					report_error(8, \%errors, \%error_parameters, \%link2question, \%question2link);
+				}
+
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
 
@@ -401,11 +433,11 @@ sub validate
 				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $$lines[$i]" if ($$option{report} == 4);
 			}
 
-			if ($$lines[$i] =~ $qr_section_name)
+			if ($$lines[$i] =~ $qr_section_name) # Sets $1.
 			{
 				# Sample section names:
-				# ###About Marpa
-				# ###Resources
+				# o ###About Marpa
+				# o ###Resources
 
 				$section_name				= $+;
 				$sections_in_body{$section_name}	= $i;
