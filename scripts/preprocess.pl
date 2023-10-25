@@ -34,7 +34,7 @@ use Time::Piece;
 # o 155 Where can I find a timeline (history) of parsing?
 
 our($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;	# Sets $1, $2 and $3.
-our($qr_link_reference)	= qr/(.+'#q)(\d+)('>Q )(\d+)</;		# Sets $1, $2, $3 and $4.
+our($qr_link_reference)	= qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;	# Sets $1, $2, $3, $4 and $5.
 our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;	# Sets $1.
 
 # ------------------------------------------------
@@ -123,9 +123,17 @@ sub renumber_questions
 	# o See also <a href='#q6'>Q 6</a>.
 	# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
+	my($save_line);
+
 	for my $i ($$body_line_numbers[0] .. $$body_line_numbers[$#$body_line_numbers])
 	{
-#		$$lines[$i] =~ s/$qr_link_reference/$question_map{$1}/g; # Sets $1, $2, $3 and $4.
+		$save_line	= $$lines[$i];
+		$$lines[$i]	=~ s/$qr_link_reference/$1$question_map{$2}$3$question_map{$4}$5/g; # Sets $1, $2, $3, $4 and $5.
+
+		if ($$lines[$i] ne $save_line)
+		{
+			say "Was: $save_line\nIs:  $$lines[$i]" if ($$option{report} == 8);
+		}
 	}
 
 } # End of renumber_questions.
