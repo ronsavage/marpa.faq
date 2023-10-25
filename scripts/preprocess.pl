@@ -17,7 +17,7 @@ use Syntax::Keyword::Match;
 use Time::Piece;
 
 our($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;
-our($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'/;
+our($qr_link_reference)	= qr/href\s*=\s*'#q(\d+)'>([^<]+)</;
 our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;
 
 # ------------------------------------------------
@@ -55,11 +55,62 @@ sub renumber_questions
 	my($lines, $offsets, $option, $section_locations) = @_;
 
 	# Scan ToC looking for questions names.
+	# Also, put flags in these array refs to limit scanning of questions per section.
 
-	my($toc_line_numbers)	= [sort keys %{$$section_locations{toc}];
-	my($body_line_numbers)	= [sort keys %{$$section_locations{body}];
+	my($toc_line_numbers)				= [sort keys %{$$section_locations{toc} }];
+	my($body_line_numbers)				= [sort keys %{$$section_locations{body} }];
+	$$toc_line_numbers[$#$toc_line_numbers + 1]	= $$body_line_numbers[0];
+	$$body_line_numbers[$#$body_line_numbers + 1]	= $#$lines;
 
-	say "Scanning ToC. Found $$lines[$i]" if ($$option{report} == 7) for my $i (0 .. $#$toc_line_numbers);
+	# Report start of ToC sections, plus just past.
+
+	if ($$option{report} == 7)
+	{
+		say "Scanning ToC.  Found $$toc_line_numbers[$_]: $$lines[$$toc_line_numbers[$_] ]" for (0 .. $#$toc_line_numbers);
+		say;
+	}
+
+	# %question_map{old q #} = new q #.
+
+	my(%question_map, $question_text);
+
+	my($question_count) = 0;
+
+	for my $i ($$toc_line_numbers[0] .. $$toc_line_numbers[$#$toc_line_numbers])
+	{
+		#say "Scanning $$lines[$i]" if ($$option{report} == 7);
+
+		if ($$lines[$i] =~ $qr_link_name)
+		{
+			$question_text		= $3;
+			$question_map{$3}	= ++$question_count;
+
+			say "ToC Question old #: $question_text. New #: $question_count" if ($$option{report} == 7);
+		}
+	}
+
+	# Report start of Body sections, plus last line.
+
+	if ($$option{report} == 8)
+	{
+		say "Scanning Body. Found $$body_line_numbers[$_]: $$lines[$$body_line_numbers[$_] ]" for (0 .. $#$body_line_numbers);
+		say;
+	}
+
+	my($link_reference);
+
+	for my $i ($$body_line_numbers[0] .. $$body_line_numbers[$#$body_line_numbers])
+	{
+		while ($$lines[$i] =~ m/$qr_link_reference/g)
+		{
+			$link_reference	= $1;
+			$question_count	= $question_map{$link_reference};
+
+			say "$1 => $2 => $link_length, Line $i: $$lines[$i]";
+
+#			say "Body link ref: $link_reference => $question_count" if ($$option{report} == 8);
+		}
+	}
 
 } # End of renumber_questions.
 
@@ -532,6 +583,10 @@ Report renumbering of section names.
 = item 7
 
 Report lines in ToC containing question names (after renumbering sections) .
+
+= item 8
+
+Report lines in Body containing question lines and references (after renumbering sections) .
 
 =back
 
