@@ -33,7 +33,7 @@ use Time::Piece;
 # o <a name = 'q155'></a>
 # o 155 Where can I find a timeline (history) of parsing?
 
-our($qr_link_name)	= qr/\[(\d+)\s+([^]]+)\]\(#q(\d+)\)/;	# Sets $1, $2 and $3.
+our($qr_link_name)	= qr/(.+)(\d+)\s+(.+#q)(\d+)(.+)/;	# Sets $1, $2, $3, $4 and $5.
 our($qr_link_reference)	= qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;	# Sets $1, $2, $3, $4 and $5.
 our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;	# Sets $1.
 
@@ -89,7 +89,7 @@ sub renumber_questions
 
 	# %question_map{old q #} = new q #.
 
-	my(%question_map, $question_text);
+	my(%question_map, $question_number);
 
 	my($question_count) = 0;
 
@@ -97,19 +97,37 @@ sub renumber_questions
 	{
 		#say "Scanning $$lines[$i]" if ($$option{report} == 7);
 
-		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2 and $3.
+		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4 and $5.
 		{
 			# Sample link names:
 			# o * [102 What is Libmarpa?](#q102)
 			#	or
 			# o * [155 Where can I find a timeline (history) of parsing?](#q155)
 
-			$question_text		= $3;
+			$question_number	= $4;
 			$question_map{$3}	= ++$question_count;
 
-			say "ToC Question old #: $question_text. New #: $question_count" if ($$option{report} == 7);
+			say "ToC Question old #: $question_number. New #: $question_count" if ($$option{report} == 7);
 		}
 	}
+
+	my($save_line);
+
+	for my $i ($$toc_line_numbers[0] .. $$toc_line_numbers[$#$toc_line_numbers])
+	{
+		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4 and $5.
+		{
+			$save_line	= $$lines[$i];
+			$$lines[$i]	=~ s/$qr_link_name/$1$question_map{$2} $3$question_map{$4}$5/; # Sets $1, $2, $3, $4 and $5.
+
+			if ($$lines[$i] ne $save_line)
+			{
+				say "Was: $save_line\nIs:  $$lines[$i]" if ($$option{report} == 8);
+			}
+		}
+	}
+
+	return;
 
 	# Report start of Body sections, plus last line.
 
@@ -122,8 +140,6 @@ sub renumber_questions
 	# Sample link references:
 	# o See also <a href='#q6'>Q 6</a>.
 	# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
-
-	my($save_line);
 
 	for my $i ($$body_line_numbers[0] .. $$body_line_numbers[$#$body_line_numbers])
 	{
@@ -327,16 +343,16 @@ sub validate
 
 		if (($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
 		{
-			if ($$lines[$i] =~ $qr_link_name) # Sets $1, $2 and $3.
+			if ($$lines[$i] =~ $qr_link_name) # Sets $1, $2, $3, $4, $5 and $6
 			{
 				# Sample link names:
 				# o * [102 What is Libmarpa?](#q102)
 				#	or
 				# o * [155 Where can I find a timeline (history) of parsing?](#q155)
 	
-				$q_number	= $1;
-				$text		= $2;
-				$link_number	= $3;
+				$q_number	= $2;
+				$text		= $4;
+				$link_number	= $5;
 
 				say "Line: $i. Link name: [$q_number $text](#q$link_number)" if ($$option{report} == 2);
 
@@ -414,7 +430,7 @@ sub validate
 			# o See also <a href='#q6'>Q 6</a>.
 			# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
-			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g); # Sets $1, $2, $3 and $4.
+			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g); # Sets $1, $2, $3, $4 and $5.
 
 			if ($#list_of_refs >= 0)
 			{
