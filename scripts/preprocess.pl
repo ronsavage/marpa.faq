@@ -33,7 +33,7 @@ use Time::Piece;
 # o <a name = 'q155'></a>
 # o 155 Where can I find a timeline (history) of parsing?
 
-our($qr_link_name)	= qr/(.+)(\d+)\s+(.+#q)(\d+)(.+)/;	# Sets $1, $2, $3, $4 and $5.
+our($qr_link_name)	= qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;	# Sets $1, $2, $3, $4 and $5.
 our($qr_link_reference)	= qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;	# Sets $1, $2, $3, $4 and $5.
 our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;	# Sets $1.
 
@@ -87,6 +87,7 @@ sub renumber_questions
 		say;
 	}
 
+	# Stockpile map of old question #s to new ones.
 	# %question_map{old q #} = new q #.
 
 	my(%question_map, $question_number);
@@ -97,6 +98,8 @@ sub renumber_questions
 	{
 		#say "Scanning $$lines[$i]" if ($$option{report} == 7);
 
+		# $qr_link_name = qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;
+
 		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4 and $5.
 		{
 			# Sample link names:
@@ -104,8 +107,8 @@ sub renumber_questions
 			#	or
 			# o * [155 Where can I find a timeline (history) of parsing?](#q155)
 
-			$question_number	= $4;
-			$question_map{$3}	= ++$question_count;
+			$question_number		= $4;
+			$question_map{$question_number}	= ++$question_count;
 
 			say "ToC Question old #: $question_number. New #: $question_count" if ($$option{report} == 7);
 		}
@@ -115,19 +118,19 @@ sub renumber_questions
 
 	for my $i ($$toc_line_numbers[0] .. $$toc_line_numbers[$#$toc_line_numbers])
 	{
+		# $qr_link_name = qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;
+
 		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4 and $5.
 		{
 			$save_line	= $$lines[$i];
-			$$lines[$i]	=~ s/$qr_link_name/$1$question_map{$2} $3$question_map{$4}$5/; # Sets $1, $2, $3, $4 and $5.
+			$$lines[$i]	=~ s/$qr_link_name/$1$question_map{$2} $3$question_map{$4}$5/;
 
 			if ($$lines[$i] ne $save_line)
 			{
-				say "Was: $save_line\nIs:  $$lines[$i]" if ($$option{report} == 8);
+				say "1 Was: $save_line\n  Is:  $$lines[$i]" if ($$option{report} == 8);
 			}
 		}
 	}
-
-	return;
 
 	# Report start of Body sections, plus last line.
 
@@ -148,7 +151,7 @@ sub renumber_questions
 
 		if ($$lines[$i] ne $save_line)
 		{
-			say "Was: $save_line\nIs:  $$lines[$i]" if ($$option{report} == 8);
+			say "2 Was: $save_line\n  Is:  $$lines[$i]" if ($$option{report} == 8);
 		}
 	}
 
@@ -343,7 +346,9 @@ sub validate
 
 		if (($i >= $offsets{start_of_toc}) && ($i <= $offsets{end_of_toc}) )
 		{
-			if ($$lines[$i] =~ $qr_link_name) # Sets $1, $2, $3, $4, $5 and $6
+			# $qr_link_name = qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;
+
+			if ($$lines[$i] =~ $qr_link_name) # Sets $1, $2, $3, $4 and $5.
 			{
 				# Sample link names:
 				# o * [102 What is Libmarpa?](#q102)
@@ -351,8 +356,8 @@ sub validate
 				# o * [155 Where can I find a timeline (history) of parsing?](#q155)
 	
 				$q_number	= $2;
-				$text		= $4;
-				$link_number	= $5;
+				$text		= $3;
+				$link_number	= $4;
 
 				say "Line: $i. Link name: [$q_number $text](#q$link_number)" if ($$option{report} == 2);
 
@@ -388,6 +393,8 @@ sub validate
 
 					report_error(3, \%errors, \%error_parameters, \%link2question, \%question2link);
 				}
+
+				say "Saving link_number: $link_number => text: $text" if ($$option{report} == 4);
 
 				$link2question{$link_number}	= $text;
 				$question2link{$text}		= $link_number;
@@ -428,18 +435,36 @@ sub validate
 
 			# Sample link references:
 			# o See also <a href='#q6'>Q 6</a>.
-			# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
+			# o See also <a href='#q108'>Q 108</a> and <a href='#q109'>Q 109</a>.
+
+			# 0: "See also <a href='#q"
+			# 1: 108
+			# 2: "'>Q "
+			# 3: 108
+			# 4: "<"
+			# 5: "/a> and <a href='#q"
+			# 6: 109
+			# 7: "'>Q "
+			# 8: 109
+			# 9: "<"
+			# Multiple links. i: 246. See also <a href='#q108'>Q 108</a> and <a href='#q109'>Q 109</a>.
+
+			# $qr_link_reference) = qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;
 
 			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g); # Sets $1, $2, $3, $4 and $5.
 
-			if ($#list_of_refs >= 0)
+			for (my $ref = 1; $ref < $#list_of_refs; $ref += 5)
 			{
-				say "Multiple links. i: $i. $$lines[$i]" if ($$option{report} == 4);
+				$link_reference	= $list_of_refs[$ref];
+				$link_text	= $list_of_refs[$ref + 2];
 
-				$link_reference	= $2;
-				$link_text	= $4;
-
-				say "==> 2: $link_reference. 4: $link_text. Line: $$lines[$i]";
+				if ($$option{report} == 4)
+				{
+					say '-------------------------';
+					say "Line: $i. token $ref: $link_reference. token @{[$ref + 2]}: $link_text. Line: $$lines[$i]";
+					say "ref: $ref. " . Dumper(@list_of_refs);
+					say '-------------------------';
+				}
 
 				if ($link_reference ne $link_text)
 				{
@@ -452,9 +477,6 @@ sub validate
 
 				$error_parameters{link_reference}	= $link_reference;
 				$references{$link_reference}		= $i;
-
-				say "Testing line: $i. Text: $$lines[$i]" if ($$option{report} == 4);
-				say "(ref.) Line: $i. Ref: <$link_reference>. Text: $$lines[$i]" if ($$option{report} == 4);
 			}
 
 			if ($$lines[$i] =~ $qr_section_name) # Sets $1.
@@ -503,7 +525,7 @@ sub validate
 		{
 			$error_count++;
 
-			say "bad  link_reference: $link_reference" if ($$option{report} == 4);
+			say "bad link_reference: $link_reference" if ($$option{report} == 4);
 
 			report_error(4, \%errors, \%error_parameters, \%link2question, \%question2link);
 		}
@@ -636,13 +658,13 @@ Report section names.
 
 Report renumbering of section names.
 
-= item 7
+=item 7
 
-Report lines in ToC containing question names (after renumbering sections) .
+Report lines in ToC containing question names (after renumbering sections).
 
-= item 8
+=item 8
 
-Report lines in Body containing question lines and references (after renumbering sections) .
+Report lines in Body containing question lines and references (after renumbering sections).
 
 =back
 
