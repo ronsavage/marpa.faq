@@ -33,10 +33,10 @@ use Time::Piece;
 # o <a name = 'q155'></a>
 # o 155 Where can I find a timeline (history) of parsing?
 
-our($qr_link_name)	= qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;	# Sets $1, $2, $3, $4 and $5.
-our($qr_link_reference)	= qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;	# Sets $1, $2, $3, $4 and $5.
-our($qr_link_target)	= qr/a\s+name\s*=\s*'q(\d+)'><\/a>/;	# Sets $1.
-
+our($qr_link_name)	= qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;	# Sets $1, $2, $3, $4, $5.
+our($qr_link_reference)	= qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;	# Sets $1, $2, $3, $4, $5.
+our($qr_link_target_1)	= qr/(<a\s+name\s*=\s*'q)(\d+)(.+)/;	# Sets $1, $2, $3.
+our($qr_link_target_2)	= qr/^(\d+)(.+)/;			# Sets $1, $2.
 # ------------------------------------------------
 
 sub generate_ids
@@ -100,7 +100,7 @@ sub renumber_questions
 
 		# $qr_link_name = qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;
 
-		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4 and $5.
+		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4, $5.
 		{
 			# Sample link names:
 			# o * [102 What is Libmarpa?](#q102)
@@ -114,13 +114,15 @@ sub renumber_questions
 		}
 	}
 
+	# Scan ToC for links.
+
 	my($save_line);
 
 	for my $i ($$toc_line_numbers[0] .. $$toc_line_numbers[$#$toc_line_numbers])
 	{
 		# $qr_link_name = qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;
 
-		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4 and $5.
+		if ($$lines[$i] =~ $qr_link_name)  # Sets $1, $2, $3, $4, $5.
 		{
 			$save_line	= $$lines[$i];
 			$$lines[$i]	=~ s/$qr_link_name/$1$question_map{$2} $3$question_map{$4}$5/;
@@ -140,19 +142,76 @@ sub renumber_questions
 		say;
 	}
 
-	# Sample link references:
-	# o See also <a href='#q6'>Q 6</a>.
-	# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
+	# Scan Body for links.
+
+	my($link_target_1a, $link_target_1b, $link_target_1c, $link_target_2a, $link_target_2b);
+
+	#say '----------------------------';
+	#say Dumper('question_map: ', %question_map);
+	#say '----------------------------';
+	#say "question_map: 137 => $question_map{137}";
+	#say '----------------------------';
 
 	for my $i ($$body_line_numbers[0] .. $$body_line_numbers[$#$body_line_numbers])
 	{
+		# Sample link references:
+		# o See also <a href='#q6'>Q 6</a>.
+		# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
+
+		# $qr_link_reference = qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;	# Sets $1, $2, $3, $4, $5.
+
 		$save_line	= $$lines[$i];
-		$$lines[$i]	=~ s/$qr_link_reference/$1$question_map{$2}$3$question_map{$4}$5/g; # Sets $1, $2, $3, $4 and $5.
+		$$lines[$i]	=~ s/$qr_link_reference/$1$question_map{$2}$3$question_map{$4}$5/g;
 
 		if ($$lines[$i] ne $save_line)
 		{
 			say "2 Was: $save_line\n  Is:  $$lines[$i]" if ($$option{report} == 8);
 		}
+
+		# Sample link target definitions (2 successive lines):
+		# o <a name = 'q102'></a>
+		# o 102 What is Libmarpa?
+		#	or
+		# o <a name = 'q155'></a>
+		# o 155 Where can I find a timeline (history) of parsing?
+
+		# $qr_link_target_1) = qr/(.+)(\d+)(.+)/;	# Sets $1, $2, $3.
+		# $qr_link_target_2) = qr/^(\d+)(.+)/;		# Sets $1, $2.
+
+		my($line_after_target, $line_at_target);
+
+		if ($$lines[$i] =~ $qr_link_target_1)
+		{
+			$link_target_1a		= $1;
+			$link_target_1b		= $2;
+			$link_target_1c		= $3;
+			my($j)			= $i + 1;
+			$line_after_target	= $$lines[$j];
+			$line_at_target		= $$lines[$i];
+
+			if ($$lines[$j] =~ $qr_link_target_2)
+			{
+				$link_target_2a = $1;
+				$link_target_2b = $2;
+			}
+			else
+			{
+				#report_error(9, \%errors, \%error_parameters, \%link2question, \%question2link);
+
+				say "Error: Link target mismatch! Line: $i. $save_line";
+
+			}
+
+			#say "$i. Targets: link_target_2a: $link_target_2a. question_map{}: $question_map{$link_target_2a}. "
+			#	. "link_target_2b: $link_target_2b.";
+
+			$$lines[$i]	= "$link_target_1a$question_map{$link_target_1b}$link_target_1c";
+			$$lines[$j]	= "$question_map{$link_target_2a}$link_target_2b";
+
+			#say "Was: $i. $line_at_target\nIs:  $i. $$lines[$i]";
+			#say "Was: $j. $line_after_target\nIs:  $j. $$lines[$j]";
+		}
+
 	}
 
 } # End of renumber_questions.
@@ -226,7 +285,7 @@ sub report_error
 	{
 		case(1) {say "$msg. Other link: $$question2link{$$error_parameters{text} }"}
 		case(2) {say "$msg. Other link: $$link2question{$$error_parameters{text} }"}
-		case(3), case(4), case(5), case(6), case(7), case(8) {say $msg}
+		case(3), case(4), case(5), case(6), case(7), case(8), case(9) {say $msg}
 	}
 
 } # End of report_error.
@@ -315,6 +374,7 @@ sub validate
 	$errors{6}		= 'Section name in ToC not present in Body';
 	$errors{7}		= 'Number of sections in ToC not equal to number in Body';
 	$errors{8}		= 'Link reference mismatch';
+	$errors{9}		= 'Mismatch between link target # and question #.';
 	$error_count		= 0;
 	my($qr_section_name)	= qr/^###([A-Z]: )?(.+)/; # Ignore section ids added by a previous run. Sets $1.
 	$offsets{start_of_toc}	= 99999;
@@ -348,7 +408,7 @@ sub validate
 		{
 			# $qr_link_name = qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/;
 
-			if ($$lines[$i] =~ $qr_link_name) # Sets $1, $2, $3, $4 and $5.
+			if ($$lines[$i] =~ $qr_link_name) # Sets $1, $2, $3, $4, $5.
 			{
 				# Sample link names:
 				# o * [102 What is Libmarpa?](#q102)
@@ -416,7 +476,7 @@ sub validate
 		{
 			# Stockpile stuff after the ToC, i.e. while within the Body.
 
-			if ($$lines[$i] =~ $qr_link_target) # Sets $1.
+			if ($$lines[$i] =~ $qr_link_target_1) # Sets $1, $2, $3.
 			{
 				# Sample link target definitions (2 successive lines):
 				# o <a name = 'q102'></a>
@@ -425,7 +485,7 @@ sub validate
 				# o <a name = 'q155'></a>
 				# o 155 Where can I find a timeline (history) of parsing?
 
-				$link_target			= $1;
+				$link_target			= $2;
 				$error_parameters{link_target}	= $link_target;
 				$references{$link_target}	= $i;
 
@@ -451,7 +511,7 @@ sub validate
 
 			# $qr_link_reference) = qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;
 
-			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g); # Sets $1, $2, $3, $4 and $5.
+			@list_of_refs = ($$lines[$i] =~ /$qr_link_reference/g); # Sets $1, $2, $3, $4, $5.
 
 			for (my $ref = 1; $ref < $#list_of_refs; $ref += 5)
 			{
@@ -665,6 +725,10 @@ Report lines in ToC containing question names (after renumbering sections).
 =item 8
 
 Report lines in Body containing question lines and references (after renumbering sections).
+
+=item 9
+
+Report lines in Body containing links names are section names.
 
 =back
 

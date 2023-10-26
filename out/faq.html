@@ -11,7 +11,7 @@
         <div class="offset2 span8">
 <h1>The Marpa FAQ</h1>
 
-<p>Version 2.02. 2023-10-26T11:55:00.</p>
+<p>Version 2.02. 2023-10-26T19:12:36.</p>
 
 <h2>On-line docs</h2>
 
@@ -54,7 +54,7 @@
 <li><a href="#q12">12 The Libmarpa API and missing valuator steps</a></li>
 </ul>
 
-<h3>D: Tricks and Techniques</h3>
+<h3>D: Tricks and techniques</h3>
 
 <ul>
 <li><a href="#q13">13 How do I implement disambiguation logic?</a></li>
@@ -90,7 +90,7 @@
 <li><a href="#q43">43 Precedence, associativity, priority and rank</a></li>
 </ul>
 
-<h3>E: How Marpa Works</h3>
+<h3>E: Details on how Marpa works</h3>
 
 <ul>
 <li><a href="#q44">44 Is Marpa deterministic?</a></li>
@@ -100,7 +100,7 @@
 <li><a href="#q48">48 Parse exhaustion</a></li>
 </ul>
 
-<h3>F: Resources</h3>
+<h3>F: Links and resources</h3>
 
 <ul>
 <li><a href="#q49">49 Where do I go for help?</a></li>
@@ -120,9 +120,9 @@
 
 <h3>A: About Marpa</h3>
 
-<p><a name = 'q102'></a></p>
+<p><a name = 'q1'></a></p>
 
-<h2>102 What is Libmarpa?</h2>
+<h2>1 What is Libmarpa?</h2>
 
 <p>Libmarpa is the core Marpa library, written in C, which implements the Marpa parse engine - the Marpa algorithm itself.
 It is low-level, but it is documented and can be installed and used separately.</p>
@@ -135,9 +135,9 @@ It is low-level, but it is documented and can be installed and used separately.<
 
 <h3>B: Error Messages</h3>
 
-<p><a name = 'q1'></a></p>
+<p><a name = 'q2'></a></p>
 
-<h2>1 Error: Parse failed. value() called when recognizer is not in tree mode</h2>
+<h2>2 Error: Parse failed. value() called when recognizer is not in tree mode</h2>
 
 <p>The culprit is Marpa::R2::Scanless::R's
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#ambiguous">ambiguous()</a> method.</p>
@@ -202,9 +202,9 @@ this technique, see <a href="https://metacpan.org/release/GraphViz2-Marpa">Graph
 <a href="https://metacpan.org/release/Text-Balanced-Marpa">Text::Balanced::Marpa</a> or
 <a href="https://metacpan.org/release/Text-Delimited-Marpa">Text::Delimited::Marpa</a>.</p>
 
-<p><a name = 'q2'></a></p>
+<p><a name = 'q3'></a></p>
 
-<h2>2 Error: A lexeme in G1 is not a lexeme in any of the lexers</h2>
+<h2>3 Error: A lexeme in G1 is not a lexeme in any of the lexers</h2>
 
 <p>Marpa automatically determines which symbols are 'lexemes'. To do this, it checks for all the
 symbols that the G1 grammar considers to be lexemes, and all the symbols that the L0 grammar
@@ -218,15 +218,15 @@ on the RHS of any L0 rule.</p>
 
 <p>See also <a href='#q7'>Q 7</a>.</p>
 
-<p><a name = 'q3'></a></p>
+<p><a name = 'q4'></a></p>
 
-<h2>3 Error: A lexeme in lexer L0 is not a lexeme in G1</h2>
+<h2>4 Error: A lexeme in lexer L0 is not a lexeme in G1</h2>
 
 <p>See <a href='#q3'>Q 3</a>.</p>
 
-<p><a name = 'q4'></a></p>
+<p><a name = 'q5'></a></p>
 
-<h2>4 Error message: Marpa exited at (line, column) = ($line, $column) within the input string</h2>
+<h2>5 Error message: Marpa exited at (line, column) = ($line, $column) within the input string</h2>
 
 <p>In the module <a href="https://metacpan.org/release/Genealogy-Gedcom-Date">Genealogy::Gedcom::Date</a>,
 this text is part of the error message when a call to Marpa ambiguity_metric() returned a value &lt;= 0.</p>
@@ -237,9 +237,9 @@ prefix of some input that can lead to a successful parse.</p>
 <p>Marpa is not reporting a problem during the read(), because you can add more to the input string,
 and Marpa does not know that you do not plan to do this.</p>
 
-<p><a name = 'q5'></a></p>
+<p><a name = 'q6'></a></p>
 
-<h2>5 Error in SLIF parse: No lexeme found at line 1, column 5</h2>
+<h2>6 Error in SLIF parse: No lexeme found at line 1, column 5</h2>
 
 <p>The full error text will look like:</p>
 
@@ -253,9 +253,9 @@ and Marpa does not know that you do not plan to do this.</p>
 character found is listed here as ')', but your BNF does not define that character as being a lexeme
 in that context.</p>
 
-<p><a name = 'q6'></a></p>
+<p><a name = 'q7'></a></p>
 
-<h2>6 Error: An L0 lexeme cannot appear on the RHS of an L0 rule</h2>
+<h2>7 Error: An L0 lexeme cannot appear on the RHS of an L0 rule</h2>
 
 <p>Consider these rules, which define lexemes in L0 (they are in L0 because ~ is used):</p>
 
@@ -278,9 +278,9 @@ and the second occurrance of X is on the RHS of the second rule. You can't do th
 
 <h3>C: Problems</h3>
 
-<p><a name = 'q107'></a></p>
+<p><a name = 'q8'></a></p>
 
-<h2>107 Why doesn't my ambiguous grammar return more than 1 parse tree?</h2>
+<h2>8 Why doesn't my ambiguous grammar return more than 1 parse tree?</h2>
 
 <p>Probably because your grammar includes</p>
 
@@ -291,9 +291,9 @@ and the second occurrance of X is on the RHS of the second rule. You can't do th
 
 <p>See also <a href='#q13'>Q 13</a> and <a href='#q46'>Q 46</a>.</p>
 
-<p><a name = 'q117'></a></p>
+<p><a name = 'q9'></a></p>
 
-<h2>117 Why does using '+' or '*' in a rule only work sometimes?</h2>
+<h2>9 Why does using '+' or '*' in a rule only work sometimes?</h2>
 
 <p>I assume you're referring to cases like this:</p>
 
@@ -358,9 +358,9 @@ passed to the semantics?</p>
 statements, with the quantifiers by themselves, and the semantics can then be attached to
 the statements.</p>
 
-<p><a name = 'q118'></a></p>
+<p><a name = 'q10'></a></p>
 
-<h2>118 Can a lexeme have length == 0?</h2>
+<h2>10 Can a lexeme have length == 0?</h2>
 
 <p>No.</p>
 
@@ -378,9 +378,9 @@ they can't actually be lexemes.</p>
 <a href="http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.p.l.txt">null.lexeme.demo.pl</a> and
 <a href="http://savage.net.au/Perl-modules/html/marpa.papers/null.lexeme.demo.1.p.l.txt">null.lexeme.demo.1.pl</a>.</p>
 
-<p><a name = 'q142'></a></p>
+<p><a name = 'q11'></a></p>
 
-<h2>142 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?</h2>
+<h2>11 I used a precedenced statement for my expression, so why did my parse come out ambiguous anyway?</h2>
 
 <p>There is a section in the Marpa::R2 documents that
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/DSL.pod#Precedence-and-ambiguous-grammars">deals specifically with this</a>.</p>
@@ -409,9 +409,9 @@ they can't actually be lexemes.</p>
 seen as removing ambiguity, but it does not remove <em>all</em> ambiguity.
 It only eliminates those parses which do not obey the precedence.</p>
 
-<p><a name = 'q149'></a></p>
+<p><a name = 'q12'></a></p>
 
-<h2>149 The Libmarpa API and missing valuator steps</h2>
+<h2>12 The Libmarpa API and missing valuator steps</h2>
 
 <p>When working with libmarpa, if you notice things like missing instructions of types
 MARPA_STEP_RULE and MARPA_STEP_NULLING_SYMBOL, make sure you are calling marpa_g_force_valued()
@@ -419,11 +419,11 @@ immediately upon grammar creation.</p>
 
 <p>For details see <a href="https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ">this Marpa Google Group post</a>.</p>
 
-<h3>D: Tricks and Techniques</h3>
+<h3>D: Tricks and techniques</h3>
 
-<p><a name = 'q108'></a></p>
+<p><a name = 'q13'></a></p>
 
-<h2>108 How do I implement disambiguation logic?</h2>
+<h2>13 How do I implement disambiguation logic?</h2>
 
 <p>See under <a href="https://metacpan.org/module/Marpa::R2::Semantics#Bailing-out-of-parse-evaluation">Bailing-out-of-parse-evaluation in Marpa::R2::Semantics</a>,
 for how to short-circuit semantic analysis.</p>
@@ -432,17 +432,17 @@ for how to short-circuit semantic analysis.</p>
 
 <p>See also <a href='#q8'>Q 8</a> and <a href='#q46'>Q 46</a>.</p>
 
-<p><a name = 'q110'></a></p>
+<p><a name = 'q14'></a></p>
 
-<h2>110 How do I parse comments?</h2>
+<h2>14 How do I parse comments?</h2>
 
 <p><a href="https://metacpan.org/module/GraphViz2::Marpa">GraphViz2::Marpa</a> implements comment skipping for C
 and C++ comments, and for #-prefix style comments. Search the source of Marpa.pm for
 'C style comment', 'Cplusplus style comment' and 'hash style comment'.</p>
 
-<p><a name = 'q111'></a></p>
+<p><a name = 'q15'></a></p>
 
-<h2>111 How do I parse numbers?</h2>
+<h2>15 How do I parse numbers?</h2>
 
 <p>Chapter 2 of <a href="http://marpa-guide.github.io/">Peter Stuifzand's Marpa Guide</a> discusses this issue at length
 And if you fork that project on github, you'll find the directory examples/ contains about a dozen sample programs.</p>
@@ -452,9 +452,9 @@ which contains similar logic (in data/*.bnf). Further, this latter distro includ
 in the scripts/ directory. The last-named script includes grammars for binary, octal and hex numbers which I did
 not need in the SVG parser.</p>
 
-<p><a name = 'q112'></a></p>
+<p><a name = 'q16'></a></p>
 
-<h2>112 How do I represent choice in the grammar?</h2>
+<h2>16 How do I represent choice in the grammar?</h2>
 
 <p>Briefly, use '|'. Sample code from the above named module (data/d.bnf):</p>
 
@@ -466,9 +466,9 @@ not need in the SVG parser.</p>
 
 <p>See also <a href='#q17'>Q 17</a> and <a href='#q18'>Q 18</a>.</p>
 
-<p><a name = 'q113'></a></p>
+<p><a name = 'q17'></a></p>
 
-<h2>113 Is there any other way of representing choice?</h2>
+<h2>17 Is there any other way of representing choice?</h2>
 
 <p>Sure. Consider these L0 rules (also from data/d.bnf):</p>
 
@@ -501,9 +501,9 @@ float       ~ sign_maybe digit_many E
 
 <p>See also <a href='#q16'>Q 16</a> and <a href='#q18'>Q 18</a>.</p>
 
-<p><a name = 'q114'></a></p>
+<p><a name = 'q18'></a></p>
 
-<h2>114 What's the difference between '|' and '||' in grammar definitions?</h2>
+<h2>18 What's the difference between '|' and '||' in grammar definitions?</h2>
 
 <p>'|' expresses a simple alternative, while '||' separates alternatives at different levels of precedence. For example:</p>
 
@@ -531,9 +531,9 @@ with pre-Marpa techniques.</p>
 
 <p>See also <a href='#q16'>Q 16</a> and <a href='#q17'>Q 17</a>.</p>
 
-<p><a name = 'q115'></a></p>
+<p><a name = 'q19'></a></p>
 
-<h2>115 What does it mean to hide (mask) tokens?</h2>
+<h2>19 What does it mean to hide (mask) tokens?</h2>
 
 <p>It's possible to design a grammar such that we can say certain tokens are hidden. This is discussed under
 <a href="https://metacpan.org/module/Marpa::R2::Scanless::DSL#RHS-alternatives">RHS-alternatives in Marpa::R2::Scanless::DSL</a>.</p>
@@ -573,28 +573,28 @@ Stream 2: [node.a]  [node.b]
 
 <p>Hence, from the end-user's viewpoint, the comma is defined - at least in this particular grammar - to be optional.</p>
 
-<p><a name = 'q116'></a></p>
+<p><a name = 'q20'></a></p>
 
-<h2>116 How do I implement recursion in a grammar?</h2>
+<h2>20 How do I implement recursion in a grammar?</h2>
 
 <p>See <a href='#q9'>Q 9</a>.</p>
 
-<p><a name = 'q119'></a></p>
+<p><a name = 'q21'></a></p>
 
-<h2>119 How do I find out where I am within the input stream?</h2>
+<h2>21 How do I find out where I am within the input stream?</h2>
 
 <p>See <a href="https://metacpan.org/module/Marpa::R2::Scanless::R#line_column">the line_column() method in Marpa::R2::Scanless::R</a>.</p>
 
-<p><a name = 'q120'></a></p>
+<p><a name = 'q22'></a></p>
 
-<h2>120 How do I find out which rule applies at some point in the input stream (e.g. during a pause)?</h2>
+<h2>22 How do I find out which rule applies at some point in the input stream (e.g. during a pause)?</h2>
 
 <p>See under <a href="https://metacpan.org/module/Marpa::R2::Semantics#Action-context">Action-context in Marpa::R2::Semantics</a>,
 for access to internal variables in Marpa which do what you want.</p>
 
-<p><a name = 'q121'></a></p>
+<p><a name = 'q23'></a></p>
 
-<h2>121 What is the meaning of the line number in a Marpa error message?</h2>
+<h2>23 What is the meaning of the line number in a Marpa error message?</h2>
 
 <p>It is the line number within the BNF of the rule being processed.</p>
 
@@ -603,9 +603,9 @@ for access to internal variables in Marpa which do what you want.</p>
 <p>Further, see <a href="https://metacpan.org/module/Marpa::R2::Scanless::R#line_column">the line_column() method in Marpa::R2::Scanless::R</a>
 for various special characters some of which may affect this line count.</p>
 
-<p><a name = 'q122'></a></p>
+<p><a name = 'q24'></a></p>
 
-<h2>122 Can I switch grammars during a parse?</h2>
+<h2>24 Can I switch grammars during a parse?</h2>
 
 <p>No - You can't just change Marpa's grammar object during a parse (by calling
 Marpa::R2::Scanless::G -> new() with a new BNF), and expect everything else to keep working.</p>
@@ -663,9 +663,9 @@ by the author, Jean-Damien Durand, for why he does things this way.</p>
 
 <p>You may safely assume this latter method is a very advanced technique!</p>
 
-<p><a name = 'q123'></a></p>
+<p><a name = 'q25'></a></p>
 
-<h2>123 Where is Ruby Slippers parsing documented?</h2>
+<h2>25 Where is Ruby Slippers parsing documented?</h2>
 
 <p>Start with <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#terminals_expected">Marpa::R2::Scanless::R's terminals_expected()</a>.
 This document has several references to Ruby Slippers.</p>
@@ -673,16 +673,16 @@ This document has several references to Ruby Slippers.</p>
 <p>See also Jeffrey's articles: <a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2011/11/marpa-and-the-ruby-slippers.html">Ruby Slippers parsing</a>,
 and the series beginning with <a href="https://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2011/11/how-to-parse-html.html">parsing HTML part 1</a>.</p>
 
-<p><a name = 'q124'></a></p>
+<p><a name = 'q26'></a></p>
 
-<h2>124 Where can I find code using Ruby Slippers?</h2>
+<h2>26 Where can I find code using Ruby Slippers?</h2>
 
 <p>See the script scripts/match.parentheses.02.pl, which ships with the module
 <a href="https://metacpan.org/module/MarpaX::Demo::SampleScripts">MarpaX::Demo::SampleScripts</a>.</p>
 
-<p><a name = 'q125'></a></p>
+<p><a name = 'q27'></a></p>
 
-<h2>125 How do I associate an action class with my grammar?</h2>
+<h2>27 How do I associate an action class with my grammar?</h2>
 
 <p>This discussion assumes you're using Marpa::R2 V 3.0 or later. Prior to that, there was complications
 using the per-parse parameter to value(), and elsewhere.</p>
@@ -721,9 +721,9 @@ $self -&gt; recce
 
 <p>must be declared as functions in the named semantics package, because that's where Marpa looks for them.</p>
 
-<p><a name = 'q126'></a></p>
+<p><a name = 'q28'></a></p>
 
-<h2>126 Declaring an Action Class</h2>
+<h2>28 Declaring an Action Class</h2>
 
 <p>Firstly, see also <a href='#q34'>Q 34</a>.</p>
 
@@ -915,43 +915,43 @@ for my $item (@{$self -&gt; decode_result($$result)})
 <a href="https://metacpan.org/release/MarpaX-Languages-C-AST" title="In *::Util::Data::Find">MarpaX::Languages::C::AST</a>.
 They all use similar mechanisms for unravelling data structures.</p>
 
-<p><a name = 'q127'></a></p>
+<p><a name = 'q29'></a></p>
 
-<h2>127 Where can I find code using events?</h2>
+<h2>29 Where can I find code using events?</h2>
 
 <p>The are many Perl modules which use events.</p>
 
 <p>Try <a href="https://metacpan.org/release/MarpaX-Languages-Perl-PackUnpack">MarpaX::Languages::Perl::PackUnpack</a>
 or <a href="https://metacpan.org/release/GraphViz2-Marpa">GraphViz2::Marpa</a>.</p>
 
-<p><a name = 'q128'></a></p>
+<p><a name = 'q30'></a></p>
 
-<h2>128 Where can I find code which builds its grammar on-the-fly?</h2>
+<h2>30 Where can I find code which builds its grammar on-the-fly?</h2>
 
 <p>A simple case: <a href="https://metacpan.org/release/Text-Balanced-Marpa">Text::Balanced::Marpa</a>.</p>
 
 <p>A complex case: <a href="https://metacpan.org/release/MarpaX-Languages-SQL2003-AST">MarpaX::Languages::SQL2003::AST</a>.</p>
 
-<p><a name = 'q133'></a></p>
+<p><a name = 'q31'></a></p>
 
-<h2>133 What grammar do I use when eol ("\n", new-line) is significant?</h2>
+<h2>31 What grammar do I use when eol ("\n", new-line) is significant?</h2>
 
 <p>There is no definitive answer to this, because different contexts will have different interpretations
 of how they need to handle eol.</p>
 
 <p>It would be nice, however, to have some specific samples of grammar available.</p>
 
-<p><a name = 'q134'></a></p>
+<p><a name = 'q32'></a></p>
 
-<h2>134 When I use the case-insensitive suffix ':i' my program dies</h2>
+<h2>32 When I use the case-insensitive suffix ':i' my program dies</h2>
 
 <p>This is probably because you're using actions on rules, and you changed a lexeme from, say, "and ~ 'and'"
 to "and ~ 'and':i". After you add the ':i', the parameter passed in to your action function will have an
 extra arrayref around it, compared to what is was without the ':i'. Just dereference it with $t1 = $$t1[0].</p>
 
-<p><a name = 'q135'></a></p>
+<p><a name = 'q33'></a></p>
 
-<h2>135 When do I use actions and when do I use events?</h2>
+<h2>33 When do I use actions and when do I use events?</h2>
 
 <p>Actions are attached to rules, so when an action is fired, you know exaclty which rule is being triggered
 by the 'current' text. And the data structure Marpa passes to your action sub contains the results of
@@ -965,19 +965,17 @@ about which rule is currently firing. For that, see <a href='#q22'>Q 22</a>.</p>
 <p>Also, see <a href="http://savage.net.au/Ron/html/Understanding.Marpa-style.action.subs.parameters.html">this article</a>
 for an explanation of how Marpa passes parameters into action subs.</p>
 
-<p><a name = 'q136'></a></p>
+<p><a name = 'q34'></a></p>
 
-<h2>136 How does Marpa pass parameters to action subs?</h2>
+<h2>34 How does Marpa pass parameters to action subs?</h2>
 
 <p>See this stand-alone article: <a href="http://savage.net.au/Ron/html/Understanding.Marpa-style.action.subs.parameters.html">How Marpa passes arguments to your action subs</a>.</p>
 
-<p>See also <a name = 'q125'>Q125 How do I associate an action class with my grammar?</a> and
-<a name = 'q126'>Q126 Declaring an Action Class</a>, and
-<a name = 'q134'>Q134 When I use the case-insensitive suffix ':i' my program dies</a>.</p>
+<p>See also <a href = '#q27'>Q 27</a> and <a href = '#q28'>Q 28</a>, and <a href = '#q32'>Q 32</a>.</p>
 
-<p><a name = 'q144'></a></p>
+<p><a name = 'q35'></a></p>
 
-<h2>144 How do I use external parsing?</h2>
+<h2>35 How do I use external parsing?</h2>
 
 <p>External parsing is where you write your own code to do some parsing, while getting Marpa to handle various
 parts of the work.</p>
@@ -1023,9 +1021,9 @@ the input stream.</p>
 
 <p>See also <a href='#q36'>Q 36</a>.</p>
 
-<p><a name = 'q145'></a></p>
+<p><a name = 'q36'></a></p>
 
-<h2>145 How do I distinguish between identifiers and keywords?</h2>
+<h2>36 How do I distinguish between identifiers and keywords?</h2>
 
 <p>A good way is to use lexeme priorities, perhaps by combining them with external parsing.</p>
 
@@ -1039,9 +1037,9 @@ on Stackoverflow.</p>
 
 <p>See also <a href='#q35'>Q 35</a>.</p>
 
-<p><a name = 'q146'></a></p>
+<p><a name = 'q37'></a></p>
 
-<h2>146 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?</h2>
+<h2>37 How do I write the BNF to specify exceptions to a pattern, or the complement of a pattern?</h2>
 
 <p>Currently there is no way to specify that directly in Marpa::R2, because context free grammars (CFGs) are not closed
 under complement. That is: If L1 and L2 are both BNF grammars, it is not necessarily possible to write L1 - L2 in BNF.</p>
@@ -1058,9 +1056,9 @@ which uses his version of BNF. See:</p>
 <p>This approach consists of building an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">ASF - Abstract Syntax Forest</a>
 of parse results and then processing the trees in that forest.</p>
 
-<p><a name = 'q147'></a></p>
+<p><a name = 'q38'></a></p>
 
-<h2>147 How do I write the BNF when the first token is optional?</h2>
+<h2>38 How do I write the BNF when the first token is optional?</h2>
 
 <p>Note: <a href="https://metacpan.org/release/GraphViz2-Marpa">GraphViz2::Marpa</a> requires this technique, since it's working
 from <a href="http://www.graphviz.org/content/dot-language">this BNF</a>.</p>
@@ -1069,15 +1067,15 @@ from <a href="http://www.graphviz.org/content/dot-language">this BNF</a>.</p>
 
 <p><a href="https://metacpan.org/source/RSAVAGE/GraphViz2-Marpa-2.11/lib/GraphViz2/Marpa.pm#L217">Sample code</a>.</p>
 
-<p><a name = 'q148'></a></p>
+<p><a name = 'q39'></a></p>
 
-<h2>148 Is there a tabular view of the DSL?</h2>
+<h2>39 Is there a tabular view of the DSL?</h2>
 
 <p>Yes: <a href="http://savage.net.au/Marpa/html/Marpa.R2.DSL.Structure.html">A Tabular View of Marpa::R2's DSL</a>.</p>
 
-<p><a name = 'q151'></a></p>
+<p><a name = 'q40'></a></p>
 
-<h2>151 How can I trace what the L0 parser is doing?</h2>
+<h2>40 How can I trace what the L0 parser is doing?</h2>
 
 <p>Use the trace_terminals parameter to
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#trace_terminals">Marpa::R2::Scanless::R's constructor</a>.</p>
@@ -1087,9 +1085,9 @@ from <a href="http://www.graphviz.org/content/dot-language">this BNF</a>.</p>
 <p>trace_terminals takes values from 0 to 99, with higher numbers requesting more verbose output. Start with 1 and then
 jump to 99.</p>
 
-<p><a name = 'q152'></a></p>
+<p><a name = 'q41'></a></p>
 
-<h2>152 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?</h2>
+<h2>41 How do I define lexemes for identifiers where the 1st char is from a subset of the other chars?</h2>
 
 <p>Assume the identifier is something like $head$tail, where $head must belong to</p>
 
@@ -1112,17 +1110,17 @@ capture_name_tail  ~ [_A-Za-z0-9]*
 
 <p>And no, you do not need to use events. (I do, in Regexp::Parsertron :-).</p>
 
-<p><a name = 'q139'></a></p>
+<p><a name = 'q42'></a></p>
 
-<h2>139 What is the difference between prediction events and pre-lexeme events?</h2>
+<h2>42 What is the difference between prediction events and pre-lexeme events?</h2>
 
 <p>A prediction event will be triggered when its lexeme is predicted (i.e. expected) at some point in
 the input stream. A pre-lexeme event can only be triggered at the start of a lexeme which has been
 explicitly detected in the input stream.</p>
 
-<p><a name = 'q140'></a></p>
+<p><a name = 'q43'></a></p>
 
-<h2>140 Precedence, associativity, priority and rank</h2>
+<h2>43 Precedence, associativity, priority and rank</h2>
 
 <p>This answer was added after a discussion on IRC,
 <a href="http://irclog.perlgeek.de/marpa/2016-05-22#i_12725635">starting here</a>.</p>
@@ -1148,11 +1146,11 @@ at the same location. This is a limitation in R2 which will be lifted in R3.</p>
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Semantics/Order.pod#The-rule-ranking-method">rule ranking</a>.</p></li>
 </ul>
 
-<h3>E: How Marpa Works</h3>
+<h3>E: Details on how Marpa works</h3>
 
-<p><a name = 'q103'></a></p>
+<p><a name = 'q44'></a></p>
 
-<h2>103 Is Marpa deterministic?</h2>
+<h2>44 Is Marpa deterministic?</h2>
 
 <p>No. Marpa is non-deterministic, unlike traditional parsers. Marpa tries everything, all at once.</p>
 
@@ -1173,9 +1171,9 @@ by the lexer.</p>
 
 <p>See also <a href='#q45'>Q 45</a>.</p>
 
-<p><a name = 'q104'></a></p>
+<p><a name = 'q45'></a></p>
 
-<h2>104 What is the difference between ambiguity and non-determinism?</h2>
+<h2>45 What is the difference between ambiguity and non-determinism?</h2>
 
 <p>Ambiguous means there is more than one parse.</p>
 
@@ -1189,9 +1187,9 @@ alternatives, as in PEG.</p>
 
 <p><a href="http://irclog.perlgeek.de/marpa/2016-10-07#i_13360238">Example code</a>.</p>
 
-<p><a name = 'q109'></a></p>
+<p><a name = 'q46'></a></p>
 
-<h2>109 What is the meaning of L0 and G1?</h2>
+<h2>46 What is the meaning of L0 and G1?</h2>
 
 <p>L0 defines exactly what tokens are acceptable in the input stream. So, these are the rules defining the
 syntax of the tokens, but not the syntax of how these tokens can be combined. G1 defines the structure of
@@ -1207,27 +1205,27 @@ cases, search for 'L0'.</p>
 
 <p>See also <a href='#q8'>Q 8</a> and <a href='#q13'>Q 13</a>.</p>
 
-<p><a name = 'q137'></a></p>
+<p><a name = 'q47'></a></p>
 
-<h2>137 SPPF parsing</h2>
+<h2>47 SPPF parsing</h2>
 
 <p>Marpa uses SPPF parsing, but not under that name. Jeffrey Kegler calls his version a 'parse bocage',
 which he invented independently of Elizabeth Scott.</p>
 
 <p>For details of her work, <a href="http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/SCOTT,%20Elizabeth%20-%20SPPF-Style%20Parsing%20From%20Earley%20Recognizers.pdf">see here</a>.</p>
 
-<p><a name = 'q138'></a></p>
+<p><a name = 'q48'></a></p>
 
-<h2>138 Parse exhaustion</h2>
+<h2>48 Parse exhaustion</h2>
 
 <p><a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod">See</a>, and
 <a href="https://metacpan.org/pod/distribution/Marpa-R2/pod/Scanless/R.pod#exhaustion">this setting</a>.</p>
 
-<h3>F: Resources</h3>
+<h3>F: Links and resources</h3>
 
-<p><a name = 'q101'></a></p>
+<p><a name = 'q49'></a></p>
 
-<h2>101 Where do I go for help?</h2>
+<h2>49 Where do I go for help?</h2>
 
 <p>The IRC channel may get the quickest response: irc.freenode.net#marpa.</p>
 
@@ -1239,24 +1237,24 @@ and so is good for complex or extended discussions.</p>
 
 <p><a href="http://savage.net.au/Marpa.html">Marpa's homepage</a>.</p>
 
-<p><a name = 'q129'></a></p>
+<p><a name = 'q50'></a></p>
 
-<h2>129 Other Resources</h2>
+<h2>50 Other Resources</h2>
 
 <ul>
 <li><p>http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html</p></li>
 <li><p>The list of features in <a href="http://savage.net.au/Perl-modules/html/marpa.papers/chapter2.html">Chapter 2 - Marpa's Advantages</a></p></li>
 </ul>
 
-<p><a name = 'q130'></a></p>
+<p><a name = 'q51'></a></p>
 
-<h2>130 Papers on Parsing Theory</h2>
+<h2>51 Papers on Parsing Theory</h2>
 
 <p><a href="http://dinhe.net/~aredridel/.notmine/PDFs/Parsing/">Aria's list</a>.</p>
 
-<p><a name = 'q131'></a></p>
+<p><a name = 'q52'></a></p>
 
-<h2>131 Are there C/Perl/Rust/etc bindings for libmarpa?</h2>
+<h2>52 Are there C/Perl/Rust/etc bindings for libmarpa?</h2>
 
 <p>The original bindings are
 <a href="https://github.com/jeffreykegler/libmarpa">Libmarpa, a C library</a>,
@@ -1273,17 +1271,17 @@ It is
 <p>Other bindings are being prototyped,
 or are in early development.</p>
 
-<p><a name = 'q132'></a></p>
+<p><a name = 'q53'></a></p>
 
-<h2>132 What are the Marpa Papers?</h2>
+<h2>53 What are the Marpa Papers?</h2>
 
 <p><a href="http://savage.net.au/Perl-modules/html/marpa.papers/">They are a small book of Marpa-related matters</a>,
 and are highly recommended reading for (a) Getting Started, (b) Marpa's Advantages, and
 (c) Advanced Usage.</p>
 
-<p><a name = 'q141'></a></p>
+<p><a name = 'q54'></a></p>
 
-<h2>141 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?</h2>
+<h2>54 I want to write my own version of the Marpa/Earley/Leo algorithm in language X. What's the best way to proceed?</h2>
 
 <p>This is Jeffrey speaking: You'll probably want to work your way through many of my
 <a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/metapages/annotated.html">blog posts</a>, especially this one:
@@ -1326,16 +1324,16 @@ by a constant amount. These do not seem to produced measurable speed-ups at pars
 they must be undone at evaluation time. They will make it very hard to add an event mechanism to
 your parser, and will make debugging and tracing more complex.</p>
 
-<p><a name = 'q143'></a></p>
+<p><a name = 'q55'></a></p>
 
-<h2>143 How do I contribute to this FAQ?</h2>
+<h2>55 How do I contribute to this FAQ?</h2>
 
 <p>The FAQ is on github. Just <a href="https://github.com/ronsavage/marpa.faq">raise an issue</a>. If you're not familiar
 with github, just click on '(!) Issues 0'. The 0 is the # of open issues, so it may be > 0.</p>
 
-<p><a name = 'q150'></a></p>
+<p><a name = 'q56'></a></p>
 
-<h2>150 Are there any comparisons of Marpa against other parsers for speed and practicality?</h2>
+<h2>56 Are there any comparisons of Marpa against other parsers for speed and practicality?</h2>
 
 <p>MarpaX::ESLIF is an optimized version of Marpa::R2.
 <a href="https://colabti.org/irclogger/irclogger_log/marpa?date=2022-08-05">Its 2022 announcement on the Marpa IRC channel</a>
@@ -1356,24 +1354,24 @@ The paper is in the refereed literature and its
 authors (Henriksen, Bilardi and Pingali) are independent of
 the Marpa and ANTLR communities.</p>
 
-<p><a name = 'q153'></a></p>
+<p><a name = 'q57'></a></p>
 
-<h2>153 Are there any on-line tools for testing grammars?</h2>
+<h2>57 Are there any on-line tools for testing grammars?</h2>
 
 <p>Yes. See <a href="https://mdaines.github.io/grammophone/">Grammophone</a>. Also, specifically for testing LL,
 see <a href="http://www.fit.vutbr.cz/~ikocman/llkptg/">this LL(k) tester</a>.</p>
 
-<p><a name = 'q154'></a></p>
+<p><a name = 'q58'></a></p>
 
-<h2>154 What do I do when the IRC logbot stops?</h2>
+<h2>58 What do I do when the IRC logbot stops?</h2>
 
 <p>Firstly, here is the logbot's <a href="http://colabti.org/irclogger/irclogger_log/marpa?date=2018-08-09">HTML report</a>.</p>
 
 <p>To contact the admin, log on to irc.freenode.net's channel #irclogger and sent a message to 'feb'.</p>
 
-<p><a name = 'q155'></a></p>
+<p><a name = 'q59'></a></p>
 
-<h2>155 Where can I find a timeline (history) of parsing?</h2>
+<h2>59 Where can I find a timeline (history) of parsing?</h2>
 
 <p>See <a href="https://jeffreykegler.github.io/personal/timeline_v3">Jeffrey Kegler's timeline</a>.</p>
         </div>
