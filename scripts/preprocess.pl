@@ -18,18 +18,18 @@ use Time::Piece;
 
 # Sample link names:
 # o * [102 What is Libmarpa?](#q102)
-#	or
+#	and
 # o * [155 Where can I find a timeline (history) of parsing?](#q155)
 
 # Sample link references:
 # o See also <a href='#q6'>Q 6</a>.
-#	or
+#	and
 # o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
 # Sample link target definitions (2 successive lines):
 # o <a name = 'q102'></a>
 # o 102 What is Libmarpa?
-#	or
+#	and
 # o <a name = 'q155'></a>
 # o 155 Where can I find a timeline (history) of parsing?
 
@@ -104,7 +104,7 @@ sub renumber_questions
 		{
 			# Sample link names:
 			# o * [102 What is Libmarpa?](#q102)
-			#	or
+			#	and
 			# o * [155 Where can I find a timeline (history) of parsing?](#q155)
 
 			$question_number		= $4;
@@ -156,6 +156,7 @@ sub renumber_questions
 	{
 		# Sample link references:
 		# o See also <a href='#q6'>Q 6</a>.
+		#	and
 		# o See also <a href='#q112'>Q 112</a> and <a href='#q114'>Q 114</a>.
 
 		# $qr_link_reference = qr/(.+?'#q)(\d+)('>Q )(\d+)(<)/;	# Sets $1, $2, $3, $4, $5.
@@ -171,7 +172,7 @@ sub renumber_questions
 		# Sample link target definitions (2 successive lines):
 		# o <a name = 'q102'></a>
 		# o 102 What is Libmarpa?
-		#	or
+		#	and
 		# o <a name = 'q155'></a>
 		# o 155 Where can I find a timeline (history) of parsing?
 
@@ -286,6 +287,7 @@ sub report_error
 		case(1) {say "$msg. Other link: $$question2link{$$error_parameters{text} }"}
 		case(2) {say "$msg. Other link: $$link2question{$$error_parameters{text} }"}
 		case(3), case(4), case(5), case(6), case(7), case(8), case(9) {say $msg}
+		case(10) {say "Line: $$error_parameters{i}. Other line: $$error_parameters{link_reference}. Section name: $$error_parameters{text}"}
 	}
 
 } # End of report_error.
@@ -375,6 +377,7 @@ sub validate
 	$errors{7}		= 'Number of sections in ToC not equal to number in Body';
 	$errors{8}		= 'Link reference mismatch';
 	$errors{9}		= 'Mismatch between link target # and question #.';
+	$errors{10}		= 'Duplicate section name';
 	$error_count		= 0;
 	my($qr_section_name)	= qr/^###([A-Z]: )?(.+)/; # Ignore section ids added by a previous run. Sets $1.
 	$offsets{start_of_toc}	= 99999;
@@ -412,7 +415,7 @@ sub validate
 			{
 				# Sample link names:
 				# o * [102 What is Libmarpa?](#q102)
-				#	or
+				#	and
 				# o * [155 Where can I find a timeline (history) of parsing?](#q155)
 	
 				$q_number	= $2;
@@ -464,10 +467,24 @@ sub validate
 			{
 				# Sample section names:
 				# o ###About Marpa
+				#	and
 				# o ###Resources
 
-				$section_name			= $+;
-				$sections_in_toc{$section_name}	= $i;
+				$section_name = $+;
+
+				# Validate that the section name is unique.
+
+				if ($sections_in_toc{$section_name})
+				{
+					$error_count++;
+
+					$error_parameters{link_reference}	= $sections_in_toc{$section_name};
+					$error_parameters{text}			= $section_name;
+
+					report_error(10, \%errors, \%error_parameters, \%link2question, \%question2link);
+				}
+
+				$sections_in_toc{$section_name} = $i;
 
 				say "Testing line: $i. Found section '$section_name' in ToC. Text: $$lines[$i]" if ($$option{report} == 5);
 			}
@@ -481,7 +498,7 @@ sub validate
 				# Sample link target definitions (2 successive lines):
 				# o <a name = 'q102'></a>
 				# o 102 What is Libmarpa?
-				#	or
+				#	and
 				# o <a name = 'q155'></a>
 				# o 155 Where can I find a timeline (history) of parsing?
 
@@ -495,8 +512,10 @@ sub validate
 
 			# Sample link references:
 			# o See also <a href='#q6'>Q 6</a>.
+			#	and
 			# o See also <a href='#q108'>Q 108</a> and <a href='#q109'>Q 109</a>.
 
+			# A dump from Data::Dumper of the latter:
 			# 0: "See also <a href='#q"
 			# 1: 108
 			# 2: "'>Q "
@@ -543,6 +562,7 @@ sub validate
 			{
 				# Sample section names:
 				# o ###About Marpa
+				#	and
 				# o ###Resources
 
 				$section_name				= $+;
