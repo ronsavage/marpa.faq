@@ -32,8 +32,7 @@ The end of the Body is assumed to be at the end of the file.
 
 5. The section names in the ToC must be in the same order as the section names in the Body.
 
-6. Within the ToC, link names and question # must match
-qr/(.+?)(\d+)\s+(.+]\(#q)(\d+)(.+)/. Samples:
+6. Within the ToC, link names and question #s are validated. Samples:
 
 * [102 What is Libmarpa?](#q102)
 	and
@@ -59,7 +58,7 @@ o 155 Where can I find a timeline (history) of parsing?
 Clearly, the link target #s must match a question # in the ToC. And the very next line must
 match the corresponding text in the ToC.
 
-11. Link references, e.g. See alsos, must point to extant links targets. Samples:
+11. Link references, e.g. in a 'See also', must point to extant links targets. Samples:
 See also <a href='#q7'>Q 7</a>.
 	and this long one
 See also <a name = '#q125'>Q 125 How do I associate an action class with my grammar?</a> and
