@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html><head>
+<title># FAQ File Format</title>
+<meta charset='utf-8'>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="./style.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="offset2 span8">
+<h1>FAQ File Format</h1>
+
+<p>Version 1.00. 2023-10-29T11:06:00.</p>
+
+<p>This documents the format of the file guide/faq.txt, which is in Markdown format.
+Likewise, this file is also on Markdown format, with lines limited my me (Ron) to &lt;= 100 chars.</p>
+
+<h2>Purpose</h2>
+
+<p>The reason we have another document, this one, to discuss the format is that the format of the
+above file is validated by scripts/preprocess.pl. The program makes a number of assumptions about
+the format of faq.txt, so I am listing those assumptions here.</p>
+
+<p>After validation by preprocess.pl the output is written to guide/faq.new, and after the output is
+assessed by a human, the output is manually copied over guide/faq.txt, and then scripts/build.sh
+is run to convert guide/*.txt files into out/*.html files.</p>
+
+<p>The output of this file being converted by scripts/build.sh into HTML as guide/faq.format.html can
+be viewed or ignored.</p>
+
+<h2>Validation Tests Performed by preprocess.pl and build.sh on faq.txt</h2>
+
+<ol>
+<li><p>The format of guide/faq.txt is Markdown.</p></li>
+<li><p>There must be 1 sub-head line in the FAQ which matches '##Table of Contents grouped by Topic'.
+This allows the code to find the start of the ToC. The start of the ToC is assumed to be before
+the start of the Body.</p></li>
+<li><p>There must be 1 sub-head line in the FAQ which matches '##Answers grouped by Topic'.
+This allows the code to both find the end of the ToC and the start of the Body.
+The end of the Body is assumed to be at the end of the file.</p></li>
+<li><p>Section names, e.g. '###A: About Marpa', must appear once in the ToC and once in the Body.</p></li>
+<li><p>The section names in the ToC must be in the same order as the section names in the Body.</p></li>
+<li><p>Within the ToC, link names and question #s are validated. Samples:</p></li>
+</ol>
+
+<p>* [102 What is Libmarpa?](#q102)</p>
+
+<pre class="prettyprint linenums"><code>and
+</code></pre>
+
+<p>* [155 Where can I find a timeline (history) of parsing?](#q155)</p>
+
+<p>The suffixes, e.g. '(#q102)', are redundant now that proprocess.pl could fabricate them. But let's
+keep them.</p>
+
+<p>Note: The above escaped Markdown text (presumably) causes the validation steps to be renumbered
+hereafter.
+Therefore I escape the subsequent numbers' periods. Who knew?</p>
+
+<p>7. The question text must be unique. E.g. 'What is Libmarpa?'. And it must appear once in the ToC
+and once in the Body.</p>
+
+<p>8. The link number must be unique.</p>
+
+<p>9. The 2 link numbers in the same line must match.</p>
+
+<p>10. Link targets in the Body consist of 2 successive lines. Samples:</p>
+
+<p>o &lt; name = 'q102'>&lt;/a> <br />
+o 102 What is Libmarpa?</p>
+
+<pre class="prettyprint linenums"><code>and
+</code></pre>
+
+<p>o &lt;a name = 'q155'>&lt;/a> <br />
+o 155 Where can I find a timeline (history) of parsing?</p>
+
+<p>Clearly, the link target #s must match a question # in the ToC. And the very next line must
+match the corresponding text in the ToC.</p>
+
+<p>11. Link references, e.g. in a 'See also', must point to extant links targets. Samples:</p>
+
+<p>See also &lt;a href='#q7'>Q 7</a>. <br />
+    and this long one <br />
+See also &lt;a name = '#q125'>Q 125 How do I associate an action class with my grammar?&lt;/a> and
+&lt;a name = '#q126'>Q 126 Declaring an Action Class&lt;/a>, and
+&lt;a name = '#q134'>Q 134 When I use the case-insensitive suffix ':i' my program dies&lt;/a>.</p>
+
+<p>12. If the section names do not have alpha ids, the ids are fabricated. If they do have ids, those
+ids are overwritten. This ensures a new section inserted between 2 existing sections will mean all
+sections will end up having consecutive ids. Ids start from 'A'.</p>
+        </div>
+    </div>
+    <div class="row footer">
+        <div class="offset2 span8">
+            <p>
+                <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="float:left; margin-right:12px; border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">The Marpa FAQ</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Ron Savage and Contributors</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a> and the <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU Free Documentation License 1.3</a></p>
+        </div>
+    </div>
+</div>
+</body></html>

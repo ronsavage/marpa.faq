@@ -3,25 +3,25 @@
 Version 1.00. 2023-10-29T11:06:00.
 
 This documents the format of the file guide/faq.txt, which is in Markdown format.
-Likewise, this file is also on Markdown format.
+Likewise, this file is also on Markdown format, with lines limited my me (Ron) to <= 100 chars.
 
 ##Purpose
 The reason we have another document, this one, to discuss the format is that the format of the
 above file is validated by scripts/preprocess.pl. The program makes a number of assumptions about
-the format of faq.txt, so I (Ron) am listing those assumptions here.
+the format of faq.txt, so I am listing those assumptions here.
 
 After validation by preprocess.pl the output is written to guide/faq.new, and after the output is
 assessed by a human, the output is manually copied over guide/faq.txt, and then scripts/build.sh
-is run to convert guide/*.txt files into out/*.html files.
+is run to convert guide/\*.txt files into out/\*.html files.
 
 The output of this file being converted by scripts/build.sh into HTML as guide/faq.format.html can
 be viewed or ignored.
 
-##Validation Tests Performed by scripts/preproces.pl and scripts/build.sh on guide/faq.txt
+##Validation Tests Performed by preprocess.pl and build.sh on faq.txt
 1. The format of guide/faq.txt is Markdown.
 
 2. There must be 1 sub-head line in the FAQ which matches '##Table of Contents grouped by Topic'.
-This allows the code to find the start of the ToC. The staet of the ToC is assumed to be before
+This allows the code to find the start of the ToC. The start of the ToC is assumed to be before
 the start of the Body.
 
 3. There must be 1 sub-head line in the FAQ which matches '##Answers grouped by Topic'.
@@ -34,38 +34,48 @@ The end of the Body is assumed to be at the end of the file.
 
 6. Within the ToC, link names and question #s are validated. Samples:
 
-* [102 What is Libmarpa?](#q102)
+\* \[102 What is Libmarpa?](#q102)
+
 	and
-* [155 Where can I find a timeline (history) of parsing?](#q155)
 
-The suffix '(#q102)' is redundant now that proprocess.pl could fabricate it. But let's keep it.
+\* \[155 Where can I find a timeline (history) of parsing?](#q155)
 
-7. The question text must be unique. E.g. 'What is Libmarpa?'. And it must appear once in the ToC
+The suffixes, e.g. '(#q102)', are redundant now that proprocess.pl could fabricate them. But let's
+keep them.
+
+Note: The above escaped Markdown text (presumably) causes the validation steps to be renumbered
+hereafter.
+Therefore I escape the subsequent numbers' periods. Who knew?
+
+7\. The question text must be unique. E.g. 'What is Libmarpa?'. And it must appear once in the ToC
 and once in the Body.
 
-8. The link number must be unique.
+8\. The link number must be unique.
 
-9. The 2 link numbers in the same line must match.
+9\. The 2 link numbers in the same line must match.
 
-10. Link targets in the Body consist of 2 successive lines. Samples:
+10\. Link targets in the Body consist of 2 successive lines. Samples:
 
-o <a name = 'q102'></a>
+o &lt; name = 'q102'>&lt;/a>  
 o 102 What is Libmarpa?
+
 	and
-o <a name = 'q155'></a>
+
+o &lt;a name = 'q155'>&lt;/a>  
 o 155 Where can I find a timeline (history) of parsing?
 
 Clearly, the link target #s must match a question # in the ToC. And the very next line must
 match the corresponding text in the ToC.
 
-11. Link references, e.g. in a 'See also', must point to extant links targets. Samples:
-See also <a href='#q7'>Q 7</a>.
-	and this long one
-See also <a name = '#q125'>Q 125 How do I associate an action class with my grammar?</a> and
-<a name = '#q126'>Q 126 Declaring an Action Class</a>, and
-<a name = '#q134'>Q 134 When I use the case-insensitive suffix ':i' my program dies</a>.
+11\. Link references, e.g. in a 'See also', must point to extant links targets. Samples:
 
-12. If the section names do not have alpha ids, the ids are fabricated. If they do have ids, those
+See also &lt;a href='#q7'>Q 7</a>.  
+	and this long one  
+See also &lt;a name = '#q125'>Q 125 How do I associate an action class with my grammar?&lt;/a> and
+&lt;a name = '#q126'>Q 126 Declaring an Action Class&lt;/a>, and
+&lt;a name = '#q134'>Q 134 When I use the case-insensitive suffix ':i' my program dies&lt;/a>.
+
+12\. If the section names do not have alpha ids, the ids are fabricated. If they do have ids, those
 ids are overwritten. This ensures a new section inserted between 2 existing sections will mean all
-sections will have consecutive ids. Ids start from 'A'.
+sections will end up having consecutive ids. Ids start from 'A'.
 
