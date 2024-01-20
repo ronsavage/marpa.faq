@@ -18,6 +18,7 @@ Version 2.02. 2023-10-27T09:35:44.
 
 ###A: About Marpa
 * [1 What is Libmarpa?](#q1)
+* [99 Marpa parses ambiguous grammars. So what?](#q99)
 
 ###B: Error Messages
 * [2 Error: Parse failed. value() called when recognizer is not in tree mode](#q2)
@@ -100,6 +101,29 @@ It is low-level, but it is documented and can be installed and used separately.
 [Index of Terms](http://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/latest/index.html).
 
 [Formal docs](https://jeffreykegler.github.io/Marpa-web-site/libmarpa_api/cpan_indexed/index.html).
+
+<a name = 'q99'></a>
+99 Marpa parses ambiguous grammars. So what?
+
+If want to avoid ambiguity in your grammar, Marpa is the best tool for
+it. Others parsers refuse to allow ambiguous grammars, do not issue
+a message pointing out the ambiguity, and exclude a lot of useful
+unambiguous grammars. They kill all your enemies, but they kill a lot
+more friends.
+
+Marpa gives you a choice. You can keep working on other aspects of your
+grammar's project, and deal with the ambiguity later. But Marpa can also
+tell you exactly where the ambiguity occurs in an ambiguous parse. (Marpa
+does this by taking two of the ambiguous parses and comparing them --
+a capability parsers which don't handle ambiguous grammars do not have.)
+
+On the other hand, you may not want to reject ambiguity so
+quickly. Humans, given the choice, prefer to communicate in ambiguous
+languages. For example, English, the language you are reading now,
+is highly ambiguous. Ambiguity can be used as a feature, instead of
+rejected as a bug. For more on this, see
+[my blog post on the
+topic](http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2014/08/ambig.html).
 
 ###B: Error Messages
 <a name = 'q2'></a>
