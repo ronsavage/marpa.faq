@@ -123,7 +123,7 @@ quickly. Humans, given the choice, prefer to communicate in ambiguous
 languages. For example, English, the language you are reading now,
 is highly ambiguous. Ambiguity can be used as a feature, instead of
 rejected as a bug. For more on this, see
-[my blog post on the
+[Jeffrey Kegler's blog post on the
 topic](http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2014/08/ambig.html).
 
 ###B: Error Messages
