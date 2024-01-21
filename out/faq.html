@@ -11,7 +11,7 @@
         <div class="offset2 span8">
 <h1>The Marpa FAQ</h1>
 
-<p>Version 2.03. 2024-01-20T11:52:53.</p>
+<p>Version 2.04. 2024-01-21T17:41:34.</p>
 
 <h2>On-line docs</h2>
 
@@ -125,7 +125,8 @@
 
 <h2>1 What is Libmarpa?</h2>
 
-<p>Libmarpa is the core Marpa library, written in C, which implements the Marpa parse engine - the Marpa algorithm itself.
+<p>Libmarpa is the core Marpa library, written in C,
+that implements the Marpa parse engine - the Marpa algorithm itself.
 It is low-level, but it is documented and can be installed and used separately.</p>
 
 <p><a href="https://jeffreykegler.github.io/Marpa-web-site/libmarpa.html">Homepage</a>.</p>
@@ -138,17 +139,22 @@ It is low-level, but it is documented and can be installed and used separately.<
 
 <h2>2 Marpa parses ambiguous grammars. So what?</h2>
 
-<p>If want to avoid ambiguity in your grammar, Marpa is the best tool for
-it. Others parsers either refuse to allow ambiguous grammars, do not issue
-a message pointing out the ambiguity, or exclude a lot of useful
-unambiguous grammars. They kill all your enemies, but at the same time they kill
-too many of your friends.</p>
+<p>If you want to avoid ambiguity in your grammar,
+Marpa is the best tool for it.
+Marpa can tell you exactly where the ambiguity occurs in an ambiguous parse.
+(Marpa does this by taking two of the ambiguous parses and comparing them.
+This is a capability that parsers do not have
+unless they can handle ambiguous grammars.)</p>
 
-<p>Marpa gives you a choice. You can keep working on other aspects of your
-grammar's project, and deal with the ambiguity later. But Marpa can also
-tell you exactly where the ambiguity occurs in an ambiguous parse. (Marpa
-does this by taking two of the ambiguous parses and comparing them --
-a capability parsers which don't handle ambiguous grammars do not have.)</p>
+<p>Marpa also allows you to prioritze dealing with the ambiguity.
+You can take advantage of Marpa's ability to handle ambiguous grammars
+by working on other aspects of your project,
+and deal with the ambiguity later.</p>
+
+<p>Almost all of the parsers in practical use
+that refuse to allow ambiguous grammars,
+also refuse to parse a lot of very useful unambiguous grammars.
+They kill all your enemies, but they also kill a lot of friends.</p>
 
 <p>On the other hand, you may not want to reject ambiguity so
 quickly. Humans, given the choice, prefer to communicate in ambiguous
