@@ -1,6 +1,6 @@
 #The Marpa FAQ
 
-Version 2.04. 2024-01-21T17:41:34.
+Version 2.05. 2024-01-28T13:42:56.
 
 ##On-line docs
 
@@ -94,7 +94,7 @@ Version 2.04. 2024-01-21T17:41:34.
 1 What is Libmarpa?
 ---------------------
 Libmarpa is the core Marpa library, written in C,
-which implements the Marpa parse engine - the Marpa algorithm itself.
+that implements the Marpa parse engine - the Marpa algorithm itself.
 It is low-level, but it is documented and can be installed and used separately.
 
 [Homepage](https://jeffreykegler.github.io/Marpa-web-site/libmarpa.html).
@@ -110,16 +110,18 @@ It is low-level, but it is documented and can be installed and used separately.
 If you want to avoid ambiguity in your grammar,
 Marpa is the best tool for it.
 Marpa can tell you exactly where the ambiguity occurs in an ambiguous parse.
-(Marpa does this by taking two of the ambiguous parses and comparing them --
-a capability parsers which don't handle ambiguous grammars do not have.)
+(Marpa does this by taking two of the ambiguous parses and comparing them.
+This is a capability that parsers do not have
+unless they can handle ambiguous grammars.)
 
 Marpa also allows you to prioritze dealing with the ambiguity.
 You can take advantage of Marpa's ability to handle ambiguous grammars
 by working on other aspects of your project,
 and deal with the ambiguity later.
 
-Almost all of the other parsers in practical use refuse to allow ambiguous grammars.
-In the process, they exclude a lot of very useful unambiguous grammars.
+Almost all of the parsers in practical use
+that refuse to allow ambiguous grammars,
+also refuse to parse a lot of very useful unambiguous grammars.
 They kill all your enemies, but they also kill a lot of friends.
 
 On the other hand, you may not want to reject ambiguity so
@@ -393,7 +395,14 @@ When working with libmarpa, if you notice things like missing instructions of ty
 MARPA_STEP_RULE and MARPA_STEP_NULLING_SYMBOL, make sure you are calling marpa_g_force_valued()
 immediately upon grammar creation.
 
-For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ).
+For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ). That group is now closed, so instead see:
+
+[Marpa's homepage](http://savage.net.au/Marpa.html).
+
+That page contains a link to an archive of the group.
+The archive is called Marpa.Google.Group.2023.12.06.zip.
+
+See also <a href='#q50'>Q 50</a> for another reference to this archive.
 
 ###D: Tricks and techniques
 <a name = 'q14'></a>
@@ -1162,9 +1171,14 @@ The [website manpages.org](https://manpages.org/) has good docs on the theoretic
 Just type marpa into the search box and hit Enter.
 
 [The Google Group](https://groups.google.com/forum/#!forum/marpa-parser) has message threading,
-and so is good for complex or extended discussions.
+and so is good for complex or extended discussions. That group is now closed, so instead see:
 
 [Marpa's homepage](http://savage.net.au/Marpa.html).
+
+That page contains a link to an archive of the group.
+The archive is called Marpa.Google.Group.2023.12.06.zip.
+
+See also <a href='#q13'>Q 13</a> for another use for this archive.
 
 <a name = 'q51'></a>
 51 Other Resources

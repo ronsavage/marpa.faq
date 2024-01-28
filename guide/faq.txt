@@ -395,7 +395,14 @@ When working with libmarpa, if you notice things like missing instructions of ty
 MARPA_STEP_RULE and MARPA_STEP_NULLING_SYMBOL, make sure you are calling marpa_g_force_valued()
 immediately upon grammar creation.
 
-For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ).
+For details see [this Marpa Google Group post](https://groups.google.com/forum/#!msg/marpa-parser/JZzPXkuAMVU/lIUJpGgIAQAJ). That group is now closed, so instead see:
+
+[Marpa's homepage](http://savage.net.au/Marpa.html).
+
+That page contains a link to an archive of the group.
+The archive is called Marpa.Google.Group.2023.12.06.zip.
+
+See also <a href='#q50'>Q 50</a> for another reference to this archive.
 
 ###D: Tricks and techniques
 <a name = 'q14'></a>
@@ -1164,9 +1171,14 @@ The [website manpages.org](https://manpages.org/) has good docs on the theoretic
 Just type marpa into the search box and hit Enter.
 
 [The Google Group](https://groups.google.com/forum/#!forum/marpa-parser) has message threading,
-and so is good for complex or extended discussions.
+and so is good for complex or extended discussions. That group is now closed, so instead see:
 
 [Marpa's homepage](http://savage.net.au/Marpa.html).
+
+That page contains a link to an archive of the group.
+The archive is called Marpa.Google.Group.2023.12.06.zip.
+
+See also <a href='#q13'>Q 13</a> for another use for this archive.
 
 <a name = 'q51'></a>
 51 Other Resources
